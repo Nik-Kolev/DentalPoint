@@ -1,40 +1,162 @@
 {
-    "heroTitle": "Dental Point",
-    "heroSubtitle": "D-r Iavor Ivanov",
-    "cta": "Book Appointment",
-    "aboutTitle": "About Us",
-    "aboutText": "In our clinic you will find modern equipment, a personal approach, and care for the whole family. We use the latest technologies and materials to provide the best treatment for our patients.",
-    "galleryTitle": "Gallery",
-    "footer": "All rights reserved.",
-    "clinicName": "Dental Point",
-    "clinicSubtitle": "Dental Cabinet",
-    "menuHome": "Home",
-    "menuContact": "Contact",
-    "menuTeam": "Team",
-    "menuLicenses": "Licenses",
-    "menuReviews": "Reviews",
-    "contactTitle": "Contact Us",
-    "contactSubtitle": "Get in touch with us",
-    "contactInfoTitle": "Contact Information",
-    "addressTitle": "Address",
-    "phoneTitle": "Phone",
-    "emailTitle": "Email",
-    "workingHoursTitle": "Working Hours",
-    "workingHoursWeekdays": "Monday - Friday: 9:00 AM - 6:00 PM",
-    "workingHoursSaturday": "Saturday: 9:00 AM - 2:00 PM",
-    "workingHoursSunday": "Sunday: Closed",
-    "holidaysTitle": "Holidays",
-    "holidaysText": "The clinic is closed during official holidays.",
-    "locationTitle": "Location",
-    "mapPlaceholder": "Map will be added soon",
-    "teamTitle": "Our Team",
-    "teamPerson1": "D-r Iavor Ivanov",
-    "teamPerson1Desc": "Chief Doctor - Dentist",
-    "teamPerson2": "D-r Maria Petrova",
-    "teamPerson2Desc": "Dentist - Orthodontist",
-    "licensesTitle": "Licenses and Certificates",
-    "certificate": "Certificate",
-    "reviewsTitle": "Patient Reviews",
-    "reviewExample": "Excellent service and professional approach. Highly recommended!",
-    "reviewPatient": "Patient"
+    "layout": {
+        "clinicName": "Dental Clinic",
+        "clinicSubtitle": "Dr. Yavor Ivanov",
+        "menuHome": "Home",
+        "menuContact": "Contact",
+        "menuTeam": "Team",
+        "menuLicenses": "Licenses",
+        "menuReviews": "Reviews",
+        "footer": "All rights reserved.",
+        "contactUs": "Contact Us",
+        "bookAppointment": "Book Appointment"
+    },
+    "home": {
+        "heroTitle": "Dental Point",
+        "heroSubtitle": "D-r Iavor Ivanov",
+        "cta": "Book Appointment",
+        "aboutTitle": "About Us",
+        "aboutText": "In our clinic you will find modern equipment, a personal approach, and care for the whole family. We use the latest technologies and materials to provide the best treatment for our patients.",
+        "galleryTitle": "Gallery"
+    },
+    "contact": {
+        "title": "Contact Us",
+        "subtitle": "We are here to help you",
+        "infoTitle": "Information",
+        "addressTitle": "Address",
+        "addressLine1": "Podpolkovnik Kalitin Street 2",
+        "addressLine2": "Levski District, Varna, Bulgaria",
+        "phoneTitle": "Phone",
+        "emailTitle": "Email",
+        "workingHoursTitle": "Working Hours",
+        "workingHoursMonday": "Monday: from 9:30 AM to 6:30 PM",
+        "workingHoursTuesday": "Tuesday: from 9:30 AM to 6:30 PM",
+        "workingHoursWednesday": "Wednesday: from 9:30 AM to 6:30 PM",
+        "workingHoursThursday": "Thursday: from 9:30 AM to 6:30 PM",
+        "workingHoursFriday": "Friday: from 9:30 AM to 6:30 PM",
+        "workingHoursSaturday": "Saturday: Closed",
+        "workingHoursSunday": "Sunday: Closed",
+        "holidaysTitle": "Holidays",
+        "holidaysText": "The clinic is closed during official holidays.",
+        "locationTitle": "Location",
+        "mapPlaceholder": "Map will be added soon",
+        "openInMaps": "Open with Google Maps"
+    },
+    "team": {
+        "title": "Our Team",
+        "subtitle": "Meet our specialists",
+        "person1Name": "D-r Iavor Ivanov",
+        "person1Title": "Chief Doctor - Dentist",
+        "person1Description": "Dr. Ivanov is an experienced dentist with over 9 years of practice in pediatric dentistry. He specializes in preventive care, cavity treatment, and orthodontics. Known for his gentle approach with young patients and his ability to create a comfortable atmosphere during treatment. He holds certifications for working with the latest dental technologies.",
+        "person2Name": "D-r Ekaterina Ivanova",
+        "person2Title": "Dentist - Orthodontist",
+        "person2Description": "Dr. Ivanova is an orthodontic specialist with extensive experience in correcting dental irregularities in adults and children. She completed a specialization in modern orthodontic techniques and works with the latest bracket systems. She stands out with her individual approach to each patient and her commitment to achieving perfect results. She actively participates in professional conferences and continuing education courses."
+    },
+    "licenses": {
+        "title": "Licenses and Certificates",
+        "subtitle": "Our professional qualifications",
+        "licenses": [
+            {
+                "title": "Dental Practice License",
+                "description": "Official license for practicing dentistry",
+                "year": "2023",
+                "issuer": "Ministry of Health Bulgaria"
+            },
+            {
+                "title": "Pediatric Dentistry Certificate",
+                "description": "Specialization in pediatric dental care",
+                "year": "2022",
+                "issuer": "Bulgarian Dental Association"
+            },
+            {
+                "title": "Orthodontics Certificate",
+                "description": "Qualification in orthodontic treatment",
+                "year": "2021",
+                "issuer": "European Orthodontic Society"
+            },
+            {
+                "title": "Endodontics Certificate",
+                "description": "Specialized root canal treatment",
+                "year": "2023",
+                "issuer": "Medical University Varna"
+            },
+            {
+                "title": "Periodontology Certificate",
+                "description": "Treatment of gum diseases",
+                "year": "2022",
+                "issuer": "Bulgarian Dental Association"
+            },
+            {
+                "title": "Oral Surgery Certificate",
+                "description": "Surgical procedures in oral cavity",
+                "year": "2021",
+                "issuer": "Medical University Sofia"
+            },
+            {
+                "title": "Prosthetics Certificate",
+                "description": "Creation and placement of dental prosthetics",
+                "year": "2020",
+                "issuer": "Bulgarian Dental Association"
+            },
+            {
+                "title": "Aesthetic Dentistry Certificate",
+                "description": "Cosmetic dental procedures",
+                "year": "2023",
+                "issuer": "International Academy"
+            },
+            {
+                "title": "Implantology Certificate",
+                "description": "Dental implant placement and treatment",
+                "year": "2022",
+                "issuer": "ITI Bulgaria"
+            },
+            {
+                "title": "Radiology Certificate",
+                "description": "X-ray diagnostics in dentistry",
+                "year": "2021",
+                "issuer": "Nuclear Regulatory Agency"
+            },
+            {
+                "title": "First Aid Certificate",
+                "description": "Emergency medical assistance provision",
+                "year": "2023",
+                "issuer": "Bulgarian Red Cross"
+            },
+            {
+                "title": "Hygiene and Disinfection",
+                "description": "Infection control in medical practice",
+                "year": "2023",
+                "issuer": "Ministry of Health Bulgaria"
+            },
+            {
+                "title": "Digital Dentistry",
+                "description": "Working with digital dental technologies",
+                "year": "2022",
+                "issuer": "Sirona Academy"
+            },
+            {
+                "title": "Laser Therapy",
+                "description": "Application of laser technologies",
+                "year": "2021",
+                "issuer": "Fotona"
+            },
+            {
+                "title": "Sedation and Anesthesia",
+                "description": "Pain management in dental procedures",
+                "year": "2020",
+                "issuer": "SAAD"
+            },
+            {
+                "title": "Quality and Safety",
+                "description": "Quality management in healthcare",
+                "year": "2023",
+                "issuer": "ISO Bulgaria"
+            }
+        ]
+    },
+    "reviews": {
+        "title": "Patient Reviews",
+        "example": "Excellent service and professional approach. Highly recommended!",
+        "patient": "Patient"
+    }
 }
