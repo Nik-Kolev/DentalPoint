@@ -1,7 +1,7 @@
 import bg from '../locales/bg.json';
 import en from '../locales/en.json';
 
-type TranslationObject = Record<string, Record<string, string>>;
+type TranslationObject = Record<string, any>;
 
 const translations: Record<string, TranslationObject> = { bg, en };
 
