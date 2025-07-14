@@ -40,17 +40,23 @@
         "holidaysText": "The clinic is closed during official holidays.",
         "locationTitle": "Location",
         "mapPlaceholder": "Map will be added soon",
-        "openInMaps": "Open with Google Maps"
+        "openInMaps": "Open in Google Maps"
     },
     "team": {
         "title": "Our Team",
         "subtitle": "Meet our specialists",
-        "person1Name": "D-r Iavor Ivanov",
+        "person1Name": "Dr. Iavor Ivanov",
         "person1Title": "Chief Doctor - Dentist",
         "person1Description": "Dr. Ivanov is an experienced dentist with over 9 years of practice in pediatric dentistry. He specializes in preventive care, cavity treatment, and orthodontics. Known for his gentle approach with young patients and his ability to create a comfortable atmosphere during treatment. He holds certifications for working with the latest dental technologies.",
-        "person2Name": "D-r Ekaterina Ivanova",
+        "person2Name": "Dr. Ekaterina Ivanova",
         "person2Title": "Dentist - Orthodontist",
-        "person2Description": "Dr. Ivanova is an orthodontic specialist with extensive experience in correcting dental irregularities in adults and children. She completed a specialization in modern orthodontic techniques and works with the latest bracket systems. She stands out with her individual approach to each patient and her commitment to achieving perfect results. She actively participates in professional conferences and continuing education courses."
+        "person2Description": "Dr. Ivanova is an orthodontics specialist with rich experience in correcting dental irregularities in adults and children. She has completed specialization in modern orthodontic techniques and works with the latest bracket systems. She is distinguished by her individual approach to each patient and her pursuit of perfect results. She actively participates in professional conferences and improvement courses.",
+        "experience": "9+ years experience",
+        "pediatricDentistry": "Pediatric Dentistry",
+        "orthodontistSpecialist": "Orthodontist Specialist",
+        "modernTechniques": "Modern Techniques",
+        "ctaTitle": "We are ready to take care of your smile",
+        "ctaSubtitle": "Book an appointment with our specialists today"
     },
     "licenses": {
         "title": "Licenses and Certificates",
@@ -58,55 +64,55 @@
         "licenses": [
             {
                 "title": "Dental Practice License",
-                "description": "Official license for practicing dentistry",
+                "description": "Official license for practicing dental medicine",
                 "year": "2023",
                 "issuer": "Ministry of Health Bulgaria"
             },
             {
                 "title": "Pediatric Dentistry Certificate",
-                "description": "Specialization in pediatric dental care",
+                "description": "Specialization in pediatric dentistry",
                 "year": "2022",
-                "issuer": "Bulgarian Dental Association"
+                "issuer": "Bulgarian Medical Association"
             },
             {
                 "title": "Orthodontics Certificate",
-                "description": "Qualification in orthodontic treatment",
+                "description": "Qualification for orthodontic treatment",
                 "year": "2021",
-                "issuer": "European Orthodontic Society"
+                "issuer": "European Orthodontic Association"
             },
             {
                 "title": "Endodontics Certificate",
                 "description": "Specialized root canal treatment",
                 "year": "2023",
-                "issuer": "Medical University Varna"
+                "issuer": "Medical University - Varna"
             },
             {
                 "title": "Periodontology Certificate",
                 "description": "Treatment of gum diseases",
                 "year": "2022",
-                "issuer": "Bulgarian Dental Association"
+                "issuer": "Bulgarian Medical Association"
             },
             {
                 "title": "Oral Surgery Certificate",
-                "description": "Surgical procedures in oral cavity",
+                "description": "Surgical interventions in the oral cavity",
                 "year": "2021",
-                "issuer": "Medical University Sofia"
+                "issuer": "Medical University - Sofia"
             },
             {
                 "title": "Prosthetics Certificate",
-                "description": "Creation and placement of dental prosthetics",
+                "description": "Manufacturing and placement of dental prosthetics",
                 "year": "2020",
-                "issuer": "Bulgarian Dental Association"
+                "issuer": "Bulgarian Medical Association"
             },
             {
                 "title": "Aesthetic Dentistry Certificate",
-                "description": "Cosmetic dental procedures",
+                "description": "Aesthetic procedures and cosmetic dentistry",
                 "year": "2023",
                 "issuer": "International Academy"
             },
             {
                 "title": "Implantology Certificate",
-                "description": "Dental implant placement and treatment",
+                "description": "Placement and treatment with dental implants",
                 "year": "2022",
                 "issuer": "ITI Bulgaria"
             },
@@ -117,8 +123,8 @@
                 "issuer": "Nuclear Regulatory Agency"
             },
             {
-                "title": "First Aid Certificate",
-                "description": "Emergency medical assistance provision",
+                "title": "First Aid",
+                "description": "Providing first medical aid",
                 "year": "2023",
                 "issuer": "Bulgarian Red Cross"
             },
@@ -130,7 +136,7 @@
             },
             {
                 "title": "Digital Dentistry",
-                "description": "Working with digital dental technologies",
+                "description": "Working with digital technologies in dentistry",
                 "year": "2022",
                 "issuer": "Sirona Academy"
             },
@@ -142,7 +148,7 @@
             },
             {
                 "title": "Sedation and Anesthesia",
-                "description": "Pain management in dental procedures",
+                "description": "Pain management and sedation in dental procedures",
                 "year": "2020",
                 "issuer": "SAAD"
             },
@@ -156,7 +162,7 @@
     },
     "reviews": {
         "title": "Patient Reviews",
-        "example": "Excellent service and professional approach. Highly recommended!",
+        "example": "Excellent service and professional approach. I recommend!",
         "patient": "Patient"
     }
 }
