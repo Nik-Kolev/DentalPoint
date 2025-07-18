@@ -1,13 +1,21 @@
 import type { Metadata } from 'next';
 import { getTranslation } from '../../../lib/useTranslation';
 
-export const metadata: Metadata = {
-    title: 'Contact Us',
-    description: 'Get in touch with Dental Point. Find our location, working hours, and contact information in Varna, Bulgaria.',
-};
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+    const locale = params?.locale || 'bg';
+    const t = getTranslation(locale);
+
+    return {
+        title: `${t('contact', 'title')}`,
+        description: t('contact', 'subtitle'),
+    };
+}
 
 export default function Contact({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
+
+    const latitude = 43.221575025798415;
+    const longitude = 27.91784662746136;
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
@@ -101,7 +109,7 @@ export default function Contact({ params }: { params: { locale: string } }) {
                         <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('contact', 'locationTitle')}</h2>
                         <div className='rounded-lg overflow-hidden shadow-md'>
                             <iframe
-                                src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2907.9999999999995!2d27.917852!3d43.2215545!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40a4540f1b2d8a8f%3A0x6f6f6f6f6f6f6f6f!2sDental%20Point%20-%20%D0%B4-%D1%80%20%D0%AF%D0%B2%D0%BE%D1%80%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%2C%20%D0%B4-%D1%80%20%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0%20%D0%9E%D1%82%D0%B7%D0%B8%D0%B2%D0%B8!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus'
+                                src={`https://www.google.com/maps?q=${latitude},${longitude}&z=17&output=embed`}
                                 width='100%'
                                 height='480'
                                 style={{ border: 0 }}
@@ -113,7 +121,7 @@ export default function Contact({ params }: { params: { locale: string } }) {
                         </div>
                         <div className='mt-8 text-center'>
                             <a
-                                href='https://www.google.com/maps/search/Dental+Point+-+%D0%B4-%D1%80+%D0%AF%D0%B2%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2,+%D0%B4-%D1%80+%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0+%D0%9E%D1%82%D0%B7%D0%B8%D0%B2%D0%B8/@43.2215545,27.917852,15z?entry=s&sa=X&ved=1t%3A199789'
+                                href='https://www.google.com/maps/place/Dental+Point+-+%D0%B4-%D1%80+%D0%AF%D0%B2%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2,+%D0%B4-%D1%80+%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0/@43.221575,27.917847,17z/data=!4m6!3m5!1s0x40a455d3a111b459:0xe737faf0914586ae!8m2!3d43.2215545!4d27.917852!16s%2Fg%2F11l6zqphst?entry=ttu&g_ep=EgoyMDI1MDcxNS4xIKXMDSoASAFQAw%3D%3D'
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='inline-flex items-center px-6 py-3 bg-[#009fe3] text-white font-semibold rounded-lg hover:bg-[#005baa] transition-colors duration-200'

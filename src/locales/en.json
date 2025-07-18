@@ -1,4 +1,13 @@
 {
+    "metadata": {
+        "title": "Dental Point - Professional Dental Care Dr. Yavor Ivanov and Dr. Katerina Ivanova",
+        "titleTemplate": "%s | Dental Point - Professional Dental Care",
+        "description": "Professional dental care at Dental Point in Varna with Dr. Yavor Ivanov and Dr. Katerina Ivanova. Modern technology, personalized treatment, and comprehensive dental services for the whole family.",
+        "keywords": "dental clinic, dentist, dental care, dr yavor ivanov, dr katerina ivanova, orthodontics, pediatric dentistry, dental implants, prosthetics, Varna, Bulgaria, dental point, professional dental care",
+        "ogTitle": "Dental Point - Professional Dental Care Dr. Yavor Ivanov and Dr. Katerina Ivanova",
+        "ogDescription": "Professional dental care in Varna with modern technology. Dr. Yavor Ivanov and Dr. Katerina Ivanova from Dental Point are here for your smile.",
+        "ogAlt": "Dental Point - Dental Clinic Varna"
+    },
     "layout": {
         "clinicName": "Dental Clinic",
         "clinicSubtitle": "Dr. Yavor Ivanov",
@@ -12,9 +21,14 @@
         "bookAppointment": "Book Appointment"
     },
     "home": {
-        "heroTitle": "Dental Point",
-        "heroSubtitle": "D-r Iavor Ivanov",
-        "cta": "Book Appointment",
+        "heroTitle": "Дентален Кабинет - Dental Point",
+        "heroSubtitle": "Dr. Yavor Ivanov & Dr. Ekaterina Ivanova",
+        "doctorsTitle": "Our Specialists",
+        "doctor1Name": "Dr. Yavor Ivanov",
+        "doctor1Specialty": "Chief Doctor - Dentist",
+        "doctor2Name": "Dr. Ekaterina Ivanova",
+        "doctor2Specialty": "Dentist - Orthodontist",
+        "moreInfo": "More Info",
         "aboutTitle": "About Us",
         "aboutText": "In our clinic you will find modern equipment, a personal approach, and care for the whole family. We use the latest technologies and materials to provide the best treatment for our patients.",
         "galleryTitle": "Gallery"
@@ -61,6 +75,13 @@
     "licenses": {
         "title": "Licenses and Certificates",
         "subtitle": "Our professional qualifications",
+        "statsTitle": "Trust our experience",
+        "statsSubtitle": "Our qualifications guarantee the highest quality of treatment",
+        "statsCertificates": "Certificates",
+        "statsExperience": "Years of total experience",
+        "statsPatients": "Satisfied patients",
+        "statsProfessionalism": "Professionalism",
+        "ctaButton": "Contact Us",
         "licenses": [
             {
                 "title": "Dental Practice License",
@@ -127,36 +148,6 @@
                 "description": "Providing first medical aid",
                 "year": "2023",
                 "issuer": "Bulgarian Red Cross"
-            },
-            {
-                "title": "Hygiene and Disinfection",
-                "description": "Infection control in medical practice",
-                "year": "2023",
-                "issuer": "Ministry of Health Bulgaria"
-            },
-            {
-                "title": "Digital Dentistry",
-                "description": "Working with digital technologies in dentistry",
-                "year": "2022",
-                "issuer": "Sirona Academy"
-            },
-            {
-                "title": "Laser Therapy",
-                "description": "Application of laser technologies",
-                "year": "2021",
-                "issuer": "Fotona"
-            },
-            {
-                "title": "Sedation and Anesthesia",
-                "description": "Pain management and sedation in dental procedures",
-                "year": "2020",
-                "issuer": "SAAD"
-            },
-            {
-                "title": "Quality and Safety",
-                "description": "Quality management in healthcare",
-                "year": "2023",
-                "issuer": "ISO Bulgaria"
             }
         ]
     },
