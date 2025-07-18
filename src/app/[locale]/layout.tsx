@@ -1,73 +1,100 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
 import Image from 'next/image';
-import { getTranslation } from '../lib/useTranslation';
+import { getTranslation } from '../../lib/useTranslation';
+import BackToTop from '@/components/BackToTop';
 
 const inter = Inter({ subsets: ['latin'] });
 const playfair = Playfair_Display({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-    title: {
-        default: 'Dental Clinic - Professional Dental Care',
-        template: '%s | Dental Clinic',
-    },
-    description:
-        'Professional dental care services with experienced dentists. Modern facilities, comfortable treatment, and personalized care for you and your family.',
-    keywords: ['dental clinic', 'dentist', 'dental care', 'oral health', 'dental treatment'],
-    authors: [{ name: 'Dental Clinic Team' }],
-    creator: 'Dental Clinic',
-    publisher: 'Dental Clinic',
-    formatDetection: {
-        email: false,
-        address: false,
-        telephone: false,
-    },
-    metadataBase: new URL('https://your-domain.vercel.app'),
-    alternates: {
-        canonical: '/',
-    },
-    openGraph: {
-        title: 'Dental Clinic - Professional Dental Care',
-        description: 'Professional dental care services with experienced dentists. Modern facilities, comfortable treatment, and personalized care.',
-        url: 'https://your-domain.vercel.app',
-        siteName: 'Dental Clinic',
-        images: [
-            {
-                url: '/og-image.jpg',
-                width: 1200,
-                height: 630,
-                alt: 'Dental Clinic',
+// Separate viewport function for Next.js 15+ compatibility
+export async function generateViewport({ params }: { params: { locale: string } }): Promise<Viewport> {
+    return {
+        width: 'device-width',
+        initialScale: 1,
+        maximumScale: 1,
+        themeColor: '#009fe3',
+        colorScheme: 'light',
+    };
+}
+
+// Simplified metadata function using translations
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+    const locale = params?.locale || 'bg';
+    const t = getTranslation(locale);
+
+    const isBulgarian = locale === 'bg';
+
+    return {
+        title: {
+            default: t('metadata', 'title'),
+            template: t('metadata', 'titleTemplate'),
+        },
+        description: t('metadata', 'description'),
+        keywords: t('metadata', 'keywords').split(', '),
+        authors: [{ name: 'Dr. Yavor Ivanov and Dr. Katerina Ivanova - Dental Point' }],
+        creator: 'Dental Point',
+        publisher: 'Dental Point',
+        formatDetection: {
+            email: false,
+            address: false,
+            telephone: false,
+        },
+        metadataBase: new URL('https://dental-point.vercel.app'),
+        alternates: {
+            canonical: `/${locale}`,
+            languages: {
+                bg: '/bg',
+                en: '/en',
             },
-        ],
-        locale: 'en_US',
-        type: 'website',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'Dental Clinic - Professional Dental Care',
-        description: 'Professional dental care services with experienced dentists.',
-        images: ['/og-image.jpg'],
-    },
-    robots: {
-        index: true,
-        follow: true,
-        googleBot: {
+        },
+        openGraph: {
+            title: t('metadata', 'ogTitle'),
+            description: t('metadata', 'ogDescription'),
+            url: `https://dental-point.vercel.app/${locale}`,
+            siteName: 'Dental Point',
+            images: [
+                {
+                    url: '/og-image.jpg',
+                    width: 1200,
+                    height: 630,
+                    alt: t('metadata', 'ogAlt'),
+                },
+            ],
+            locale: isBulgarian ? 'bg_BG' : 'en_US',
+            type: 'website',
+        },
+        robots: {
             index: true,
             follow: true,
-            'max-video-preview': -1,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
+            googleBot: {
+                index: true,
+                follow: true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+            },
         },
-    },
-    verification: {
-        google: 'your-google-verification-code',
-    },
-};
+        category: 'health',
+        classification: 'dental care',
+        referrer: 'origin-when-cross-origin',
+        // TODO: Add Google verification when custom domain is purchased
+        // verification: {
+        //     google: 'your-google-verification-code',
+        // },
+        other: {
+            'geo.region': 'BG',
+            'geo.placename': 'Varna',
+            'geo.position': '43.22171865355527;27.91822750627432',
+            ICBM: '43.22171865355527, 27.91822750627432',
+        },
+    };
+}
 
-export default function RootLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
+export default function LocaleLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
     const locale = params?.locale || 'bg';
     const t = getTranslation(locale);
 
@@ -83,14 +110,14 @@ export default function RootLayout({ children, params }: { children: React.React
     return (
         <html lang={locale}>
             <head>
-                <link rel='icon' href='/favicon.ico' />
-                <link rel='apple-touch-icon' href='/apple-touch-icon.png' />
+                <link rel='icon' href='/favicon.png' type='image/jpg' />
+                <link rel='apple-touch-icon' href='/favicon.png' />
                 <link rel='manifest' href='/manifest.json' />
             </head>
             <body className={inter.className}>
                 <header className='w-full shadow-sm bg-white'>
                     <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8'>
-                        {/* Logo and Clinic Name - Flexible on mobile, fixed on desktop */}
+                        {/* Logo and Clinic Name */}
                         <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64'>
                             <Image
                                 src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/header_logo.jpg'
@@ -106,12 +133,12 @@ export default function RootLayout({ children, params }: { children: React.React
                             </div>
                         </div>
 
-                        {/* Desktop Navigation - Perfectly centered */}
+                        {/* Desktop Navigation */}
                         <div className='hidden lg:flex flex-1 justify-center'>
                             <Navigation locale={locale} translations={translations} />
                         </div>
 
-                        {/* Right side - Flexible on mobile, fixed on desktop */}
+                        {/* Right side*/}
                         <div className='flex items-center justify-end space-x-3 flex-shrink-0 lg:w-64'>
                             {/* Language Switcher - Only visible on desktop */}
                             <div className='hidden lg:block'>
@@ -162,6 +189,7 @@ export default function RootLayout({ children, params }: { children: React.React
                         </div>
                     </div>
                 </footer>
+                <BackToTop />
             </body>
         </html>
     );

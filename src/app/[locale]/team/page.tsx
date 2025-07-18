@@ -20,7 +20,7 @@ export default function Team({ params }: { params: { locale: string } }) {
 
                 <div className='space-y-16 lg:space-y-20'>
                     {/* Dr. Iavor Ivanov */}
-                    <div className='flex flex-col lg:flex-row lg:items-start lg:gap-8 xl:gap-12'>
+                    <div id='dr-yavor-ivanov' className='flex flex-col lg:flex-row lg:items-start lg:gap-8 xl:gap-12 scroll-mt-20'>
                         {/* Mobile Layout */}
                         <div className='lg:hidden text-center space-y-4'>
                             <h2 className='text-2xl sm:text-3xl font-bold text-[#0056b3] font-serif'>{t('team', 'person1Name')}</h2>
@@ -65,7 +65,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                     </div>
 
                     {/* Dr. Ekaterina Ivanova */}
-                    <div className='flex flex-col lg:flex-row-reverse lg:items-start lg:gap-8 xl:gap-12'>
+                    <div id='dr-ekaterina-ivanova' className='flex flex-col lg:flex-row-reverse lg:items-start lg:gap-8 xl:gap-12 scroll-mt-20'>
                         {/* Mobile Layout */}
                         <div className='lg:hidden text-center space-y-4'>
                             <h2 className='text-2xl sm:text-3xl font-bold text-[#0056b3] font-serif'>{t('team', 'person2Name')}</h2>
