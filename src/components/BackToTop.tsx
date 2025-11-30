@@ -30,12 +30,12 @@ export default function BackToTop() {
     return (
         <button
             onClick={scrollToTop}
-            className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 bg-[#005baa] text-white p-2 md:p-3 rounded-full shadow-lg hover:bg-[#004a8c] transition-all duration-200 hover:scale-110 z-50 ${
+            className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 bg-[#005baa] text-white border border-white p-3 md:p-4 rounded-full shadow-lg hover:bg-[#004a8c] transition-all duration-200 hover:scale-110 z-50 flex-shrink-0 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
             }`}
             aria-label='Back to top'
         >
-            <svg className='w-5 h-5 md:w-6 md:h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+            <svg className='w-6 h-6 md:w-7 md:h-7' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 10l7-7m0 0l7 7m-7-7v18' />
             </svg>
         </button>

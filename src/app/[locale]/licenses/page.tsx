@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslation } from '../../../lib/useTranslation';
-import CTAButton from '@/components/CTAButton';
+import StaticCTA from '@/components/StaticCTA';
 import CertificateCard from './CertificateCard';
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
@@ -25,23 +25,9 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                     <p className='mt-4 text-xl text-gray-600'>{t('licenses', 'subtitle')}</p>
                 </div>
 
-                {/* Certificates Grid */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16'>
-                    {licensesData.map((license: any, index: number) => (
-                        <CertificateCard
-                            key={index}
-                            title={license.title}
-                            description={license.description}
-                            year={license.year}
-                            issuer={license.issuer}
-                            imageUrl={getCertificateImageId(index)}
-                        />
-                    ))}
-                </div>
-
-                {/* Statistics Section */}
-                <div className='mt-16 bg-white rounded-lg shadow-lg p-8'>
-                    <div className='grid grid-cols-1 md:grid-cols-4 gap-8 text-center'>
+                {/* Statistics Section - Moved to top */}
+                <div className='mb-8 bg-white rounded-lg shadow-lg p-6 sm:p-8'>
+                    <div className='grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center'>
                         <div>
                             <div className='text-3xl font-bold text-[#005baa] mb-2'>{licensesData.length}+</div>
                             <div className='text-gray-600'>{t('licenses', 'statsCertificates')}</div>
@@ -61,12 +47,22 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                     </div>
                 </div>
 
-                {/* CTA Section */}
-                <div className='text-center mt-12 bg-[#0056b3] text-white py-8 rounded-xl'>
-                    <h2 className='text-xl md:text-2xl font-bold mb-3 font-serif'>{t('licenses', 'statsTitle')}</h2>
-                    <p className='text-base md:text-lg mb-6'>{t('licenses', 'statsSubtitle')}</p>
-                    <CTAButton locale={params.locale} />
+                {/* Certificates Grid */}
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16'>
+                    {licensesData.map((license: any, index: number) => (
+                        <CertificateCard
+                            key={index}
+                            title={license.title}
+                            description={license.description}
+                            year={license.year}
+                            issuer={license.issuer}
+                            imageUrl={getCertificateImageId(index)}
+                        />
+                    ))}
                 </div>
+
+                {/* CTA Section */}
+                <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
             </div>
         </div>
     );

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface NavigationProps {
@@ -11,6 +11,7 @@ interface NavigationProps {
         home: string;
         contact: string;
         team: string;
+        gallery: string;
         licenses: string;
         reviews: string;
     };
@@ -48,6 +49,19 @@ export default function Navigation({ locale, translations }: NavigationProps) {
         setIsMobileMenuOpen(false);
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isMobileMenuOpen) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isMobileMenuOpen]);
+
     return (
         <>
             {/* Desktop Navigation */}
@@ -61,6 +75,9 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                 <Link href={`/${locale}/team`} className={linkClass('team')}>
                     {translations.team}
                 </Link>
+                <Link href={`/${locale}/gallery`} className={linkClass('gallery')}>
+                    {translations.gallery}
+                </Link>
                 <Link href={`/${locale}/licenses`} className={linkClass('licenses')}>
                     {translations.licenses}
                 </Link>
@@ -72,12 +89,12 @@ export default function Navigation({ locale, translations }: NavigationProps) {
             {/* Mobile Menu Button */}
             <button
                 onClick={toggleMobileMenu}
-                className='lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500'
+                className='lg:hidden relative inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500'
                 aria-expanded={isMobileMenuOpen}
                 aria-label='Toggle navigation menu'
             >
                 <svg
-                    className={`${isMobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
+                    className={`h-6 w-6 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'}`}
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'
@@ -86,7 +103,9 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4 6h16M4 12h16M4 18h16' />
                 </svg>
                 <svg
-                    className={`${isMobileMenuOpen ? 'block' : 'hidden'} h-6 w-6`}
+                    className={`absolute h-6 w-6 transition-all duration-300 ${
+                        isMobileMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'
+                    }`}
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'
@@ -97,34 +116,39 @@ export default function Navigation({ locale, translations }: NavigationProps) {
             </button>
 
             {/* Mobile Menu - With Centered Language Switcher */}
-            {isMobileMenuOpen && (
-                <div className='lg:hidden absolute top-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
-                    <div className='py-2'>
-                        <Link href={`/${locale}`} className={mobileLinkClass('')} onClick={closeMobileMenu}>
-                            {translations.home}
-                        </Link>
-                        <Link href={`/${locale}/contact`} className={mobileLinkClass('contact')} onClick={closeMobileMenu}>
-                            {translations.contact}
-                        </Link>
-                        <Link href={`/${locale}/team`} className={mobileLinkClass('team')} onClick={closeMobileMenu}>
-                            {translations.team}
-                        </Link>
-                        <Link href={`/${locale}/licenses`} className={mobileLinkClass('licenses')} onClick={closeMobileMenu}>
-                            {translations.licenses}
-                        </Link>
-                        <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} onClick={closeMobileMenu}>
-                            {translations.reviews}
-                        </Link>
+            <div
+                className={`lg:hidden fixed top-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 transition-all duration-300 ease-in-out ${
+                    isMobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+                }`}
+            >
+                <div className='py-2'>
+                    <Link href={`/${locale}`} className={mobileLinkClass('')} onClick={closeMobileMenu}>
+                        {translations.home}
+                    </Link>
+                    <Link href={`/${locale}/contact`} className={mobileLinkClass('contact')} onClick={closeMobileMenu}>
+                        {translations.contact}
+                    </Link>
+                    <Link href={`/${locale}/team`} className={mobileLinkClass('team')} onClick={closeMobileMenu}>
+                        {translations.team}
+                    </Link>
+                    <Link href={`/${locale}/gallery`} className={mobileLinkClass('gallery')} onClick={closeMobileMenu}>
+                        {translations.gallery}
+                    </Link>
+                    <Link href={`/${locale}/licenses`} className={mobileLinkClass('licenses')} onClick={closeMobileMenu}>
+                        {translations.licenses}
+                    </Link>
+                    <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} onClick={closeMobileMenu}>
+                        {translations.reviews}
+                    </Link>
 
-                        {/* Language Switcher in Mobile Menu - Centered */}
-                        <div className='border-t border-gray-200 mt-2 pt-3 pb-1'>
-                            <div className='flex justify-center'>
-                                <LanguageSwitcher locale={locale} />
-                            </div>
+                    {/* Language Switcher in Mobile Menu - Centered */}
+                    <div className='border-t border-gray-200 mt-2 pt-3 pb-1'>
+                        <div className='flex justify-center'>
+                            <LanguageSwitcher locale={locale} />
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }

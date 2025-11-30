@@ -14,6 +14,7 @@
         "menuHome": "Home",
         "menuContact": "Contact",
         "menuTeam": "Team",
+        "menuGallery": "Gallery",
         "menuLicenses": "Licenses",
         "menuReviews": "Reviews",
         "footer": "All rights reserved.",
@@ -21,7 +22,7 @@
         "bookAppointment": "Book Appointment"
     },
     "home": {
-        "heroTitle": "Дентален Кабинет - Dental Point",
+        "heroTitle": "Dental Office - Dental Point",
         "heroSubtitle": "Dr. Yavor Ivanov & Dr. Ekaterina Ivanova",
         "doctorsTitle": "Our Specialists",
         "doctor1Name": "Dr. Yavor Ivanov",
@@ -31,7 +32,9 @@
         "moreInfo": "More Info",
         "aboutTitle": "About Us",
         "aboutText": "In our clinic you will find modern equipment, a personal approach, and care for the whole family. We use the latest technologies and materials to provide the best treatment for our patients.",
-        "galleryTitle": "Gallery"
+        "galleryTitle": "Gallery",
+        "ctaTitle": "Browse our modern clinic",
+        "ctaSubtitle": "Book an appointment and experience professional care"
     },
     "contact": {
         "title": "Contact Us",
@@ -77,6 +80,8 @@
         "subtitle": "Our professional qualifications",
         "statsTitle": "Trust our experience",
         "statsSubtitle": "Our qualifications guarantee the highest quality of treatment",
+        "ctaTitle": "Trust our experience",
+        "ctaSubtitle": "Our qualifications guarantee the highest quality of treatment",
         "statsCertificates": "Certificates",
         "statsExperience": "Years of total experience",
         "statsPatients": "Satisfied patients",
@@ -151,9 +156,17 @@
             }
         ]
     },
+    "gallery": {
+        "title": "Gallery",
+        "subtitle": "Take a look at our clinic",
+        "ctaTitle": "Browse the results of our work",
+        "ctaSubtitle": "Book an appointment and achieve the same results"
+    },
     "reviews": {
         "title": "Patient Reviews",
         "example": "Excellent service and professional approach. I recommend!",
-        "patient": "Patient"
+        "patient": "Patient",
+        "ctaTitle": "Join our satisfied patients",
+        "ctaSubtitle": "Book an appointment and experience professional care"
     }
 }

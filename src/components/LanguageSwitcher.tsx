@@ -1,13 +1,16 @@
 'use client';
 
+import { useRouter, usePathname } from 'next/navigation';
 import Flag from 'react-world-flags';
 
 export default function LanguageSwitcher({ locale }: { locale: string }) {
+    const router = useRouter();
+    const pathname = usePathname();
+
     const switchLanguage = (newLocale: string) => {
         localStorage.setItem('preferredLang', newLocale);
-        const currentPath = window.location.pathname;
-        const newPath = currentPath.replace(/^\/(en|bg)/, `/${newLocale}`);
-        window.location.pathname = newPath;
+        const newPath = pathname.replace(/^\/(en|bg)/, `/${newLocale}`);
+        router.push(newPath);
     };
 
     return (
