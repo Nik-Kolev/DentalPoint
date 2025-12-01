@@ -28,7 +28,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person1Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/iavor.jpg'
+                                    src='/Images/owners/iavor.jpg'
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
@@ -46,7 +46,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/iavor.jpg'
+                                    src='/Images/owners/iavor.jpg'
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
@@ -73,7 +73,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person2Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/kati.jpg'
+                                    src='/Images/owners/kati.jpg'
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
@@ -91,7 +91,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/kati.jpg'
+                                    src='/Images/owners/kati.jpg'
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}

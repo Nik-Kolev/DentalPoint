@@ -116,7 +116,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                     {/* Logo and Clinic Name */}
                     <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64'>
                         <Image
-                            src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/header_logo.jpg'
+                            src='/Images/logo/header_logo.jpg'
                             alt='Dental Point Logo'
                             width={40}
                             height={40}

@@ -22,13 +22,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                         {/* Dr. Yavor Ivanov */}
                         <div className='text-center'>
                             <div className='relative h-80 sm:h-96 md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl mb-4'>
-                                <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/iavor.jpg'
-                                    alt={t('home', 'doctor1Name')}
-                                    fill
-                                    className='object-cover'
-                                    priority
-                                />
+                                <Image src='/Images/owners/iavor.jpg' alt={t('home', 'doctor1Name')} fill className='object-cover' priority />
                             </div>
                             <h4 className='font-semibold text-[#005baa] text-xl sm:text-2xl md:text-3xl mb-2'>{t('home', 'doctor1Name')}</h4>
                             <p className='text-gray-600 text-base sm:text-lg md:text-xl mb-4'>{t('home', 'doctor1Specialty')}</p>
@@ -43,13 +37,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                         {/* Dr. Ekaterina Ivanova */}
                         <div className='text-center'>
                             <div className='relative h-80 sm:h-96 md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl mb-4'>
-                                <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/kati.jpg'
-                                    alt={t('home', 'doctor2Name')}
-                                    fill
-                                    className='object-cover'
-                                    priority
-                                />
+                                <Image src='/Images/owners/kati.jpg' alt={t('home', 'doctor2Name')} fill className='object-cover' priority />
                             </div>
                             <h4 className='font-semibold text-[#005baa] text-xl sm:text-2xl md:text-3xl mb-2'>{t('home', 'doctor2Name')}</h4>
                             <p className='text-gray-600 text-base sm:text-lg md:text-xl mb-4'>{t('home', 'doctor2Specialty')}</p>
@@ -81,15 +69,26 @@ export default function Home({ params }: { params: { locale: string } }) {
                 </div>
             </section>
 
-            {/* Simple Gallery Section */}
+            {/* Cabinet Interior Gallery Section */}
             <section className='pt-4 sm:pt-6 pb-6 md:pb-8 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4'>
-                        {Array.from({ length: 6 }).map((_, i) => (
+                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4'>
+                        {[
+                            'IMG_3345.jpeg',
+                            'IMG_3346.jpeg',
+                            'IMG_3349.jpeg',
+                            'IMG_3350.jpeg',
+                            'IMG_3356.jpeg',
+                            'IMG_3357.jpeg',
+                            'IMG_3358.jpeg',
+                            'IMG_3372.jpeg',
+                            'IMG_3445.jpeg',
+                            'IMG_3448.jpeg',
+                        ].map((imageName, i) => (
                             <div key={i} className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200'>
                                 <Image
-                                    src='https://lzvdw3wv3rlhnguv.public.blob.vercel-storage.com/header_logo.jpg'
-                                    alt={`Gallery image ${i + 1}`}
+                                    src={`/Images/front/${imageName}`}
+                                    alt={`Cabinet interior ${i + 1}`}
                                     width={150}
                                     height={150}
                                     className='rounded-md object-cover w-full h-24 sm:h-32'

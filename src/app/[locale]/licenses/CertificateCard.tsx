@@ -1,4 +1,6 @@
-import Image from 'next/image';
+'use client';
+
+import { useRef } from 'react';
 
 interface CertificateCardProps {
     title: string;
@@ -6,19 +8,35 @@ interface CertificateCardProps {
     year: string;
     issuer: string;
     imageUrl: string;
+    onImageClick: (element: HTMLElement) => void;
 }
 
-export default function CertificateCard({ title, description, year, issuer, imageUrl }: CertificateCardProps) {
+export default function CertificateCard({ title, description, year, issuer, imageUrl, onImageClick }: CertificateCardProps) {
+    const imageRef = useRef<HTMLDivElement>(null);
+
+    const handleClick = () => {
+        if (imageRef.current) {
+            onImageClick(imageRef.current);
+        }
+    };
+
     return (
-        <div className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300'>
-            <div className='relative h-48'>
-                <Image src={imageUrl} alt={title} fill className='object-cover' />
-                <div className='absolute top-2 right-2 bg-[#005baa] text-white px-2 py-1 rounded text-sm font-semibold'>{year}</div>
+        <div className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col'>
+            <div
+                ref={imageRef}
+                className='relative bg-gray-50 flex items-center justify-center p-4 min-h-[200px] max-h-[400px] cursor-pointer group'
+                onClick={handleClick}
+            >
+                <img src={imageUrl} alt={title} className='max-w-full max-h-full w-auto h-auto object-contain' loading='lazy' />
+                {year && (
+                    <div className='absolute top-2 right-2 bg-[#005baa] text-white px-2 py-1 rounded text-sm font-semibold pointer-events-none z-20'>
+                        {year}
+                    </div>
+                )}
             </div>
-            <div className='p-6'>
+            <div className='p-6 flex-grow'>
                 <h3 className='text-lg font-bold text-gray-900 mb-2'>{title}</h3>
-                <p className='text-gray-600 text-sm mb-3'>{description}</p>
-                <div className='text-sm text-[#005baa] font-medium'>{issuer}</div>
+                <p className='text-gray-600 text-sm'>{description}</p>
             </div>
         </div>
     );
