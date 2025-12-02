@@ -38,37 +38,54 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         // Find static CTA elements
         const staticCTAs = document.querySelectorAll('[data-static-cta]');
 
-        if (staticCTAs.length === 0) return;
+        if (staticCTAs.length === 0) {
+            setIsStaticCTAVisible(false);
+            return;
+        }
 
         const observer = new IntersectionObserver(
             (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setIsStaticCTAVisible(true);
-                    } else {
-                        setIsStaticCTAVisible(false);
-                    }
-                });
+                // Check if any StaticCTA is visible
+                const anyVisible = entries.some((entry) => entry.isIntersecting);
+                setIsStaticCTAVisible(anyVisible);
             },
             {
                 threshold: 0.1,
-                rootMargin: '0px 0px -120px 0px',
+                rootMargin: '0px 0px -100px 0px',
             }
         );
 
         staticCTAs.forEach((cta) => observer.observe(cta));
+
+        // Also check immediately in case StaticCTA is already in view
+        const checkInitialVisibility = () => {
+            staticCTAs.forEach((cta) => {
+                const rect = cta.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight - 100 && rect.bottom > 0;
+                if (isVisible) {
+                    setIsStaticCTAVisible(true);
+                }
+            });
+        };
+
+        // Small delay to ensure DOM is ready
+        setTimeout(checkInitialVisibility, 100);
 
         return () => {
             staticCTAs.forEach((cta) => observer.unobserve(cta));
         };
     }, [isContactPage, pathname]);
 
-    if (isContactPage || isStaticCTAVisible) {
+    if (isContactPage) {
         return null;
     }
 
     return (
-        <div className='fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 md:hidden'>
+        <div
+            className={`fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 md:hidden transition-all duration-300 ${
+                isStaticCTAVisible ? 'opacity-0 pointer-events-none translate-y-full' : 'opacity-100 pointer-events-auto translate-y-0'
+            }`}
+        >
             <Link
                 href={`/${locale}/contact`}
                 className={`group relative flex items-center justify-center px-4 py-3 text-base font-bold text-white bg-gradient-to-r from-[#005baa] to-[#009fe3] rounded-xl shadow-2xl hover:shadow-[#009fe3]/50 transition-all duration-300 hover:scale-[1.02] transform overflow-hidden ${

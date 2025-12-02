@@ -106,18 +106,21 @@ export default function Licenses({ params }: { params: { locale: string } }) {
         shortText?: string;
     } | null>(null);
 
-    // Mobile: show 6 initially, desktop: show all
-    const [visibleCount, setVisibleCount] = useState(6);
+    // Mobile: show 3 initially, desktop: show all
+    const [visibleCount, setVisibleCount] = useState(3);
     const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
         // Check if mobile on mount and resize
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+
             // On desktop, show all certificates
-            if (window.innerWidth >= 768) {
+            if (!mobile) {
                 setVisibleCount(certificatesData.length);
             }
+            // On mobile, initial state is already 3, no need to reset
         };
 
         checkMobile();
@@ -125,13 +128,19 @@ export default function Licenses({ params }: { params: { locale: string } }) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Show more certificates
+    // Show more certificates (3 at a time)
     const loadMore = () => {
-        setVisibleCount((prev) => Math.min(prev + 6, certificatesData.length));
+        setVisibleCount((prev) => Math.min(prev + 3, certificatesData.length));
+    };
+
+    // Show less (collapse back to 3)
+    const showLess = () => {
+        setVisibleCount(3);
     };
 
     const visibleCertificates = certificatesData.slice(0, visibleCount);
     const hasMore = visibleCount < certificatesData.length;
+    const hasExpanded = visibleCount > 3;
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
@@ -187,15 +196,25 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                     ))}
                 </div>
 
-                {/* Load More Button - Show on mobile when there are more certificates */}
-                {hasMore && (
-                    <div className='flex justify-center mb-16 md:hidden'>
-                        <button
-                            onClick={loadMore}
-                            className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
-                        >
-                            {t('licenses', 'loadMore') || `Load More (${certificatesData.length - visibleCount} remaining)`}
-                        </button>
+                {/* Load More / Show Less Buttons - Show on mobile */}
+                {(hasMore || hasExpanded) && (
+                    <div className='flex justify-center mb-16 md:hidden gap-4'>
+                        {hasMore && (
+                            <button
+                                onClick={loadMore}
+                                className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            >
+                                {t('licenses', 'loadMore')}
+                            </button>
+                        )}
+                        {hasExpanded && (
+                            <button
+                                onClick={showLess}
+                                className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            >
+                                {t('licenses', 'showLess')}
+                            </button>
+                        )}
                     </div>
                 )}
 
@@ -203,8 +222,8 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
             </div>
 
-            {/* Lightbox - rendered outside container for proper positioning */}
-            {selectedImage && (
+            {/* Lightbox - rendered outside container for proper positioning - only on desktop */}
+            {selectedImage && !isMobile && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
                     onClose={() => setSelectedImage(null)}

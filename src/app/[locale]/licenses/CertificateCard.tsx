@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 interface CertificateCardProps {
     title: string;
@@ -13,9 +13,20 @@ interface CertificateCardProps {
 
 export default function CertificateCard({ title, description, year, issuer, imageUrl, onImageClick }: CertificateCardProps) {
     const imageRef = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleClick = () => {
-        if (imageRef.current) {
+        // Only allow clicking on desktop (lightbox)
+        if (!isMobile && imageRef.current) {
             onImageClick(imageRef.current);
         }
     };
@@ -24,7 +35,7 @@ export default function CertificateCard({ title, description, year, issuer, imag
         <div className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col'>
             <div
                 ref={imageRef}
-                className='relative bg-gray-50 flex items-center justify-center p-4 min-h-[200px] max-h-[400px] cursor-pointer group'
+                className={`relative bg-gray-50 flex items-center justify-center p-4 min-h-[200px] max-h-[400px] ${!isMobile ? 'cursor-pointer group' : ''}`}
                 onClick={handleClick}
             >
                 <img src={imageUrl} alt={title} className='max-w-full max-h-full w-auto h-auto object-contain' loading='lazy' />

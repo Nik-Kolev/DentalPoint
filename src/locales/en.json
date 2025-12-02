@@ -87,6 +87,8 @@
         "statsPatients": "Satisfied patients",
         "statsProfessionalism": "Professionalism",
         "ctaButton": "Contact Us",
+        "loadMore": "Load More",
+        "showLess": "Show Less",
         "licenses": [
             {
                 "title": "Dental Practice License",
