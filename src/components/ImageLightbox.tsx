@@ -112,7 +112,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
     if (!isOpen) return null;
 
     return (
-        <div className='fixed inset-0 z-50 bg-white bg-opacity-60 backdrop-blur-md transition-opacity duration-300' onClick={onClose}>
+        <div className='fixed inset-0 z-50 transition-opacity duration-300' onClick={onClose}>
             <button
                 className='absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition-colors z-10 bg-white rounded-full p-2 shadow-lg'
                 onClick={onClose}
@@ -124,11 +124,11 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
             </button>
             <div
                 ref={containerRef}
-                className='absolute w-auto h-auto bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col'
+                className='absolute w-auto h-auto bg-white rounded-lg shadow-2xl overflow-y-auto flex flex-col'
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    maxWidth: '70vw',
-                    maxHeight: '85vh',
+                    maxWidth: '65vw',
+                    maxHeight: '88vh',
                 }}
             >
                 {/* Year badge - centered at top */}
@@ -139,12 +139,14 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 )}
 
                 {/* Image - centered in middle */}
-                <div className='relative bg-gray-50 flex items-center justify-center p-4 flex-1 min-h-0 overflow-hidden'>
+                <div className='relative bg-gray-50 flex items-center justify-center p-4 flex-1 min-h-0 overflow-auto'>
                     <canvas
                         ref={canvasRef}
-                        className='max-w-full max-h-full w-auto h-auto object-contain'
+                        className='w-auto h-auto object-contain'
                         style={{
                             display: imageLoaded ? 'block' : 'none',
+                            maxWidth: '100%',
+                            maxHeight: 'calc(90vh - 60px)',
                         }}
                     />
                     {!imageLoaded && <div className='w-full h-full flex items-center justify-center text-gray-400'>Loading...</div>}
