@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { getTranslation } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import CertificateCard from './CertificateCard';
@@ -95,6 +96,114 @@ const certificatesData = [
     },
 ];
 
+// Hook for synchronized counting animation
+function useCountUp(target: number, suffix: string = '', startTime: number | null, duration: number = 2000) {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        if (startTime === null) return;
+
+        let animationFrameId: number;
+        const startValue = 0;
+
+        const animate = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const calculated = startValue + (target - startValue) * easeOutQuart;
+
+            // Use Math.round for smoother counting, but ensure we reach exact target
+            let current = Math.round(calculated);
+
+            // If we're very close to target (within 0.5), set to target directly
+            if (calculated >= target - 0.5) {
+                current = target;
+            }
+
+            setCount(current);
+
+            if (progress < 1 && current < target) {
+                animationFrameId = requestAnimationFrame(animate);
+            } else {
+                // Ensure final value is exactly the target
+                setCount(target);
+            }
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+
+        return () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        };
+    }, [target, startTime, duration]);
+
+    return { displayValue: `${count}${suffix}` };
+}
+
+// Statistics Section wrapper that synchronizes all animations
+function StatisticsSection({ children }: { children: React.ReactNode }) {
+    const [startTime, setStartTime] = useState<number | null>(null);
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const hasAnimatedRef = useRef(false);
+
+    useEffect(() => {
+        if (hasAnimatedRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && !hasAnimatedRef.current) {
+                        hasAnimatedRef.current = true;
+                        // Start all animations at the same time
+                        setStartTime(performance.now());
+                    }
+                });
+            },
+            { threshold: 0.5 }
+        );
+
+        const currentElement = sectionRef.current;
+        if (currentElement) {
+            observer.observe(currentElement);
+        }
+
+        return () => {
+            if (currentElement) {
+                observer.unobserve(currentElement);
+            }
+        };
+    }, []);
+
+    return (
+        <div className='mb-8 bg-white rounded-lg shadow-lg p-6 sm:p-8' ref={sectionRef}>
+            <div className='grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center'>
+                {React.Children.map(children, (child) => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child, { startTime } as any);
+                    }
+                    return child;
+                })}
+            </div>
+        </div>
+    );
+}
+
+// Statistic Card Component with animation
+function StatisticCard({ target, suffix, label, startTime }: { target: number; suffix: string; label: string; startTime?: number | null }) {
+    const { displayValue } = useCountUp(target, suffix, startTime ?? null);
+
+    return (
+        <div>
+            <div className='text-3xl font-bold text-[#005baa] mb-2'>{displayValue}</div>
+            <div className='text-gray-600'>{label}</div>
+        </div>
+    );
+}
+
 export default function Licenses({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
     const [selectedImage, setSelectedImage] = useState<{
@@ -151,26 +260,12 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 </div>
 
                 {/* Statistics Section - Moved to top */}
-                <div className='mb-8 bg-white rounded-lg shadow-lg p-6 sm:p-8'>
-                    <div className='grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center'>
-                        <div>
-                            <div className='text-3xl font-bold text-[#005baa] mb-2'>{certificatesData.length}+</div>
-                            <div className='text-gray-600'>{t('licenses', 'statsCertificates')}</div>
-                        </div>
-                        <div>
-                            <div className='text-3xl font-bold text-[#005baa] mb-2'>12+</div>
-                            <div className='text-gray-600'>{t('licenses', 'statsExperience')}</div>
-                        </div>
-                        <div>
-                            <div className='text-3xl font-bold text-[#005baa] mb-2'>500+</div>
-                            <div className='text-gray-600'>{t('licenses', 'statsPatients')}</div>
-                        </div>
-                        <div>
-                            <div className='text-3xl font-bold text-[#005baa] mb-2'>100%</div>
-                            <div className='text-gray-600'>{t('licenses', 'statsProfessionalism')}</div>
-                        </div>
-                    </div>
-                </div>
+                <StatisticsSection>
+                    <StatisticCard target={certificatesData.length} suffix='+' label={t('licenses', 'statsCertificates')} />
+                    <StatisticCard target={12} suffix='+' label={t('licenses', 'statsExperience')} />
+                    <StatisticCard target={500} suffix='+' label={t('licenses', 'statsPatients')} />
+                    <StatisticCard target={100} suffix='%' label={t('licenses', 'statsProfessionalism')} />
+                </StatisticsSection>
 
                 {/* Certificates Grid */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8'>

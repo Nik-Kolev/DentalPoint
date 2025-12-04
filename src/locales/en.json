@@ -15,7 +15,7 @@
         "menuContact": "Contact",
         "menuTeam": "Team",
         "menuGallery": "Gallery",
-        "menuLicenses": "Licenses",
+        "menuLicenses": "Certificates",
         "menuReviews": "Reviews",
         "footer": "All rights reserved.",
         "contactUs": "Contact Us",
@@ -76,7 +76,7 @@
         "ctaSubtitle": "Book an appointment with our specialists today"
     },
     "licenses": {
-        "title": "Licenses and Certificates",
+        "title": "Certificates",
         "subtitle": "Our professional qualifications",
         "statsTitle": "Trust our experience",
         "statsSubtitle": "Our qualifications guarantee the highest quality of treatment",
