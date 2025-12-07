@@ -22,7 +22,8 @@
         "bookAppointment": "Book Appointment"
     },
     "home": {
-        "heroTitle": "Dental Office - Dental Point",
+        "heroTitlePrefix": "Dental Office",
+        "heroTitleClinic": "Dental Point",
         "heroSubtitle": "Dr. Yavor Ivanov & Dr. Ekaterina Ivanova",
         "doctorsTitle": "Our Specialists",
         "doctor1Name": "Dr. Yavor Ivanov",
@@ -31,7 +32,8 @@
         "doctor2Specialty": "Dentist - Orthodontist",
         "moreInfo": "More Info",
         "aboutTitle": "About Us",
-        "aboutText": "In our clinic you will find modern equipment, a personal approach, and care for the whole family. We use the latest technologies and materials to provide the best treatment for our patients.",
+        "aboutTextLine1": "In our clinic you will find modern equipment, a personal approach, and care for the whole family.",
+        "aboutTextLine2": "We use the latest technologies and materials to provide the best treatment for our patients.",
         "galleryTitle": "Gallery",
         "ctaTitle": "Browse our modern clinic",
         "ctaSubtitle": "Book an appointment and experience professional care"
@@ -166,9 +168,51 @@
     },
     "reviews": {
         "title": "Patient Reviews",
-        "example": "Excellent service and professional approach. I recommend!",
-        "patient": "Patient",
         "ctaTitle": "Join our satisfied patients",
-        "ctaSubtitle": "Book an appointment and experience professional care"
+        "ctaSubtitle": "Book an appointment and experience professional care",
+        "items": [
+            {
+                "name": "Andrey Andreev",
+                "initials": "AA",
+                "rating": 5,
+                "date": "2025-12-05",
+                "text": "Extremely careful. My teeth have never seen such a thorough cleaning of tartar."
+            },
+            {
+                "name": "nikolai kolev",
+                "initials": "nk",
+                "rating": 5,
+                "date": "2025-07-01",
+                "text": "Professionalism at a high level, friendly attitude, pleasant and calm atmosphere!"
+            },
+            {
+                "name": "Silvana Ivanova",
+                "initials": "SI",
+                "rating": 5,
+                "date": "2025-03-01",
+                "text": "Professionalism and ethics! Extremely careful service, comfort and calm atmosphere."
+            },
+            {
+                "name": "V. Vasileva",
+                "initials": "VV",
+                "rating": 5,
+                "date": "2025-02-01",
+                "text": "Extremely satisfied! It's always pleasant to be taken care of by smiling and attentive specialists! 😊"
+            },
+            {
+                "name": "Siyana Penkova",
+                "initials": "SP",
+                "rating": 5,
+                "date": "2024-12-01",
+                "text": "Very patient and attentive dentist! Excellent specialist!"
+            },
+            {
+                "name": "V La",
+                "initials": "VL",
+                "rating": 5,
+                "date": "2025-06-01",
+                "text": "Professional service and excellent attitude. I recommend!"
+            }
+        ]
     }
 }

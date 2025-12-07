@@ -14,12 +14,12 @@ export default function Team({ params }: { params: { locale: string } }) {
     return (
         <div className='min-h-screen py-8 sm:py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
             <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center mb-12'>
+                <div className='text-center pb-8 sm:pb-12'>
                     <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-[#005baa] mb-4 font-serif'>{t('team', 'title')}</h1>
                     <p className='text-lg md:text-xl text-gray-600'>{t('team', 'subtitle')}</p>
                 </div>
 
-                <div className='space-y-16 lg:space-y-20'>
+                <div className='space-y-8 sm:space-y-12'>
                     {/* Dr. Iavor Ivanov */}
                     <div id='dr-yavor-ivanov' className='flex flex-col lg:flex-row lg:items-start lg:gap-8 xl:gap-12 scroll-mt-20'>
                         {/* Mobile Layout */}
@@ -39,7 +39,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'experience')}</span>
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'pediatricDentistry')}</span>
                             </div>
-                            <p className='text-gray-700 leading-relaxed text-left px-2'>{t('team', 'person1Description')}</p>
+                            <p className='text-gray-700 leading-relaxed text-justify px-2'>{t('team', 'person1Description')}</p>
                         </div>
 
                         {/* Desktop Layout */}
@@ -60,7 +60,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     <span className='bg-[#005baa] text-white px-4 py-2 rounded-full text-sm'>{t('team', 'experience')}</span>
                                     <span className='bg-[#005baa] text-white px-4 py-2 rounded-full text-sm'>{t('team', 'pediatricDentistry')}</span>
                                 </div>
-                                <p className='text-gray-700 leading-relaxed text-left text-lg xl:text-xl'>{t('team', 'person1Description')}</p>
+                                <p className='text-gray-700 leading-relaxed text-justify text-lg xl:text-xl'>{t('team', 'person1Description')}</p>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'orthodontistSpecialist')}</span>
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'modernTechniques')}</span>
                             </div>
-                            <p className='text-gray-700 leading-relaxed text-left px-2'>{t('team', 'person2Description')}</p>
+                            <p className='text-gray-700 leading-relaxed text-justify px-2'>{t('team', 'person2Description')}</p>
                         </div>
 
                         {/* Desktop Layout */}
@@ -105,14 +105,16 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     <span className='bg-[#005baa] text-white px-4 py-2 rounded-full text-sm'>{t('team', 'orthodontistSpecialist')}</span>
                                     <span className='bg-[#005baa] text-white px-4 py-2 rounded-full text-sm'>{t('team', 'modernTechniques')}</span>
                                 </div>
-                                <p className='text-gray-700 leading-relaxed text-left text-lg xl:text-xl'>{t('team', 'person2Description')}</p>
+                                <p className='text-gray-700 leading-relaxed text-justify text-lg xl:text-xl'>{t('team', 'person2Description')}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Call to Action */}
-                <StaticCTA locale={params.locale} title={t('team', 'ctaTitle')} subtitle={t('team', 'ctaSubtitle')} />
+                <div className='pt-8 sm:pt-12'>
+                    <StaticCTA locale={params.locale} title={t('team', 'ctaTitle')} subtitle={t('team', 'ctaSubtitle')} />
+                </div>
             </div>
         </div>
     );

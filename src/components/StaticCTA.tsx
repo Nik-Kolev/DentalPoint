@@ -13,7 +13,7 @@ export default function StaticCTA({ locale, title, subtitle }: StaticCTAProps) {
     const t = getTranslation(locale);
 
     return (
-        <div className='text-center mt-12 bg-[#005baa] text-white py-8 px-4 md:px-6 rounded-xl' data-static-cta>
+        <div className='text-center bg-[#005baa] text-white py-8 px-4 md:px-6 rounded-xl' data-static-cta>
             <h2 className='text-xl md:text-2xl font-bold mb-3 font-serif max-w-md mx-auto leading-tight'>{title}</h2>
             <p className='text-base md:text-lg mb-6'>{subtitle}</p>
             <Link

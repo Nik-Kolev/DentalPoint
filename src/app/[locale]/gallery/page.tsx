@@ -21,12 +21,12 @@ export default function Gallery({ params }: { params: { locale: string } }) {
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
             <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center mb-12'>
+                <div className='text-center pb-8 sm:pb-12'>
                     <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('gallery', 'title')}</h1>
                     <p className='mt-4 text-xl text-gray-600'>{t('gallery', 'subtitle')}</p>
                 </div>
 
-                <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-16'>
+                <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 pb-8 sm:pb-12'>
                     {galleryImages.map((imageSrc, i) => (
                         <div
                             key={i}
@@ -36,8 +36,9 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                             <Image
                                 src={imageSrc}
                                 alt={`Gallery image ${i + 1}`}
-                                width={150}
-                                height={150}
+                                width={300}
+                                height={300}
+                                quality={85}
                                 className='rounded-md object-cover w-full h-24 sm:h-32'
                             />
                         </div>
@@ -45,7 +46,9 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                 </div>
 
                 {/* CTA Section */}
-                <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                <div className='pt-8 sm:pt-12'>
+                    <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                </div>
 
                 {/* Lightbox */}
                 {selectedImage && (

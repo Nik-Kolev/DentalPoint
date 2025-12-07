@@ -96,7 +96,6 @@ const certificatesData = [
     },
 ];
 
-// Hook for synchronized counting animation
 function useCountUp(target: number, suffix: string = '', startTime: number | null, duration: number = 2000) {
     const [count, setCount] = useState(0);
 
@@ -110,24 +109,20 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // Easing function for smooth animation
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
             const calculated = startValue + (target - startValue) * easeOutQuart;
 
-            // Use Math.round for smoother counting, but ensure we reach exact target
             let current = Math.round(calculated);
 
-            // If we're very close to target (within 0.5), set to target directly
             if (calculated >= target - 0.5) {
                 current = target;
             }
 
             setCount(current);
 
-            if (progress < 1 && current < target) {
+            if (progress < 1) {
                 animationFrameId = requestAnimationFrame(animate);
             } else {
-                // Ensure final value is exactly the target
                 setCount(target);
             }
         };
@@ -254,21 +249,23 @@ export default function Licenses({ params }: { params: { locale: string } }) {
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center mb-12'>
+                <div className='text-center pb-8 sm:pb-12'>
                     <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('licenses', 'title')}</h1>
                     <p className='mt-4 text-xl text-gray-600'>{t('licenses', 'subtitle')}</p>
                 </div>
 
                 {/* Statistics Section - Moved to top */}
-                <StatisticsSection>
-                    <StatisticCard target={certificatesData.length} suffix='+' label={t('licenses', 'statsCertificates')} />
-                    <StatisticCard target={12} suffix='+' label={t('licenses', 'statsExperience')} />
-                    <StatisticCard target={500} suffix='+' label={t('licenses', 'statsPatients')} />
-                    <StatisticCard target={100} suffix='%' label={t('licenses', 'statsProfessionalism')} />
-                </StatisticsSection>
+                <div className='pb-8 sm:pb-12'>
+                    <StatisticsSection>
+                        <StatisticCard target={certificatesData.length} suffix='+' label={t('licenses', 'statsCertificates')} />
+                        <StatisticCard target={12} suffix='+' label={t('licenses', 'statsExperience')} />
+                        <StatisticCard target={500} suffix='+' label={t('licenses', 'statsPatients')} />
+                        <StatisticCard target={100} suffix='%' label={t('licenses', 'statsProfessionalism')} />
+                    </StatisticsSection>
+                </div>
 
                 {/* Certificates Grid */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
                     {visibleCertificates.map((certificate: { year: string; title: string; shortText: string; image: string }, index: number) => (
                         <CertificateCard
                             key={index}
@@ -293,7 +290,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
                 {/* Load More / Show Less Buttons - Show on mobile */}
                 {(hasMore || hasExpanded) && (
-                    <div className='flex justify-center mb-16 md:hidden gap-4'>
+                    <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
                         {hasMore && (
                             <button
                                 onClick={loadMore}
@@ -314,7 +311,9 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 )}
 
                 {/* CTA Section */}
-                <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                <div className='pt-8 sm:pt-12'>
+                    <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                </div>
             </div>
 
             {/* Lightbox - rendered outside container for proper positioning - only on desktop */}

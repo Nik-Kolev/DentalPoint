@@ -15,20 +15,26 @@ interface ImageLightboxProps {
 
 export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerElement, year, title, shortText }: ImageLightboxProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const imgRef = useRef<HTMLImageElement>(null);
     const [isAnimating, setIsAnimating] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
+            // Calculate scrollbar width to prevent page shift
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            // Prevent scrolling but keep scrollbar visible
             document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = `${scrollbarWidth}px`;
             document.body.setAttribute('data-lightbox-open', 'true');
         } else {
             document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '';
             document.body.removeAttribute('data-lightbox-open');
         }
         return () => {
             document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '';
             document.body.removeAttribute('data-lightbox-open');
         };
     }, [isOpen]);
@@ -87,24 +93,22 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
     }, [isOpen, triggerElement]);
 
     useEffect(() => {
-        if (isOpen && canvasRef.current && imageSrc) {
-            const canvas = canvasRef.current;
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
+        if (isOpen && imgRef.current && imageSrc) {
+            setImageLoaded(false);
+            const img = imgRef.current;
 
+            // Load the original full-resolution image directly
+            // Using the full path ensures we get the original file without Next.js optimization
             img.onload = () => {
-                // Set canvas size to match image natural size (no EXIF rotation)
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    // Draw image without any rotation
-                    ctx.drawImage(img, 0, 0);
-                    setImageLoaded(true);
-                }
+                setImageLoaded(true);
             };
 
+            img.onerror = () => {
+                console.error('Failed to load image:', imageSrc);
+                setImageLoaded(false);
+            };
+
+            // Set src to load the full-resolution image
             img.src = imageSrc;
         }
     }, [isOpen, imageSrc]);
@@ -140,14 +144,17 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
 
                 {/* Image - centered in middle */}
                 <div className='relative bg-gray-50 flex items-center justify-center p-4 flex-1 min-h-0 overflow-auto'>
-                    <canvas
-                        ref={canvasRef}
+                    <img
+                        ref={imgRef}
+                        src={imageSrc}
+                        alt={alt}
                         className='w-auto h-auto object-contain'
                         style={{
                             display: imageLoaded ? 'block' : 'none',
                             maxWidth: '100%',
                             maxHeight: 'calc(90vh - 60px)',
                         }}
+                        loading='eager'
                     />
                     {!imageLoaded && <div className='w-full h-full flex items-center justify-center text-gray-400'>Loading...</div>}
                 </div>
