@@ -1,55 +1,26 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function AuthErrorPage() {
-    const searchParams = useSearchParams();
     const router = useRouter();
-    const error = searchParams.get('error');
-
-    const getErrorMessage = () => {
-        switch (error) {
-            case 'AccessDenied':
-                return 'Your email is not authorized to access this application.';
-            case 'Configuration':
-                return 'There is a problem with the server configuration.';
-            case 'AccessDenied':
-                return 'Access denied.';
-            default:
-                return 'An error occurred during authentication.';
-        }
-    };
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
-            <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center'>
+        <div className='fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#e3f3fb] to-white px-4'>
+            <div className='max-w-sm w-full bg-white rounded-lg shadow-lg p-6 border border-gray-200 text-center'>
                 <div className='mb-6'>
-                    <div className='mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4'>
-                        <svg className='w-8 h-8 text-red-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                            <path
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth={2}
-                                d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-                            />
-                        </svg>
-                    </div>
-                    <h1 className='text-2xl font-bold text-gray-900 mb-2'>Authentication Error</h1>
-                    <p className='text-gray-600'>{getErrorMessage()}</p>
+                    <h1 className='text-xl font-bold text-gray-900 mb-3'>Unauthorized</h1>
+                    <p className='text-gray-600 text-sm'>Your email is not authorized to access this application.</p>
                 </div>
 
-                <div className='space-y-3'>
-                    <Link
-                        href='/auth/signin'
-                        className='block w-full bg-[#005baa] text-white font-semibold py-3 px-4 rounded-lg hover:bg-[#004a8f] transition-colors duration-200'
+                <div className='space-y-2'>
+                    <button
+                        onClick={() => router.push('/auth/signin')}
+                        className='w-full bg-[#005baa] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#004a8f] transition-colors duration-200 text-sm'
                     >
                         Try Again
-                    </Link>
-                    <button
-                        onClick={() => router.push('/')}
-                        className='block w-full bg-gray-100 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200'
-                    >
+                    </button>
+                    <button onClick={() => router.push('/')} className='w-full text-sm text-gray-600 hover:text-[#005baa] transition-colors duration-200 py-2'>
                         Back to Home
                     </button>
                 </div>

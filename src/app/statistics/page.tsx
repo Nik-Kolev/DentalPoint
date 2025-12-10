@@ -2,111 +2,35 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
-
-// Mock data - Replace with real GA data later
-const mockData = {
-    allTime: {
-        totalVisitors: 12450,
-        totalPageViews: 18720,
-        uniqueVisitors: 8920,
-        avgSessionDuration: '2m 34s',
-        bounceRate: '42.5%',
-        dailyData: [
-            { date: '2024-01-01', visitors: 45, pageViews: 67 },
-            { date: '2024-01-02', visitors: 52, pageViews: 78 },
-            { date: '2024-01-03', visitors: 38, pageViews: 56 },
-            { date: '2024-01-04', visitors: 61, pageViews: 92 },
-            { date: '2024-01-05', visitors: 55, pageViews: 83 },
-            { date: '2024-01-06', visitors: 48, pageViews: 71 },
-            { date: '2024-01-07', visitors: 67, pageViews: 101 },
-        ],
-        deviceBreakdown: [
-            { device: 'Desktop', count: 6234, percentage: 50.1 },
-            { device: 'Mobile', count: 4980, percentage: 40.0 },
-            { device: 'Tablet', count: 1236, percentage: 9.9 },
-        ],
-        trafficSources: [
-            { source: 'Direct', count: 4560, percentage: 36.6 },
-            { source: 'Google Search', count: 3890, percentage: 31.2 },
-            { source: 'Social Media', count: 2340, percentage: 18.8 },
-            { source: 'Referral', count: 1660, percentage: 13.4 },
-        ],
-    },
-    month: {
-        totalVisitors: 1240,
-        totalPageViews: 1890,
-        uniqueVisitors: 980,
-        avgSessionDuration: '2m 45s',
-        bounceRate: '38.2%',
-        dailyData: [
-            { date: 'Day 1', visitors: 42, pageViews: 63 },
-            { date: 'Day 2', visitors: 48, pageViews: 72 },
-            { date: 'Day 3', visitors: 35, pageViews: 52 },
-            { date: 'Day 4', visitors: 55, pageViews: 83 },
-            { date: 'Day 5', visitors: 51, pageViews: 76 },
-            { date: 'Day 6', visitors: 44, pageViews: 66 },
-            { date: 'Day 7', visitors: 62, pageViews: 93 },
-        ],
-        deviceBreakdown: [
-            { device: 'Desktop', count: 620, percentage: 50.0 },
-            { device: 'Mobile', count: 496, percentage: 40.0 },
-            { device: 'Tablet', count: 124, percentage: 10.0 },
-        ],
-    },
-    week: {
-        totalVisitors: 312,
-        totalPageViews: 467,
-        uniqueVisitors: 245,
-        avgSessionDuration: '2m 52s',
-        bounceRate: '35.8%',
-        dailyData: [
-            { date: 'Mon', visitors: 38, pageViews: 57 },
-            { date: 'Tue', visitors: 45, pageViews: 68 },
-            { date: 'Wed', visitors: 42, pageViews: 63 },
-            { date: 'Thu', visitors: 51, pageViews: 76 },
-            { date: 'Fri', visitors: 48, pageViews: 72 },
-            { date: 'Sat', visitors: 44, pageViews: 66 },
-            { date: 'Sun', visitors: 44, pageViews: 65 },
-        ],
-        deviceBreakdown: [
-            { device: 'Desktop', count: 156, percentage: 50.0 },
-            { device: 'Mobile', count: 125, percentage: 40.1 },
-            { device: 'Tablet', count: 31, percentage: 9.9 },
-        ],
-    },
-    day: {
-        totalVisitors: 45,
-        totalPageViews: 67,
-        uniqueVisitors: 38,
-        avgSessionDuration: '3m 12s',
-        bounceRate: '33.3%',
-        hourlyData: [
-            { hour: '00:00', visitors: 0 },
-            { hour: '06:00', visitors: 2 },
-            { hour: '09:00', visitors: 5 },
-            { hour: '12:00', visitors: 8 },
-            { hour: '15:00', visitors: 12 },
-            { hour: '18:00', visitors: 10 },
-            { hour: '21:00', visitors: 6 },
-        ],
-        deviceBreakdown: [
-            { device: 'Desktop', count: 23, percentage: 51.1 },
-            { device: 'Mobile', count: 18, percentage: 40.0 },
-            { device: 'Tablet', count: 4, percentage: 8.9 },
-        ],
-    },
-};
-
-type TimePeriod = 'day' | 'week' | 'month' | 'allTime';
+import { fetchAnalyticsData, type AnalyticsData, type TimePeriod } from '@/lib/analytics';
 
 export default function StatisticsPage() {
     const { data: session } = useSession();
     const router = useRouter();
     const [timePeriod, setTimePeriod] = useState<TimePeriod>('week');
+    const [data, setData] = useState<AnalyticsData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const currentData = mockData[timePeriod];
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const analyticsData = await fetchAnalyticsData(timePeriod);
+                setData(analyticsData);
+            } catch (err: any) {
+                console.error('Failed to load analytics:', err);
+                setError(err.message || 'Failed to load analytics data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [timePeriod]);
 
     const handleSignOut = async () => {
         await signOut({ redirect: false });
@@ -118,35 +42,26 @@ export default function StatisticsPage() {
         router.push('/');
     };
 
-    // Calculate max value for chart scaling
-    const maxVisitors = useMemo(() => {
-        const data = timePeriod === 'day' ? (currentData as typeof mockData.day).hourlyData : (currentData as typeof mockData.week).dailyData;
-        return Math.max(...data.map((d: any) => d.visitors), 1);
-    }, [currentData, timePeriod]);
-
     return (
         <ProtectedRoute>
-            <div className='min-h-screen bg-gray-50 py-8 px-4'>
-                <div className='max-w-7xl mx-auto'>
+            <div className='min-h-screen bg-gray-50 py-4 px-2 sm:py-6 sm:px-4'>
+                <div className='max-w-6xl mx-auto'>
                     {/* Header */}
-                    <div className='bg-white rounded-lg shadow-lg p-6 mb-6'>
-                        <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4'>
+                    <div className='bg-white rounded-lg shadow-lg p-4 sm:p-5 mb-4 sm:mb-6'>
+                        <div className='flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 mb-3 sm:mb-4'>
                             <div>
-                                <h1 className='text-3xl font-bold text-gray-900 mb-2'>Statistics Dashboard</h1>
-                                <p className='text-gray-600'>
-                                    Welcome, <span className='font-semibold text-[#005baa]'>{session?.user?.email}</span>
-                                </p>
+                                <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>Statistics Dashboard</h1>
                             </div>
-                            <div className='flex gap-3'>
+                            <div className='flex gap-2 sm:gap-3 justify-center md:justify-start'>
                                 <button
                                     onClick={handleReturnToWebsite}
-                                    className='bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-sm'
+                                    className='bg-gray-200 text-gray-700 font-semibold py-2 px-4 sm:px-6 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-sm text-sm sm:text-base'
                                 >
-                                    Return to Website
+                                    Back to Website
                                 </button>
                                 <button
                                     onClick={handleSignOut}
-                                    className='bg-[#005baa] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#004a8f] transition-colors duration-200 shadow-sm'
+                                    className='bg-[#005baa] text-white font-semibold py-2 px-4 sm:px-6 rounded-lg hover:bg-[#004a8f] transition-colors duration-200 shadow-sm text-sm sm:text-base'
                                 >
                                     Logout
                                 </button>
@@ -154,121 +69,220 @@ export default function StatisticsPage() {
                         </div>
 
                         {/* Time Period Selector */}
-                        <div className='flex gap-2 border-t pt-4'>
-                            {(['day', 'week', 'month', 'allTime'] as TimePeriod[]).map((period) => (
-                                <button
-                                    key={period}
-                                    onClick={() => setTimePeriod(period)}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                                        timePeriod === period ? 'bg-[#005baa] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
-                                >
-                                    {period === 'day' ? 'Today' : period === 'week' ? '7 Days' : period === 'month' ? '30 Days' : 'All Time'}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Summary Cards */}
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <div className='text-sm text-gray-600 mb-1'>Total Visitors</div>
-                            <div className='text-3xl font-bold text-[#005baa]'>{currentData.totalVisitors.toLocaleString()}</div>
-                            <div className='text-xs text-gray-500 mt-2'>Unique: {currentData.uniqueVisitors.toLocaleString()}</div>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <div className='text-sm text-gray-600 mb-1'>Page Views</div>
-                            <div className='text-3xl font-bold text-[#005baa]'>{currentData.totalPageViews.toLocaleString()}</div>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <div className='text-sm text-gray-600 mb-1'>Avg. Session</div>
-                            <div className='text-3xl font-bold text-[#005baa]'>{currentData.avgSessionDuration}</div>
-                        </div>
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <div className='text-sm text-gray-600 mb-1'>Bounce Rate</div>
-                            <div className='text-3xl font-bold text-[#005baa]'>{currentData.bounceRate}</div>
-                        </div>
-                    </div>
-
-                    <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6'>
-                        {/* Visitor Trend Chart */}
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <h2 className='text-xl font-bold text-gray-900 mb-4'>Visitors Over Time</h2>
-                            <div className='h-64 flex items-end justify-between gap-2'>
-                                {(timePeriod === 'day' ? (currentData as typeof mockData.day).hourlyData : (currentData as typeof mockData.week).dailyData).map(
-                                    (item: any, index: number) => {
-                                        const height = (item.visitors / maxVisitors) * 100;
-                                        return (
-                                            <div key={index} className='flex-1 flex flex-col items-center'>
-                                                <div className='w-full flex flex-col items-center justify-end h-full'>
-                                                    <div
-                                                        className='w-full bg-[#005baa] rounded-t transition-all hover:bg-[#004a8f] cursor-pointer'
-                                                        style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '4px' : '0' }}
-                                                        title={`${item.visitors} visitors`}
-                                                    />
-                                                </div>
-                                                <div className='text-xs text-gray-600 mt-2 text-center'>{item.date || item.hour}</div>
-                                                <div className='text-xs font-semibold text-[#005baa] mt-1'>{item.visitors}</div>
-                                            </div>
-                                        );
-                                    }
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Device Breakdown */}
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <h2 className='text-xl font-bold text-gray-900 mb-4'>Device Breakdown</h2>
-                            <div className='space-y-4'>
-                                {currentData.deviceBreakdown.map((device, index) => (
-                                    <div key={index}>
-                                        <div className='flex justify-between items-center mb-2'>
-                                            <span className='text-sm font-medium text-gray-700'>{device.device}</span>
-                                            <span className='text-sm font-semibold text-[#005baa]'>
-                                                {device.count.toLocaleString()} ({device.percentage}%)
-                                            </span>
-                                        </div>
-                                        <div className='w-full bg-gray-200 rounded-full h-3'>
-                                            <div className='bg-[#005baa] h-3 rounded-full transition-all' style={{ width: `${device.percentage}%` }} />
-                                        </div>
-                                    </div>
+                        <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4 border-t pt-4'>
+                            <div className='flex gap-2 flex-wrap justify-center'>
+                                {(['week', 'month', 'year'] as TimePeriod[]).map((period) => (
+                                    <button
+                                        key={period}
+                                        onClick={() => setTimePeriod(period)}
+                                        disabled={loading}
+                                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                            timePeriod === period ? 'bg-[#005baa] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    >
+                                        {period === 'week' ? 'Weekly' : period === 'month' ? 'Monthly' : 'Yearly'}
+                                    </button>
                                 ))}
                             </div>
+                            {data && (
+                                <div className='flex items-center gap-2 text-base sm:text-lg text-gray-700'>
+                                    <span className='text-gray-400 hidden sm:inline'>—</span>
+                                    <span>
+                                        Total Visitors:{' '}
+                                        <span className='font-bold text-lg sm:text-xl text-[#005baa]'>{data.totalVisitors.toLocaleString()}</span>
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Traffic Sources - Only show for allTime */}
-                    {timePeriod === 'allTime' && (
-                        <div className='bg-white rounded-lg shadow-lg p-6'>
-                            <h2 className='text-xl font-bold text-gray-900 mb-4'>Traffic Sources</h2>
-                            <p className='text-sm text-gray-600 mb-4'>
-                                Shows where your visitors are coming from - useful for understanding marketing effectiveness
-                            </p>
-                            <div className='space-y-4'>
-                                {mockData.allTime.trafficSources.map((source, index) => (
-                                    <div key={index}>
-                                        <div className='flex justify-between items-center mb-2'>
-                                            <span className='text-sm font-medium text-gray-700'>{source.source}</span>
-                                            <span className='text-sm font-semibold text-[#005baa]'>
-                                                {source.count.toLocaleString()} ({source.percentage}%)
-                                            </span>
-                                        </div>
-                                        <div className='w-full bg-gray-200 rounded-full h-2'>
-                                            <div className='bg-[#005baa] h-2 rounded-full transition-all' style={{ width: `${source.percentage}%` }} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                    {loading && (
+                        <div className='bg-white rounded-lg shadow-lg p-12 text-center'>
+                            <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#005baa] mb-4'></div>
+                            <p className='text-[#005baa]'>Loading analytics data...</p>
                         </div>
                     )}
 
-                    {/* Note */}
-                    <div className='mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4'>
-                        <p className='text-sm text-blue-800'>
-                            <strong>Note:</strong> This dashboard is currently showing mock data. When Google Analytics is integrated, this will display real
-                            statistics.
-                        </p>
-                    </div>
+                    {!loading && !error && data && (
+                        <>
+                            {/* Main Charts - Custom widths on desktop */}
+                            <div className='grid grid-cols-1 lg:grid-cols-[2.25fr_1fr_1.75fr] gap-3 sm:gap-4 mb-4 sm:mb-6 items-start'>
+                                {/* Visitors Chart - Wider */}
+                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
+                                    <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>Visitors Over Time</h2>
+                                    {data.timeSeries && data.timeSeries.length > 0 ? (
+                                        <div
+                                            className={
+                                                timePeriod === 'year'
+                                                    ? 'h-64 sm:h-48 grid grid-cols-6 sm:grid-cols-12 gap-1 sm:gap-1.5'
+                                                    : 'h-48 flex items-end justify-between gap-1.5 pb-2'
+                                            }
+                                        >
+                                            {data.timeSeries.map((item, index) => {
+                                                const maxVisitors = Math.max(...data.timeSeries!.map((d) => d.visitors), 1);
+                                                const height = (item.visitors / maxVisitors) * 100;
+                                                const totalVisitors = data.timeSeries!.reduce((sum, d) => sum + d.visitors, 0);
+                                                const percentage = totalVisitors > 0 ? Math.round((item.visitors / totalVisitors) * 100) : 0;
+                                                const isYearly = timePeriod === 'year';
+                                                return (
+                                                    <div key={index} className={`${isYearly ? '' : 'flex-1'} flex flex-col items-center h-full`}>
+                                                        <div className='w-full flex flex-col items-center justify-end h-full'>
+                                                            <div
+                                                                className='w-full bg-[#005baa] rounded-md transition-all hover:bg-[#004a8f] cursor-pointer relative flex items-center justify-center'
+                                                                style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '4px' : '0' }}
+                                                                title={`${item.visitors} visitors`}
+                                                            >
+                                                                {height > 15 && (
+                                                                    <span
+                                                                        className={`text-black ${
+                                                                            isYearly ? 'text-xs' : 'text-sm'
+                                                                        } font-semibold absolute inset-0 flex items-center justify-center`}
+                                                                    >
+                                                                        {percentage}%
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            className={`${
+                                                                isYearly ? 'text-xs' : 'text-sm'
+                                                            } text-gray-600 mt-1.5 text-center whitespace-nowrap font-medium`}
+                                                        >
+                                                            {item.label}
+                                                        </div>
+                                                        <div className={`${isYearly ? 'text-xs' : 'text-sm'} font-semibold text-[#005baa] mt-0.5`}>
+                                                            {item.visitors}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <p className='text-gray-500 text-sm'>No time series data available</p>
+                                    )}
+                                </div>
+
+                                {/* Device Breakdown - Vertical */}
+                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-visible'>
+                                    <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>Visitors by Device</h2>
+                                    <div className='h-48 flex items-end justify-between gap-2 sm:gap-2 pb-2 overflow-visible'>
+                                        {data.deviceBreakdown.length > 0 ? (
+                                            data.deviceBreakdown.map((device, index) => {
+                                                const maxCount = Math.max(...data.deviceBreakdown.map((d) => d.count), 1);
+                                                const height = (device.count / maxCount) * 100;
+                                                return (
+                                                    <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
+                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                            <div
+                                                                className='w-full bg-[#005baa] rounded-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                style={{ height: `${height}%`, minHeight: device.count > 0 ? '8px' : '0' }}
+                                                            >
+                                                                {height > 15 && (
+                                                                    <span className='text-black text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                        {device.percentage}%
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className='text-sm text-gray-600 mt-1.5 text-center font-medium whitespace-nowrap'>
+                                                            {device.device}
+                                                        </div>
+                                                        <div className='text-sm font-semibold text-[#005baa] mt-0.5'>{device.count}</div>
+                                                        {/* Tooltip for small bars */}
+                                                        <div className='invisible group-hover:visible absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
+                                                            {device.device}: {device.count} ({device.percentage}%)
+                                                            <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <p className='text-gray-500 text-sm'>No device data available</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Traffic Sources - Vertical */}
+                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-visible'>
+                                    <div className='flex items-center gap-2 mb-2 sm:mb-3'>
+                                        <h2 className='text-base sm:text-lg font-bold text-gray-900'>Traffic Sources</h2>
+                                        <div className='group relative z-50'>
+                                            <svg
+                                                className='w-4 h-4 sm:w-5 sm:h-5 text-gray-500 hover:text-gray-700 cursor-help transition-colors'
+                                                fill='currentColor'
+                                                viewBox='0 0 20 20'
+                                            >
+                                                <path
+                                                    fillRule='evenodd'
+                                                    d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z'
+                                                    clipRule='evenodd'
+                                                />
+                                            </svg>
+                                            <div className='opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 sm:w-80 p-3 sm:p-4 bg-gray-900 text-white text-xs sm:text-sm rounded-lg shadow-2xl z-[100] pointer-events-none whitespace-normal transition-opacity duration-200'>
+                                                <div className='space-y-2'>
+                                                    <div>
+                                                        <strong>Direct:</strong> Typed your website address directly in the browser
+                                                    </div>
+                                                    <div>
+                                                        <strong>Google:</strong> Clicked from Google search results (e.g., "dentist varna")
+                                                    </div>
+                                                    <div>
+                                                        <strong>Facebook/Instagram:</strong> Clicked from social media posts or ads
+                                                    </div>
+                                                    <div>
+                                                        <strong>Others:</strong> All other traffic sources
+                                                    </div>
+                                                </div>
+                                                <div className='absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='h-48 flex items-end justify-between gap-2 sm:gap-2 pb-2'>
+                                        {data.trafficSources && data.trafficSources.length > 0 ? (
+                                            data.trafficSources.map((source, index) => {
+                                                const maxCount = Math.max(...data.trafficSources!.map((s) => s.count), 1);
+                                                const height = (source.count / maxCount) * 100;
+                                                const getSourceTooltip = (sourceName: string) => {
+                                                    if (sourceName === 'Direct') return 'Typed your website address directly';
+                                                    if (sourceName === 'Google') return 'Clicked from Google search results';
+                                                    if (sourceName === 'Facebook') return 'Clicked from Facebook';
+                                                    if (sourceName === 'Instagram') return 'Clicked from Instagram';
+                                                    return 'Clicked from other sources';
+                                                };
+                                                return (
+                                                    <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
+                                                        <div className='w-full flex flex-col items-center justify-end h-full'>
+                                                            <div
+                                                                className='w-full bg-[#005baa] rounded-md transition-all hover:bg-[#004a8f] cursor-pointer relative'
+                                                                style={{ height: `${height}%`, minHeight: source.count > 0 ? '8px' : '0' }}
+                                                            >
+                                                                {height > 15 && (
+                                                                    <span className='text-black text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                        {source.percentage}%
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className='text-sm text-gray-600 mt-1.5 text-center font-medium whitespace-nowrap'>
+                                                            {source.source}
+                                                        </div>
+                                                        <div className='text-sm font-semibold text-[#005baa] mt-0.5'>{source.count}</div>
+                                                        {/* Tooltip for small bars */}
+                                                        <div className='invisible group-hover:visible absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
+                                                            {source.source}: {source.count} ({source.percentage}%)
+                                                            <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <p className='text-gray-500 text-sm'>No traffic source data available</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </ProtectedRoute>

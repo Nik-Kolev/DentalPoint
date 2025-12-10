@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel='apple-touch-icon' href='/favicon.png' />
                 <link rel='manifest' href='/manifest.json' />
             </head>
-            <body className={inter.className}>
+            <body className={inter.className} suppressHydrationWarning>
                 <SessionProvider>{children}</SessionProvider>
             </body>
         </html>

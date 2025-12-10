@@ -1,3 +1,3 @@
 export default function StatisticsLayout({ children }: { children: React.ReactNode }) {
-    return <>{children}</>;
+    return <div suppressHydrationWarning>{children}</div>;
 }
