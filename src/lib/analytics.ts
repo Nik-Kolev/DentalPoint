@@ -9,103 +9,160 @@ export interface AnalyticsData {
     trafficSources?: Array<{ source: string; count: number; percentage: number }>;
 }
 
-export type TimePeriod = 'day' | 'week' | 'month' | 'year';
+export type TimePeriod = 'day' | 'week' | 'month' | 'year' | 'alltime';
 
-// Mock data for different time periods
-const mockData: Record<TimePeriod, AnalyticsData> = {
-    day: {
-        totalVisitors: 45,
-        totalPageViews: 67,
-        uniqueVisitors: 38,
-        deviceBreakdown: [
-            { device: 'Mobile', count: 29, percentage: 64.4 },
-            { device: 'Desktop', count: 16, percentage: 35.6 },
-        ],
-        trafficSources: [
-            { source: 'Direct', count: 18, percentage: 40.0 },
-            { source: 'Google', count: 15, percentage: 33.3 },
-            { source: 'Facebook', count: 8, percentage: 17.8 },
-            { source: 'Instagram', count: 4, percentage: 8.9 },
-        ],
-    },
-    week: {
-        totalVisitors: 312,
-        totalPageViews: 467,
-        uniqueVisitors: 245,
-        timeSeries: [
-            { label: 'Mon', visitors: 38 },
-            { label: 'Tue', visitors: 45 },
-            { label: 'Wed', visitors: 42 },
-            { label: 'Thu', visitors: 51 },
-            { label: 'Fri', visitors: 48 },
-            { label: 'Sat', visitors: 44 },
-            { label: 'Sun', visitors: 44 },
-        ],
-        deviceBreakdown: [
-            { device: 'Mobile', count: 203, percentage: 65.1 },
-            { device: 'Desktop', count: 109, percentage: 34.9 },
-        ],
-        trafficSources: [
-            { source: 'Direct', count: 125, percentage: 40.1 },
-            { source: 'Google', count: 98, percentage: 31.4 },
-            { source: 'Facebook', count: 56, percentage: 17.9 },
-            { source: 'Instagram', count: 28, percentage: 9.0 },
-            { source: 'Others', count: 5, percentage: 1.6 },
-        ],
-    },
-    month: {
-        totalVisitors: 1240,
-        totalPageViews: 1890,
-        uniqueVisitors: 980,
-        timeSeries: [
-            { label: 'Week 1', visitors: 280 },
-            { label: 'Week 2', visitors: 310 },
-            { label: 'Week 3', visitors: 295 },
-            { label: 'Week 4', visitors: 355 },
-        ],
-        deviceBreakdown: [
-            { device: 'Mobile', count: 806, percentage: 65.0 },
-            { device: 'Desktop', count: 434, percentage: 35.0 },
-        ],
-        trafficSources: [
-            { source: 'Direct', count: 456, percentage: 36.8 },
-            { source: 'Google', count: 389, percentage: 31.4 },
-            { source: 'Facebook', count: 223, percentage: 18.0 },
-            { source: 'Instagram', count: 112, percentage: 9.0 },
-            { source: 'Others', count: 60, percentage: 4.8 },
-        ],
-    },
-    year: {
-        totalVisitors: 12450,
-        totalPageViews: 18720,
-        uniqueVisitors: 8920,
-        timeSeries: [
-            { label: 'Jan', visitors: 980 },
-            { label: 'Feb', visitors: 1020 },
-            { label: 'Mar', visitors: 1100 },
-            { label: 'Apr', visitors: 1050 },
-            { label: 'May', visitors: 1150 },
-            { label: 'Jun', visitors: 1080 },
-            { label: 'Jul', visitors: 1200 },
-            { label: 'Aug', visitors: 1180 },
-            { label: 'Sep', visitors: 1120 },
-            { label: 'Oct', visitors: 1250 },
-            { label: 'Nov', visitors: 1180 },
-            { label: 'Dec', visitors: 1040 },
-        ],
-        deviceBreakdown: [
-            { device: 'Mobile', count: 8093, percentage: 65.0 },
-            { device: 'Desktop', count: 4357, percentage: 35.0 },
-        ],
-        trafficSources: [
-            { source: 'Direct', count: 4560, percentage: 36.6 },
-            { source: 'Google', count: 3890, percentage: 31.2 },
-            { source: 'Facebook', count: 2340, percentage: 18.8 },
-            { source: 'Instagram', count: 1120, percentage: 9.0 },
-            { source: 'Others', count: 540, percentage: 4.3 },
-        ],
-    },
-};
+/**
+ * Generate realistic time series data with growth patterns
+ */
+function generateTimeSeries(period: TimePeriod): Array<{ label: string; visitors: number }> {
+    const today = new Date();
+    const timeSeries: Array<{ label: string; visitors: number }> = [];
+
+    if (period === 'week') {
+        // Past 7 days - show some variation
+        const dayNames = ['Неделя', 'Понеделник', 'Вторник', 'Сряда', 'Четвъртък', 'Петък', 'Събота'];
+        const baseVisitors = 40;
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dayName = dayNames[date.getDay()];
+            // Weekend typically lower, weekdays higher with some variation
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const variation = isWeekend ? -8 : 5;
+            const trend = Math.sin((6 - i) * 0.5) * 3; // Subtle trend
+            const visitors = Math.max(20, Math.floor(baseVisitors + variation + trend + (Math.random() * 10 - 5)));
+            timeSeries.push({ label: dayName, visitors });
+        }
+    } else if (period === 'month') {
+        // Past 30 days - show growth trend
+        const baseVisitors = 35;
+        const growthRate = 0.5; // Slight growth per day
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const label = `${day}.${month}`;
+            // Growth trend + weekly pattern + random variation
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const weeklyPattern = isWeekend ? -5 : 0;
+            const trend = (29 - i) * growthRate;
+            const variation = Math.random() * 12 - 6;
+            const visitors = Math.max(15, Math.floor(baseVisitors + trend + weeklyPattern + variation));
+            timeSeries.push({ label, visitors });
+        }
+    } else if (period === 'year') {
+        // Past 365 days grouped by month - show seasonal patterns
+        const monthMap = new Map<string, number>();
+        const monthOrder: string[] = [];
+
+        // Get last 12 months
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date(today);
+            date.setMonth(today.getMonth() - i);
+            const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+            if (!monthOrder.includes(monthKey)) {
+                monthOrder.push(monthKey);
+            }
+        }
+
+        // Generate daily data with seasonal patterns
+        for (let i = 364; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+            const monthIndex = monthOrder.indexOf(monthKey);
+
+            // Seasonal pattern: higher in spring/summer, lower in winter
+            const seasonalFactor = Math.sin((monthIndex / 12) * 2 * Math.PI - Math.PI / 2) * 0.15 + 1;
+            const baseDaily = 25;
+            const dailyVisitors = Math.floor(baseDaily * seasonalFactor + (Math.random() * 8 - 4));
+
+            const current = monthMap.get(monthKey) || 0;
+            monthMap.set(monthKey, current + Math.max(1, dailyVisitors));
+        }
+
+        monthOrder.forEach((month) => {
+            if (monthMap.has(month)) {
+                timeSeries.push({ label: month, visitors: monthMap.get(month)! });
+            }
+        });
+    } else if (period === 'alltime') {
+        // Years - show clear growth trend
+        const currentYear = today.getFullYear();
+        for (let year = 2022; year <= currentYear; year++) {
+            const yearsSinceStart = year - 2022;
+            // Exponential growth pattern
+            const baseGrowth = 5000;
+            const growthFactor = 1.3;
+            const baseVisitors = baseGrowth * Math.pow(growthFactor, yearsSinceStart);
+            const visitors = Math.floor(baseVisitors + (Math.random() * baseVisitors * 0.2 - baseVisitors * 0.1));
+            timeSeries.push({ label: String(year), visitors });
+        }
+    }
+
+    return timeSeries;
+}
+
+/**
+ * Generate device breakdown based on period and total visitors
+ */
+function generateDeviceBreakdown(totalVisitors: number, period: TimePeriod): Array<{ device: string; count: number; percentage: number }> {
+    // Mobile percentage varies slightly by period (more mobile on weekends/evenings)
+    const mobileBase = period === 'week' ? 0.68 : period === 'month' ? 0.66 : 0.65;
+    const mobileVariation = Math.random() * 0.06 - 0.03;
+    const mobilePercentage = Math.max(0.55, Math.min(0.75, mobileBase + mobileVariation));
+
+    const mobileCount = Math.floor(totalVisitors * mobilePercentage);
+    const desktopCount = totalVisitors - mobileCount;
+
+    return [
+        {
+            device: 'Mobile',
+            count: mobileCount,
+            percentage: Math.round((mobileCount / totalVisitors) * 100 * 10) / 10,
+        },
+        {
+            device: 'Desktop',
+            count: desktopCount,
+            percentage: Math.round((desktopCount / totalVisitors) * 100 * 10) / 10,
+        },
+    ].sort((a, b) => b.count - a.count);
+}
+
+/**
+ * Generate traffic sources based on period and total visitors
+ */
+function generateTrafficSources(totalVisitors: number, period: TimePeriod): Array<{ source: string; count: number; percentage: number }> {
+    // Sources vary by period - social media more active on weekends
+    const isShortPeriod = period === 'week' || period === 'month';
+    const socialFactor = isShortPeriod ? 1.1 : 1.0;
+
+    const directBase = 0.38;
+    const googleBase = 0.32;
+    const facebookBase = 0.18 * socialFactor;
+    const instagramBase = 0.09 * socialFactor;
+    const othersBase = 0.03;
+
+    // Add some variation
+    const variation = Math.random() * 0.1 - 0.05;
+    const directPct = Math.max(0.3, Math.min(0.45, directBase + variation));
+    const googlePct = Math.max(0.25, Math.min(0.38, googleBase + variation * 0.5));
+    const facebookPct = Math.max(0.12, Math.min(0.25, facebookBase + variation * 0.3));
+    const instagramPct = Math.max(0.06, Math.min(0.15, instagramBase + variation * 0.3));
+    const othersPct = 1 - directPct - googlePct - facebookPct - instagramPct;
+
+    return [
+        { source: 'Direct', count: Math.floor(totalVisitors * directPct), percentage: Math.round(directPct * 100 * 10) / 10 },
+        { source: 'Google', count: Math.floor(totalVisitors * googlePct), percentage: Math.round(googlePct * 100 * 10) / 10 },
+        { source: 'Facebook', count: Math.floor(totalVisitors * facebookPct), percentage: Math.round(facebookPct * 100 * 10) / 10 },
+        { source: 'Instagram', count: Math.floor(totalVisitors * instagramPct), percentage: Math.round(instagramPct * 100 * 10) / 10 },
+        { source: 'Others', count: Math.floor(totalVisitors * othersPct), percentage: Math.round(othersPct * 100 * 10) / 10 },
+    ]
+        .filter((s) => s.count > 0)
+        .sort((a, b) => b.count - a.count);
+}
 
 /**
  * Fetch analytics data - using mock data for now
@@ -115,37 +172,21 @@ export async function fetchAnalyticsData(period: TimePeriod): Promise<AnalyticsD
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const data = mockData[period];
+    const timeSeries = generateTimeSeries(period);
+    const totalVisitors = timeSeries.reduce((sum, item) => sum + item.visitors, 0);
+    const deviceBreakdown = generateDeviceBreakdown(totalVisitors, period);
+    const trafficSources = generateTrafficSources(totalVisitors, period);
 
-    // Combine tablet into mobile and sort by count (bigger first)
-    const deviceMap = new Map<string, { device: string; count: number; percentage: number }>();
-    data.deviceBreakdown.forEach((item) => {
-        const deviceName = item.device === 'Tablet' ? 'Mobile' : item.device;
-        if (deviceMap.has(deviceName)) {
-            const existing = deviceMap.get(deviceName)!;
-            existing.count += item.count;
-        } else {
-            deviceMap.set(deviceName, { device: deviceName, count: item.count, percentage: 0 });
-        }
-    });
-
-    // Calculate percentages and sort by count (bigger first)
-    const totalDeviceCount = Array.from(deviceMap.values()).reduce((sum, d) => sum + d.count, 0);
-    const deviceBreakdown = Array.from(deviceMap.values())
-        .map((d) => ({
-            ...d,
-            percentage: totalDeviceCount > 0 ? Math.round((d.count / totalDeviceCount) * 100 * 10) / 10 : 0,
-        }))
-        .sort((a, b) => b.count - a.count);
-
-    // Sort traffic sources by count (bigger first)
-    const trafficSources = data.trafficSources ? [...data.trafficSources].sort((a, b) => b.count - a.count) : undefined;
-
-    return {
-        ...data,
+    const data: AnalyticsData = {
+        totalVisitors,
+        totalPageViews: Math.floor(totalVisitors * 1.5),
+        uniqueVisitors: Math.floor(totalVisitors * 0.8),
+        timeSeries,
         deviceBreakdown,
         trafficSources,
     };
+
+    return data;
 }
 
 /**
@@ -172,8 +213,12 @@ export function getDateRange(period: TimePeriod): { startDate: string; endDate: 
             break;
         case 'year':
             const yearAgo = new Date(today);
-            yearAgo.setFullYear(today.getFullYear() - 1);
+            yearAgo.setDate(today.getDate() - 365);
             startDate = yearAgo.toISOString().split('T')[0];
+            break;
+        case 'alltime':
+            // All time - use a far back date
+            startDate = '2022-01-01';
             break;
     }
 
