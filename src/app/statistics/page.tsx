@@ -123,7 +123,7 @@ export default function StatisticsPage() {
     // Calculate optimal label spacing for time series
     const getLabelSpacing = (dataLength: number, period: TimePeriod): number => {
         if (period === 'week') return 1; // Show all 7 days
-        if (period === 'month') return Math.ceil(dataLength / 10); // Show ~10 labels
+        if (period === 'month') return 1; // Show all 30 days
         if (period === 'year') return 1; // Show all 12 months
         if (period === 'alltime') return 1; // Show all years
         return 1;
@@ -132,7 +132,7 @@ export default function StatisticsPage() {
     return (
         <ProtectedRoute>
             <div className='min-h-screen bg-gray-50 py-4 px-2 sm:py-6 sm:px-4'>
-                <div className='max-w-6xl mx-auto'>
+                <div className='max-w-7xl mx-auto'>
                     {/* Header */}
                     <div className='bg-white rounded-lg shadow-lg p-4 sm:p-5 mb-4 sm:mb-6'>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 mb-3 sm:mb-4'>
@@ -173,7 +173,7 @@ export default function StatisticsPage() {
                                             ? 'Последни 30 дни'
                                             : period === 'year'
                                             ? 'Последна година'
-                                            : 'Цяло време'}
+                                            : 'Целия период'}
                                     </button>
                                 ))}
                             </div>
@@ -207,7 +207,7 @@ export default function StatisticsPage() {
                                         ? 'Посетители за последните 30 дни'
                                         : timePeriod === 'year'
                                         ? 'Посетители за последната година (по месеци)'
-                                        : 'Посетители за цялото време (по години)'}
+                                        : 'Посетители за целия период (по години)'}
                                 </h2>
                                 {data.timeSeries && data.timeSeries.length > 0 ? (
                                     timePeriod === 'month' ? (
@@ -237,9 +237,7 @@ export default function StatisticsPage() {
                                                                 <div className='text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                     {translateTimeLabel(item.label)}
                                                                 </div>
-                                                                <div className='text-xs font-semibold text-[#005baa] mt-1'>
-                                                                    {item.visitors.toLocaleString()}
-                                                                </div>
+                                                                {/* Value is shown inside the bar; avoid duplicating below */}
                                                                 {height <= 20 && (
                                                                     <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                                         {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
@@ -276,9 +274,7 @@ export default function StatisticsPage() {
                                                                 <div className='text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                     {translateTimeLabel(item.label)}
                                                                 </div>
-                                                                <div className='text-xs font-semibold text-[#005baa] mt-1'>
-                                                                    {item.visitors.toLocaleString()}
-                                                                </div>
+                                                                {/* Value is shown inside the bar; avoid duplicating below */}
                                                                 {height <= 20 && (
                                                                     <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                                         {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
@@ -291,8 +287,8 @@ export default function StatisticsPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Desktop: Full 30 days in one chart */}
-                                            <div className='hidden sm:flex h-64 sm:h-72 items-end justify-center gap-3 sm:gap-6 px-2 sm:px-4 pb-2 overflow-visible'>
+                                            {/* Desktop: Full 30 days in one chart (no horizontal scroll) */}
+                                            <div className='hidden sm:flex h-64 sm:h-72 items-end justify-center gap-2 sm:gap-3 px-2 sm:px-4 pb-2 overflow-visible'>
                                                 {data.timeSeries?.map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
@@ -301,7 +297,7 @@ export default function StatisticsPage() {
                                                     return (
                                                         <div
                                                             key={index}
-                                                            className='flex-1 max-w-[80px] sm:max-w-[100px] flex flex-col items-center h-full relative group'
+                                                            className='flex-1 max-w-[70px] sm:max-w-[80px] flex flex-col items-center h-full relative group'
                                                         >
                                                             <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
                                                                 <div
@@ -316,15 +312,11 @@ export default function StatisticsPage() {
                                                                 </div>
                                                             </div>
                                                             {showLabel && (
-                                                                <div className='text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                <div className='text-[10px] sm:text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                     {translateTimeLabel(item.label)}
                                                                 </div>
                                                             )}
-                                                            {showLabel && (
-                                                                <div className='text-xs sm:text-sm font-semibold text-[#005baa] mt-1'>
-                                                                    {item.visitors.toLocaleString()}
-                                                                </div>
-                                                            )}
+                                                            {/* Value is shown inside the bar; avoid duplicating below */}
                                                             {height <= 20 && (
                                                                 <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                                     {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
@@ -369,11 +361,7 @@ export default function StatisticsPage() {
                                                                 {translateTimeLabel(item.label)}
                                                             </div>
                                                         )}
-                                                        {showLabel && (
-                                                            <div className='text-xs sm:text-sm font-semibold text-[#005baa] mt-1'>
-                                                                {item.visitors.toLocaleString()}
-                                                            </div>
-                                                        )}
+                                                        {/* Value is shown inside the bar; avoid duplicating below */}
                                                         {height <= 20 && (
                                                             <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                                 {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}

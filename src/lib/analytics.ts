@@ -19,12 +19,14 @@ function generateTimeSeries(period: TimePeriod): Array<{ label: string; visitors
     const timeSeries: Array<{ label: string; visitors: number }> = [];
 
     if (period === 'week') {
-        // Past 7 days - show some variation
+        // Past 7 full days (excluding today) - show some variation
         const dayNames = ['Неделя', 'Понеделник', 'Вторник', 'Сряда', 'Четвъртък', 'Петък', 'Събота'];
         const baseVisitors = 40;
+        const baseDate = new Date(today);
+        baseDate.setDate(baseDate.getDate() - 1); // Use yesterday as the latest day
         for (let i = 6; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i);
+            const date = new Date(baseDate);
+            date.setDate(baseDate.getDate() - i);
             const dayName = dayNames[date.getDay()];
             // Weekend typically lower, weekdays higher with some variation
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
@@ -34,12 +36,14 @@ function generateTimeSeries(period: TimePeriod): Array<{ label: string; visitors
             timeSeries.push({ label: dayName, visitors });
         }
     } else if (period === 'month') {
-        // Past 30 days - show growth trend
+        // Past 30 full days (excluding today) - show growth trend
         const baseVisitors = 35;
         const growthRate = 0.5; // Slight growth per day
+        const baseDate = new Date(today);
+        baseDate.setDate(baseDate.getDate() - 1); // Use yesterday as the latest day
         for (let i = 29; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i);
+            const date = new Date(baseDate);
+            date.setDate(baseDate.getDate() - i);
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const label = `${day}.${month}`;
@@ -194,7 +198,10 @@ export async function fetchAnalyticsData(period: TimePeriod): Promise<AnalyticsD
  */
 export function getDateRange(period: TimePeriod): { startDate: string; endDate: string } {
     const today = new Date();
-    const endDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+    const end = new Date(today);
+    // Use yesterday as the end date so we only include full days
+    end.setDate(end.getDate() - 1);
+    const endDate = end.toISOString().split('T')[0]; // YYYY-MM-DD
 
     let startDate: string;
     switch (period) {
@@ -202,18 +209,21 @@ export function getDateRange(period: TimePeriod): { startDate: string; endDate: 
             startDate = endDate;
             break;
         case 'week':
-            const weekAgo = new Date(today);
-            weekAgo.setDate(today.getDate() - 7);
+            // Last 7 full days including endDate
+            const weekAgo = new Date(end);
+            weekAgo.setDate(end.getDate() - 6);
             startDate = weekAgo.toISOString().split('T')[0];
             break;
         case 'month':
-            const monthAgo = new Date(today);
-            monthAgo.setDate(today.getDate() - 30);
+            // Last 30 full days including endDate
+            const monthAgo = new Date(end);
+            monthAgo.setDate(end.getDate() - 29);
             startDate = monthAgo.toISOString().split('T')[0];
             break;
         case 'year':
-            const yearAgo = new Date(today);
-            yearAgo.setDate(today.getDate() - 365);
+            // Last 365 full days including endDate
+            const yearAgo = new Date(end);
+            yearAgo.setDate(end.getDate() - 364);
             startDate = yearAgo.toISOString().split('T')[0];
             break;
         case 'alltime':

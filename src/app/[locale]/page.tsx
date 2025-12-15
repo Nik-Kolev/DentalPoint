@@ -30,7 +30,7 @@ export default function Home({ params }: { params: { locale: string } }) {
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl'>
-                        <Image src='/Images/front/clinic.jpg' alt='Dental Point Clinic' fill className='object-cover' priority quality={90} />
+                        <Image src='/Images/front/clinic.jpg' alt='Dental Point Clinic' fill className='object-cover' priority quality={90} unoptimized />
                     </div>
                 </div>
             </section>

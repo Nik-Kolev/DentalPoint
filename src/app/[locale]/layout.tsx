@@ -121,6 +121,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                             width={40}
                             height={40}
                             className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
+                            unoptimized
                         />
                         <div className='flex flex-col'>
                             <span className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] ${playfair.className}`}>Dental Point</span>
