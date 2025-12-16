@@ -112,8 +112,13 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                             {/* Before/After Images */}
                             <div className='grid grid-cols-2 gap-1'>
                                 <div
-                                    className='relative cursor-pointer group'
-                                    onClick={(e) => setSelectedImage({ src: item.before, alt: `Before - Gallery item ${i + 1}`, element: e.currentTarget })}
+                                    className='relative sm:cursor-pointer group'
+                                    onClick={(e) => {
+                                        // Only open lightbox on desktop
+                                        if (!isMobile) {
+                                            setSelectedImage({ src: item.before, alt: `Before - Gallery item ${i + 1}`, element: e.currentTarget });
+                                        }
+                                    }}
                                 >
                                     <Image
                                         src={item.before}
@@ -123,13 +128,18 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         quality={85}
                                         className='w-full h-40 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs sm:text-sm font-semibold py-1 px-2 text-center'>
+                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'before')}
                                     </div>
                                 </div>
                                 <div
-                                    className='relative cursor-pointer group'
-                                    onClick={(e) => setSelectedImage({ src: item.after, alt: `After - Gallery item ${i + 1}`, element: e.currentTarget })}
+                                    className='relative sm:cursor-pointer group'
+                                    onClick={(e) => {
+                                        // Only open lightbox on desktop
+                                        if (!isMobile) {
+                                            setSelectedImage({ src: item.after, alt: `After - Gallery item ${i + 1}`, element: e.currentTarget });
+                                        }
+                                    }}
                                 >
                                     <Image
                                         src={item.after}
@@ -139,7 +149,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         quality={85}
                                         className='w-full h-40 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs sm:text-sm font-semibold py-1 px-2 text-center'>
+                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'after')}
                                     </div>
                                 </div>
@@ -148,7 +158,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                             {/* Description Text */}
                             {item.descriptionKey !== undefined && gallery.items?.[item.descriptionKey]?.description && (
                                 <div className='p-3 sm:p-4'>
-                                    <p className='text-sm sm:text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
+                                    <p className='text-base sm:text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
                                 </div>
                             )}
                         </div>
@@ -182,8 +192,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
 
-                {/* Lightbox */}
-                {selectedImage && (
+                {/* Lightbox - Only on desktop */}
+                {selectedImage && !isMobile && (
                     <ImageLightbox
                         isOpen={!!selectedImage}
                         onClose={() => setSelectedImage(null)}

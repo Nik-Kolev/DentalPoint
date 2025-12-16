@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
@@ -13,6 +13,16 @@ const montserrat = Montserrat({ subsets: ['latin'], weight: ['600', '700'] });
 export default function Home({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
+    const [isMobile, setIsMobile] = useState(true);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
 
@@ -56,12 +66,17 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* Clinic Gallery Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='grid grid-cols-3 gap-3 sm:gap-4'>
+                    <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4'>
                         {clinicImages.map((imageName, i) => (
                             <div
                                 key={i}
-                                className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 cursor-pointer'
-                                onClick={(e) => setSelectedImage({ src: `/Images/front/${imageName}`, alt: `Clinic image ${i + 1}`, element: e.currentTarget })}
+                                className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 sm:cursor-pointer'
+                                onClick={(e) => {
+                                    // Only open lightbox on desktop
+                                    if (!isMobile) {
+                                        setSelectedImage({ src: `/Images/front/${imageName}`, alt: `Clinic image ${i + 1}`, element: e.currentTarget });
+                                    }
+                                }}
                             >
                                 <Image
                                     src={`/Images/front/${imageName}`}
@@ -69,7 +84,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     width={300}
                                     height={300}
                                     quality={85}
-                                    className='rounded-md object-cover w-full h-24 sm:h-32'
+                                    className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
                             </div>
                         ))}
@@ -77,8 +92,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                 </div>
             </section>
 
-            {/* Lightbox */}
-            {selectedImage && (
+            {/* Lightbox - Only on desktop */}
+            {selectedImage && !isMobile && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
                     onClose={() => setSelectedImage(null)}
