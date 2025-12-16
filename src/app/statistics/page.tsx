@@ -35,7 +35,7 @@ export default function StatisticsPage() {
         return translations[source] || source;
     };
 
-    const translateTimeLabel = (label: string): string => {
+    const translateTimeLabel = (label: string, period?: TimePeriod): string => {
         // Days of week (full names)
         const dayTranslations: Record<string, string> = {
             Mon: 'Понеделник',
@@ -67,8 +67,8 @@ export default function StatisticsPage() {
             return label;
         }
 
-        // Months
-        const monthTranslations: Record<string, string> = {
+        // Months - full names for year period, abbreviated otherwise
+        const monthTranslationsAbbr: Record<string, string> = {
             Jan: 'Яну',
             Feb: 'Фев',
             Mar: 'Мар',
@@ -82,7 +82,34 @@ export default function StatisticsPage() {
             Nov: 'Ное',
             Dec: 'Дек',
         };
-        if (monthTranslations[label]) return monthTranslations[label];
+        const monthTranslationsFull: Record<string, string> = {
+            Jan: 'Януари',
+            Feb: 'Февруари',
+            Mar: 'Март',
+            Apr: 'Април',
+            May: 'Май',
+            Jun: 'Юни',
+            Jul: 'Юли',
+            Aug: 'Август',
+            Sep: 'Септември',
+            Oct: 'Октомври',
+            Nov: 'Ноември',
+            Dec: 'Декември',
+            Яну: 'Януари',
+            Фев: 'Февруари',
+            Мар: 'Март',
+            Апр: 'Април',
+            Май: 'Май',
+            Юни: 'Юни',
+            Юли: 'Юли',
+            Авг: 'Август',
+            Сеп: 'Септември',
+            Окт: 'Октомври',
+            Ное: 'Ноември',
+            Дек: 'Декември',
+        };
+        if (period === 'year' && monthTranslationsFull[label]) return monthTranslationsFull[label];
+        if (monthTranslationsAbbr[label]) return monthTranslationsAbbr[label];
 
         // Years (for alltime view) - return as is
         if (/^\d{4}$/.test(label)) {
@@ -211,93 +238,16 @@ export default function StatisticsPage() {
                                 </h2>
                                 {data.timeSeries && data.timeSeries.length > 0 ? (
                                     timePeriod === 'month' ? (
-                                        // Mobile: Split 30 days into 2 rows (1-15 and 16-30)
-                                        <div className='space-y-4'>
-                                            {/* First half: Days 1-15 */}
-                                            <div className='block sm:hidden'>
-                                                <h3 className='text-xs sm:text-sm font-semibold text-gray-600 mb-2'>Дни 1-15</h3>
-                                                <div className='h-64 flex items-end justify-center gap-1 px-1 pb-2 overflow-hidden'>
-                                                    {(data.timeSeries || []).slice(0, 15).map((item, index) => {
-                                                        const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                        const height = (item.visitors / maxVisitors) * 100;
-                                                        return (
-                                                            <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
-                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
-                                                                    <div
-                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                        style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                                    >
-                                                                        {height > 20 && (
-                                                                            <span className='text-white text-[10px] font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                                {item.visitors}
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                <div className='text-[9px] text-gray-600 mt-1 text-center font-medium truncate w-full'>
-                                                                    {translateTimeLabel(item.label)}
-                                                                </div>
-                                                                {/* Value is shown inside the bar; avoid duplicating below */}
-                                                                {height <= 20 && (
-                                                                    <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                        {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
-                                                                        <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-
-                                            {/* Second half: Days 16-30 */}
-                                            <div className='block sm:hidden'>
-                                                <h3 className='text-xs sm:text-sm font-semibold text-gray-600 mb-2'>Дни 16-30</h3>
-                                                <div className='h-64 flex items-end justify-center gap-1 px-1 pb-2 overflow-hidden'>
-                                                    {(data.timeSeries || []).slice(15).map((item, index) => {
-                                                        const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                        const height = (item.visitors / maxVisitors) * 100;
-                                                        return (
-                                                            <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
-                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
-                                                                    <div
-                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                        style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                                    >
-                                                                        {height > 20 && (
-                                                                            <span className='text-white text-[10px] font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                                {item.visitors}
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                <div className='text-[9px] text-gray-600 mt-1 text-center font-medium truncate w-full'>
-                                                                    {translateTimeLabel(item.label)}
-                                                                </div>
-                                                                {/* Value is shown inside the bar; avoid duplicating below */}
-                                                                {height <= 20 && (
-                                                                    <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                        {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
-                                                                        <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-
-                                            {/* Desktop: Full 30 days in one chart (no horizontal scroll) */}
-                                            <div className='hidden sm:flex h-64 sm:h-72 items-end justify-center gap-2 sm:gap-3 px-2 sm:px-4 pb-2 overflow-hidden'>
+                                        // 30 days - scrollable with large text and columns
+                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
+                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
                                                 {data.timeSeries?.map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
-                                                    const labelSpacing = getLabelSpacing((data.timeSeries || []).length, timePeriod);
-                                                    const showLabel = index % labelSpacing === 0 || index === (data.timeSeries || []).length - 1;
                                                     return (
                                                         <div
                                                             key={index}
-                                                            className='flex-1 max-w-[70px] sm:max-w-[80px] flex flex-col items-center h-full relative group'
+                                                            className='flex flex-col items-center h-full relative group w-20 sm:w-24 flex-shrink-0'
                                                         >
                                                             <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                                 <div
@@ -311,15 +261,12 @@ export default function StatisticsPage() {
                                                                     )}
                                                                 </div>
                                                             </div>
-                                                            {showLabel && (
-                                                                <div className='text-[10px] sm:text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
-                                                                    {translateTimeLabel(item.label)}
-                                                                </div>
-                                                            )}
-                                                            {/* Value is shown inside the bar; avoid duplicating below */}
+                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                {translateTimeLabel(item.label, timePeriod)}
+                                                            </div>
                                                             {height <= 20 && (
                                                                 <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                    {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
+                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
                                                                     <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
                                                                 </div>
                                                             )}
@@ -328,54 +275,84 @@ export default function StatisticsPage() {
                                                 })}
                                             </div>
                                         </div>
-                                    ) : (
-                                        // Other periods: week, year, alltime
-                                        <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
-                                            {(data.timeSeries || []).map((item, index) => {
-                                                const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                const height = (item.visitors / maxVisitors) * 100;
-                                                const labelSpacing = getLabelSpacing((data.timeSeries || []).length, timePeriod);
-                                                const showLabel = index % labelSpacing === 0 || index === (data.timeSeries || []).length - 1;
-                                                const maxWidthClass =
-                                                    timePeriod === 'week'
-                                                        ? 'sm:max-w-[140px]'
-                                                        : timePeriod === 'year'
-                                                        ? 'sm:max-w-[120px]'
-                                                        : 'sm:max-w-[140px]';
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className={`flex-1 min-w-0 ${maxWidthClass} flex flex-col items-center h-full relative group`}
-                                                    >
-                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
-                                                            <div
-                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                            >
-                                                                {height > 20 && (
-                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                        {item.visitors}
-                                                                    </span>
-                                                                )}
+                                    ) : // Other periods: week, year, alltime
+                                    // For year and alltime, make scrollable with larger columns
+                                    timePeriod === 'year' || timePeriod === 'alltime' ? (
+                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
+                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
+                                                {(data.timeSeries || []).map((item, index) => {
+                                                    const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
+                                                    const height = (item.visitors / maxVisitors) * 100;
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className='flex flex-col items-center h-full relative group w-20 sm:w-28 flex-shrink-0'
+                                                        >
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
+                                                                <div
+                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
+                                                                    style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
+                                                                >
+                                                                    {height > 20 && (
+                                                                        <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                            {item.visitors}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
                                                             </div>
+                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                {translateTimeLabel(item.label, timePeriod)}
+                                                            </div>
+                                                            {height <= 20 && (
+                                                                <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
+                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
+                                                                    <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                        {showLabel && (
-                                                            <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
-                                                                {translateTimeLabel(item.label)}
-                                                            </div>
-                                                        )}
-                                                        {/* Value is shown inside the bar; avoid duplicating below */}
-                                                        {height <= 20 && (
-                                                            <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                {translateTimeLabel(item.label)}: {item.visitors.toLocaleString()}
-                                                                <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })}
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    )
+                                    ) : timePeriod === 'week' ? (
+                                        // Week period - scrollable with large text and columns
+                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
+                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
+                                                {(data.timeSeries || []).map((item, index) => {
+                                                    const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
+                                                    const height = (item.visitors / maxVisitors) * 100;
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className='flex flex-col items-center h-full relative group w-24 sm:w-32 flex-shrink-0'
+                                                        >
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
+                                                                <div
+                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
+                                                                    style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
+                                                                >
+                                                                    {height > 20 && (
+                                                                        <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                            {item.visitors}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                {translateTimeLabel(item.label, timePeriod)}
+                                                            </div>
+                                                            {height <= 20 && (
+                                                                <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
+                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
+                                                                    <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ) : null
                                 ) : (
                                     <p className='text-gray-500 text-sm'>Няма налични данни за времеви ред</p>
                                 )}
@@ -386,32 +363,29 @@ export default function StatisticsPage() {
                                 {/* Device Breakdown */}
                                 <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
                                     <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>Посетители по устройства</h2>
-                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
+                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-2 sm:gap-12 lg:gap-16 px-2 sm:px-4 pb-2 overflow-hidden'>
                                         {data.deviceBreakdown.length > 0 ? (
                                             data.deviceBreakdown.map((device, index) => {
                                                 const maxCount = Math.max(...data.deviceBreakdown.map((d) => d.count), 1);
                                                 const height = (device.count / maxCount) * 100;
                                                 return (
-                                                    <div
-                                                        key={index}
-                                                        className='flex-1 min-w-0 sm:max-w-[140px] flex flex-col items-center h-full relative group'
-                                                    >
+                                                    <div key={index} className='flex flex-col items-center h-full relative group w-24 sm:w-32'>
                                                         <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                             <div
                                                                 className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                 style={{ height: `${height}%`, minHeight: device.count > 0 ? '10px' : '0' }}
                                                             >
                                                                 {height > 20 && (
-                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
                                                                         {device.percentage}%
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                        <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
+                                                        <div className='text-xs sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                             {translateDevice(device.device)}
                                                         </div>
-                                                        <div className='text-[9px] sm:text-sm font-semibold text-[#005baa] mt-0.5 sm:mt-1'>
+                                                        <div className='text-xs sm:text-base font-semibold text-[#005baa] mt-1'>
                                                             {device.count.toLocaleString()}
                                                         </div>
                                                         {/* Tooltip for small bars */}
@@ -463,32 +437,29 @@ export default function StatisticsPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
+                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-2 sm:gap-8 lg:gap-12 px-2 sm:px-4 pb-2 overflow-hidden'>
                                         {data.trafficSources && data.trafficSources.length > 0 ? (
                                             data.trafficSources.map((source, index) => {
                                                 const maxCount = Math.max(...data.trafficSources!.map((s) => s.count), 1);
                                                 const height = (source.count / maxCount) * 100;
                                                 return (
-                                                    <div
-                                                        key={index}
-                                                        className='flex-1 min-w-0 sm:max-w-[120px] flex flex-col items-center h-full relative group'
-                                                    >
+                                                    <div key={index} className='flex flex-col items-center h-full relative group w-20 sm:w-28'>
                                                         <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                             <div
                                                                 className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                 style={{ height: `${height}%`, minHeight: source.count > 0 ? '10px' : '0' }}
                                                             >
                                                                 {height > 20 && (
-                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
                                                                         {source.percentage}%
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                        <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
+                                                        <div className='text-xs sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                             {translateSource(source.source)}
                                                         </div>
-                                                        <div className='text-[9px] sm:text-sm font-semibold text-[#005baa] mt-0.5 sm:mt-1'>
+                                                        <div className='text-xs sm:text-base font-semibold text-[#005baa] mt-1'>
                                                             {source.count.toLocaleString()}
                                                         </div>
                                                         {/* Tooltip for small bars */}
