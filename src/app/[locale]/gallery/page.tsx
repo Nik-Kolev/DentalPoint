@@ -109,8 +109,9 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 pb-8 sm:pb-12'>
                     {visibleItems.map((item, i) => (
                         <div key={i} className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden'>
-                            {/* Before/After Images */}
-                            <div className='grid grid-cols-2 gap-1'>
+                            {/* Mobile: Stacked layout (Before, After, Text) | Desktop: Side by side (Before/After, Text below) */}
+                            <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
+                                {/* Before Image */}
                                 <div
                                     className='relative sm:cursor-pointer group'
                                     onClick={(e) => {
@@ -126,12 +127,14 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         width={300}
                                         height={300}
                                         quality={85}
-                                        className='w-full h-40 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm sm:text-sm font-semibold py-2 px-2 text-center'>
+                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'before')}
                                     </div>
                                 </div>
+
+                                {/* After Image */}
                                 <div
                                     className='relative sm:cursor-pointer group'
                                     onClick={(e) => {
@@ -147,18 +150,18 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         width={300}
                                         height={300}
                                         quality={85}
-                                        className='w-full h-40 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-sm sm:text-sm font-semibold py-2 px-2 text-center'>
+                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'after')}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Description Text */}
+                            {/* Description Text - Below images on both mobile and desktop */}
                             {item.descriptionKey !== undefined && gallery.items?.[item.descriptionKey]?.description && (
-                                <div className='p-3 sm:p-4'>
-                                    <p className='text-base sm:text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
+                                <div className='p-4 sm:p-4'>
+                                    <p className='text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
                                 </div>
                             )}
                         </div>

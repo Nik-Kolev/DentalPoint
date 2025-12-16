@@ -113,19 +113,19 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
     return (
         <>
             <header className='w-full shadow-sm bg-white relative z-40'>
-                <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8'>
-                    {/* Logo and Clinic Name */}
-                    <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64'>
+                <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
+                    {/* Logo and Clinic Name - Centered on mobile */}
+                    <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0'>
                         <Image
                             src='/Images/logo/header_logo.jpg'
                             alt='Dental Point Logo'
                             width={40}
                             height={40}
-                            className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
+                            className='w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
                             unoptimized
                         />
                         <div className='flex flex-col'>
-                            <span className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] ${playfair.className}`}>Dental Point</span>
+                            <span className={`text-2xl sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] ${playfair.className}`}>Dental Point</span>
                         </div>
                     </div>
 
@@ -135,7 +135,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                     </div>
 
                     {/* Right side*/}
-                    <div className='flex items-center justify-end space-x-3 flex-shrink-0 lg:w-64'>
+                    <div className='flex items-center justify-end space-x-3 flex-shrink-0 lg:w-64 ml-auto'>
                         {/* Statistics Link - Visible on desktop when logged in */}
                         <div className='hidden lg:block'>
                             <StatisticsLink />
