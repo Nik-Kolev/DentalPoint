@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { getTranslation } from '../../lib/useTranslation';
 import BackToTop from '@/components/BackToTop';
 import FloatingCTA from '@/components/FloatingCTA';
+import StatisticsLink from '@/components/StatisticsLink';
 
 const inter = Inter({ subsets: ['latin'] });
 const playfair = Playfair_Display({ subsets: ['latin'] });
@@ -135,6 +136,11 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
 
                     {/* Right side*/}
                     <div className='flex items-center justify-end space-x-3 flex-shrink-0 lg:w-64'>
+                        {/* Statistics Link - Visible on desktop when logged in */}
+                        <div className='hidden lg:block'>
+                            <StatisticsLink />
+                        </div>
+
                         {/* Language Switcher - Only visible on desktop */}
                         <div className='hidden lg:block'>
                             <LanguageSwitcher locale={locale} />

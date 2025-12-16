@@ -28,10 +28,15 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger }) {
             // If user signs in, add user data to token
             if (user) {
                 token.email = user.email;
+                token.lastActivity = Date.now();
+            }
+            // Refresh token expiration on each access to extend session
+            if (trigger !== 'signIn') {
+                token.lastActivity = Date.now();
             }
             return token;
         },

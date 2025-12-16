@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
+import StatisticsLink from './StatisticsLink';
 
 interface NavigationProps {
     locale: string;
@@ -140,6 +141,13 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                     <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} onClick={closeMobileMenu}>
                         {translations.reviews}
                     </Link>
+
+                    {/* Statistics Link in Mobile Menu */}
+                    <div className='border-t border-gray-200 mt-2 pt-2 pb-1'>
+                        <div className='flex justify-center'>
+                            <StatisticsLink />
+                        </div>
+                    </div>
 
                     {/* Language Switcher in Mobile Menu - Centered */}
                     <div className='border-t border-gray-200 mt-2 pt-3 pb-1'>
