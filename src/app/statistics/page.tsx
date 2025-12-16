@@ -131,8 +131,8 @@ export default function StatisticsPage() {
 
     return (
         <ProtectedRoute>
-            <div className='min-h-screen bg-gray-50 py-4 px-2 sm:py-6 sm:px-4'>
-                <div className='max-w-7xl mx-auto'>
+            <div className='min-h-screen bg-gray-50 py-4 px-2 sm:py-6 sm:px-4 overflow-x-hidden'>
+                <div className='max-w-7xl mx-auto w-full'>
                     {/* Header */}
                     <div className='bg-white rounded-lg shadow-lg p-4 sm:p-5 mb-4 sm:mb-6'>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 mb-3 sm:mb-4'>
@@ -199,7 +199,7 @@ export default function StatisticsPage() {
                     {!loading && !error && data && (
                         <>
                             {/* Visitors Over Time - Full Width */}
-                            <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 mb-4 sm:mb-6 overflow-visible'>
+                            <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 mb-4 sm:mb-6 overflow-hidden'>
                                 <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>
                                     {timePeriod === 'week'
                                         ? 'Посетители за последните 7 дни'
@@ -216,25 +216,25 @@ export default function StatisticsPage() {
                                             {/* First half: Days 1-15 */}
                                             <div className='block sm:hidden'>
                                                 <h3 className='text-xs sm:text-sm font-semibold text-gray-600 mb-2'>Дни 1-15</h3>
-                                                <div className='h-64 flex items-end justify-center gap-3 px-2 pb-2 overflow-visible'>
+                                                <div className='h-64 flex items-end justify-center gap-1 px-1 pb-2 overflow-hidden'>
                                                     {(data.timeSeries || []).slice(0, 15).map((item, index) => {
                                                         const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                         const height = (item.visitors / maxVisitors) * 100;
                                                         return (
-                                                            <div key={index} className='flex-1 max-w-[60px] flex flex-col items-center h-full relative group'>
-                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                            <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
+                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                                     <div
-                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                         style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
                                                                     >
                                                                         {height > 20 && (
-                                                                            <span className='text-white text-xs font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                            <span className='text-white text-[10px] font-semibold absolute inset-0 flex items-center justify-center'>
                                                                                 {item.visitors}
                                                                             </span>
                                                                         )}
                                                                     </div>
                                                                 </div>
-                                                                <div className='text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                <div className='text-[9px] text-gray-600 mt-1 text-center font-medium truncate w-full'>
                                                                     {translateTimeLabel(item.label)}
                                                                 </div>
                                                                 {/* Value is shown inside the bar; avoid duplicating below */}
@@ -253,25 +253,25 @@ export default function StatisticsPage() {
                                             {/* Second half: Days 16-30 */}
                                             <div className='block sm:hidden'>
                                                 <h3 className='text-xs sm:text-sm font-semibold text-gray-600 mb-2'>Дни 16-30</h3>
-                                                <div className='h-64 flex items-end justify-center gap-3 px-2 pb-2 overflow-visible'>
+                                                <div className='h-64 flex items-end justify-center gap-1 px-1 pb-2 overflow-hidden'>
                                                     {(data.timeSeries || []).slice(15).map((item, index) => {
                                                         const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                         const height = (item.visitors / maxVisitors) * 100;
                                                         return (
-                                                            <div key={index} className='flex-1 max-w-[60px] flex flex-col items-center h-full relative group'>
-                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                            <div key={index} className='flex-1 min-w-0 flex flex-col items-center h-full relative group'>
+                                                                <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                                     <div
-                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                        className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                         style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
                                                                     >
                                                                         {height > 20 && (
-                                                                            <span className='text-white text-xs font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                            <span className='text-white text-[10px] font-semibold absolute inset-0 flex items-center justify-center'>
                                                                                 {item.visitors}
                                                                             </span>
                                                                         )}
                                                                     </div>
                                                                 </div>
-                                                                <div className='text-xs text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                                <div className='text-[9px] text-gray-600 mt-1 text-center font-medium truncate w-full'>
                                                                     {translateTimeLabel(item.label)}
                                                                 </div>
                                                                 {/* Value is shown inside the bar; avoid duplicating below */}
@@ -288,7 +288,7 @@ export default function StatisticsPage() {
                                             </div>
 
                                             {/* Desktop: Full 30 days in one chart (no horizontal scroll) */}
-                                            <div className='hidden sm:flex h-64 sm:h-72 items-end justify-center gap-2 sm:gap-3 px-2 sm:px-4 pb-2 overflow-visible'>
+                                            <div className='hidden sm:flex h-64 sm:h-72 items-end justify-center gap-2 sm:gap-3 px-2 sm:px-4 pb-2 overflow-hidden'>
                                                 {data.timeSeries?.map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
@@ -299,9 +299,9 @@ export default function StatisticsPage() {
                                                             key={index}
                                                             className='flex-1 max-w-[70px] sm:max-w-[80px] flex flex-col items-center h-full relative group'
                                                         >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                                 <div
-                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                     style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
                                                                 >
                                                                     {height > 20 && (
@@ -330,7 +330,7 @@ export default function StatisticsPage() {
                                         </div>
                                     ) : (
                                         // Other periods: week, year, alltime
-                                        <div className='h-64 sm:h-72 flex items-end justify-center gap-3 sm:gap-6 px-2 sm:px-4 pb-2 overflow-visible'>
+                                        <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
                                             {(data.timeSeries || []).map((item, index) => {
                                                 const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                 const height = (item.visitors / maxVisitors) * 100;
@@ -338,26 +338,29 @@ export default function StatisticsPage() {
                                                 const showLabel = index % labelSpacing === 0 || index === (data.timeSeries || []).length - 1;
                                                 const maxWidthClass =
                                                     timePeriod === 'week'
-                                                        ? 'max-w-[120px] sm:max-w-[140px]'
+                                                        ? 'sm:max-w-[140px]'
                                                         : timePeriod === 'year'
-                                                        ? 'max-w-[100px] sm:max-w-[120px]'
-                                                        : 'max-w-[120px] sm:max-w-[140px]';
+                                                        ? 'sm:max-w-[120px]'
+                                                        : 'sm:max-w-[140px]';
                                                 return (
-                                                    <div key={index} className={`flex-1 ${maxWidthClass} flex flex-col items-center h-full relative group`}>
-                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                    <div
+                                                        key={index}
+                                                        className={`flex-1 min-w-0 ${maxWidthClass} flex flex-col items-center h-full relative group`}
+                                                    >
+                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                             <div
-                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                 style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
                                                             >
                                                                 {height > 20 && (
-                                                                    <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
                                                                         {item.visitors}
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </div>
                                                         {showLabel && (
-                                                            <div className='text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                            <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
                                                                 {translateTimeLabel(item.label)}
                                                             </div>
                                                         )}
@@ -381,9 +384,9 @@ export default function StatisticsPage() {
                             {/* Device and Traffic Sources - Side by Side */}
                             <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6 items-start'>
                                 {/* Device Breakdown */}
-                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-visible'>
+                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
                                     <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>Посетители по устройства</h2>
-                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-3 sm:gap-6 px-2 sm:px-4 pb-2 overflow-visible'>
+                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
                                         {data.deviceBreakdown.length > 0 ? (
                                             data.deviceBreakdown.map((device, index) => {
                                                 const maxCount = Math.max(...data.deviceBreakdown.map((d) => d.count), 1);
@@ -391,24 +394,24 @@ export default function StatisticsPage() {
                                                 return (
                                                     <div
                                                         key={index}
-                                                        className='flex-1 max-w-[120px] sm:max-w-[140px] flex flex-col items-center h-full relative group'
+                                                        className='flex-1 min-w-0 sm:max-w-[140px] flex flex-col items-center h-full relative group'
                                                     >
-                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                             <div
-                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-visible'
+                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                 style={{ height: `${height}%`, minHeight: device.count > 0 ? '10px' : '0' }}
                                                             >
                                                                 {height > 20 && (
-                                                                    <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
                                                                         {device.percentage}%
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                        <div className='text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                        <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
                                                             {translateDevice(device.device)}
                                                         </div>
-                                                        <div className='text-xs sm:text-sm font-semibold text-[#005baa] mt-1'>
+                                                        <div className='text-[9px] sm:text-sm font-semibold text-[#005baa] mt-0.5 sm:mt-1'>
                                                             {device.count.toLocaleString()}
                                                         </div>
                                                         {/* Tooltip for small bars */}
@@ -426,7 +429,7 @@ export default function StatisticsPage() {
                                 </div>
 
                                 {/* Traffic Sources */}
-                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-visible'>
+                                <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
                                     <div className='flex items-center gap-2 mb-2 sm:mb-3'>
                                         <h2 className='text-base sm:text-lg font-bold text-gray-900'>Източници на трафик</h2>
                                         <div className='group relative z-50'>
@@ -460,7 +463,7 @@ export default function StatisticsPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-3 sm:gap-6 px-2 sm:px-4 pb-2'>
+                                    <div className='h-64 sm:h-72 flex items-end justify-center gap-1 sm:gap-6 px-1 sm:px-4 pb-2 overflow-hidden'>
                                         {data.trafficSources && data.trafficSources.length > 0 ? (
                                             data.trafficSources.map((source, index) => {
                                                 const maxCount = Math.max(...data.trafficSources!.map((s) => s.count), 1);
@@ -468,24 +471,24 @@ export default function StatisticsPage() {
                                                 return (
                                                     <div
                                                         key={index}
-                                                        className='flex-1 max-w-[100px] sm:max-w-[120px] flex flex-col items-center h-full relative group'
+                                                        className='flex-1 min-w-0 sm:max-w-[120px] flex flex-col items-center h-full relative group'
                                                     >
-                                                        <div className='w-full flex flex-col items-center justify-end h-full'>
+                                                        <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
                                                             <div
-                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative'
+                                                                className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                 style={{ height: `${height}%`, minHeight: source.count > 0 ? '10px' : '0' }}
                                                             >
                                                                 {height > 20 && (
-                                                                    <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
+                                                                    <span className='text-white text-[10px] sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
                                                                         {source.percentage}%
                                                                     </span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                        <div className='text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
+                                                        <div className='text-[9px] sm:text-sm text-gray-600 mt-1 sm:mt-2 text-center font-medium truncate w-full sm:whitespace-nowrap'>
                                                             {translateSource(source.source)}
                                                         </div>
-                                                        <div className='text-xs sm:text-sm font-semibold text-[#005baa] mt-1'>
+                                                        <div className='text-[9px] sm:text-sm font-semibold text-[#005baa] mt-0.5 sm:mt-1'>
                                                             {source.count.toLocaleString()}
                                                         </div>
                                                         {/* Tooltip for small bars */}
