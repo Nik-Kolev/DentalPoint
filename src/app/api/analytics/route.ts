@@ -1,17 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
+import type { TimePeriod, AnalyticsData } from '@/lib/analytics';
+import { getDateRange } from '@/lib/analytics';
+
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+type CachedEntry = {
+    timestamp: number;
+    data: AnalyticsData;
+};
+
+const analyticsCache: Partial<Record<TimePeriod, CachedEntry>> = {};
 
 export async function POST(request: NextRequest) {
     try {
-        const { period } = await request.json();
+        const { period } = (await request.json()) as { period: TimePeriod };
 
-        // Validate period
-        const validPeriods = ['day', 'week', 'month', 'year'];
+        const validPeriods: TimePeriod[] = ['day', 'week', 'month', 'year', 'alltime'];
         if (!validPeriods.includes(period)) {
             return NextResponse.json({ error: 'Invalid period' }, { status: 400 });
         }
 
-        // Check for required environment variables
+        const cached = analyticsCache[period];
+        const now = Date.now();
+        if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+            return NextResponse.json(cached.data);
+        }
+
         const propertyId = process.env.GA4_PROPERTY_ID;
         const privateKey = process.env.GA4_PRIVATE_KEY?.replace(/\\n/g, '\n');
         const clientEmail = process.env.GA4_CLIENT_EMAIL;
@@ -21,7 +36,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Analytics not configured' }, { status: 500 });
         }
 
-        // Create JWT client
         const jwtClient = new google.auth.JWT({
             email: clientEmail,
             key: privateKey,
@@ -30,51 +44,22 @@ export async function POST(request: NextRequest) {
 
         await jwtClient.authorize();
 
-        // Create analytics data client with auth
-        const analyticsData = google.analyticsdata({
+        const analyticsDataClient = google.analyticsdata({
             version: 'v1beta',
             auth: jwtClient,
         });
 
-        // Calculate date range
-        const today = new Date();
-        const endDate = today.toISOString().split('T')[0];
-        let startDate: string;
+        const { startDate, endDate } = getDateRange(period);
 
-        switch (period) {
-            case 'day':
-                startDate = endDate;
-                break;
-            case 'week':
-                const weekAgo = new Date(today);
-                weekAgo.setDate(today.getDate() - 7);
-                startDate = weekAgo.toISOString().split('T')[0];
-                break;
-            case 'month':
-                const monthAgo = new Date(today);
-                monthAgo.setDate(today.getDate() - 30);
-                startDate = monthAgo.toISOString().split('T')[0];
-                break;
-            case 'year':
-                const yearAgo = new Date(today);
-                yearAgo.setFullYear(today.getFullYear() - 1);
-                startDate = yearAgo.toISOString().split('T')[0];
-                break;
-            default:
-                startDate = endDate;
-        }
-
-        // Fetch total visitors and sessions
-        const [visitorsResponse, deviceResponse, sourceResponse] = await Promise.all([
-            analyticsData.properties.runReport({
+        const [visitorsResponse, deviceResponse, sourceResponse, timeSeriesResponse] = await Promise.all([
+            analyticsDataClient.properties.runReport({
                 property: `properties/${propertyId}`,
                 requestBody: {
                     dateRanges: [{ startDate, endDate }],
                     metrics: [{ name: 'totalUsers' }, { name: 'screenPageViews' }, { name: 'sessions' }],
                 },
             }),
-            // Device breakdown
-            analyticsData.properties.runReport({
+            analyticsDataClient.properties.runReport({
                 property: `properties/${propertyId}`,
                 requestBody: {
                     dateRanges: [{ startDate, endDate }],
@@ -82,8 +67,7 @@ export async function POST(request: NextRequest) {
                     metrics: [{ name: 'totalUsers' }],
                 },
             }),
-            // Traffic sources
-            analyticsData.properties.runReport({
+            analyticsDataClient.properties.runReport({
                 property: `properties/${propertyId}`,
                 requestBody: {
                     dateRanges: [{ startDate, endDate }],
@@ -93,21 +77,28 @@ export async function POST(request: NextRequest) {
                     limit: '10',
                 },
             }),
+            analyticsDataClient.properties.runReport({
+                property: `properties/${propertyId}`,
+                requestBody: {
+                    dateRanges: [{ startDate, endDate }],
+                    dimensions: [{ name: period === 'alltime' ? 'year' : period === 'year' ? 'month' : 'date' }],
+                    metrics: [{ name: 'totalUsers' }],
+                    orderBys: [{ metric: { metricName: 'totalUsers' }, desc: false }],
+                },
+            }),
         ]);
 
-        // Extract data
-        const totalVisitors = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[0]?.value || '0');
-        const totalPageViews = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[1]?.value || '0');
-        const totalSessions = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[2]?.value || '0');
+        const totalVisitors = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[0]?.value || '0', 10);
+        const totalPageViews = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[1]?.value || '0', 10);
+        const totalSessions = parseInt(visitorsResponse.data.rows?.[0]?.metricValues?.[2]?.value || '0', 10);
 
-        // Process device breakdown
         const deviceBreakdown: Array<{ device: string; count: number; percentage: number }> = [];
         const deviceRows = deviceResponse.data.rows || [];
-        const totalDeviceUsers = deviceRows.reduce((sum, row) => sum + parseInt(row.metricValues?.[0]?.value || '0'), 0);
+        const totalDeviceUsers = deviceRows.reduce((sum, row) => sum + parseInt(row.metricValues?.[0]?.value || '0', 10), 0);
 
         deviceRows.forEach((row) => {
             const device = row.dimensionValues?.[0]?.value || 'Unknown';
-            const count = parseInt(row.metricValues?.[0]?.value || '0');
+            const count = parseInt(row.metricValues?.[0]?.value || '0', 10);
             const percentage = totalDeviceUsers > 0 ? (count / totalDeviceUsers) * 100 : 0;
             deviceBreakdown.push({
                 device: device.charAt(0).toUpperCase() + device.slice(1).toLowerCase(),
@@ -116,17 +107,15 @@ export async function POST(request: NextRequest) {
             });
         });
 
-        // Process traffic sources
         const trafficSources: Array<{ source: string; count: number; percentage: number }> = [];
         const sourceRows = sourceResponse.data.rows || [];
-        const totalSourceUsers = sourceRows.reduce((sum, row) => sum + parseInt(row.metricValues?.[0]?.value || '0'), 0);
+        const totalSourceUsers = sourceRows.reduce((sum, row) => sum + parseInt(row.metricValues?.[0]?.value || '0', 10), 0);
 
         sourceRows.forEach((row) => {
             const source = row.dimensionValues?.[0]?.value || 'Unknown';
-            const count = parseInt(row.metricValues?.[0]?.value || '0');
+            const count = parseInt(row.metricValues?.[0]?.value || '0', 10);
             const percentage = totalSourceUsers > 0 ? (count / totalSourceUsers) * 100 : 0;
 
-            // Normalize source names
             let normalizedSource = source;
             if (source === '(direct)') {
                 normalizedSource = 'Direct';
@@ -138,8 +127,6 @@ export async function POST(request: NextRequest) {
                 normalizedSource = 'Instagram';
             } else if (source.toLowerCase().includes('twitter') || source.toLowerCase().includes('x.com')) {
                 normalizedSource = 'Twitter/X';
-            } else {
-                normalizedSource = source;
             }
 
             trafficSources.push({
@@ -149,17 +136,62 @@ export async function POST(request: NextRequest) {
             });
         });
 
-        return NextResponse.json({
+        const timeSeriesRows = timeSeriesResponse.data.rows || [];
+        const timeSeries: NonNullable<AnalyticsData['timeSeries']> = timeSeriesRows.map((row) => {
+            const raw = row.dimensionValues?.[0]?.value || '';
+            const value = parseInt(row.metricValues?.[0]?.value || '0', 10);
+
+            let label = raw;
+
+            if (period === 'week' || period === 'month' || period === 'day') {
+                if (/^\d{8}$/.test(raw)) {
+                    const year = parseInt(raw.slice(0, 4), 10);
+                    const month = parseInt(raw.slice(4, 6), 10) - 1;
+                    const day = parseInt(raw.slice(6, 8), 10);
+                    const date = new Date(year, month, day);
+
+                    if (period === 'week') {
+                        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                        label = dayNames[date.getDay()];
+                    } else {
+                        const dd = String(day).padStart(2, '0');
+                        const mm = String(month + 1).padStart(2, '0');
+                        label = `${dd}.${mm}`;
+                    }
+                }
+            } else if (period === 'year') {
+                if (/^\d{6}$/.test(raw)) {
+                    const monthIndex = parseInt(raw.slice(4, 6), 10) - 1;
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    label = months[Math.max(0, Math.min(11, monthIndex))];
+                }
+            } else if (period === 'alltime') {
+                if (/^\d{4}$/.test(raw)) {
+                    label = raw;
+                }
+            }
+
+            return { label, visitors: value };
+        });
+
+        const responseData: AnalyticsData = {
             totalVisitors,
             totalPageViews,
             uniqueVisitors: totalVisitors,
             totalSessions,
+            timeSeries,
             deviceBreakdown,
             trafficSources,
-        });
+        };
+
+        analyticsCache[period] = {
+            timestamp: now,
+            data: responseData,
+        };
+
+        return NextResponse.json(responseData);
     } catch (error: any) {
         console.error('Analytics API error:', error);
-        // Provide more helpful error messages
         let errorMessage = 'Failed to fetch analytics data';
         if (error.message?.includes('has not been used') || error.message?.includes('is disabled')) {
             errorMessage = 'Google Analytics Data API is not enabled. Please enable it in Google Cloud Console.';

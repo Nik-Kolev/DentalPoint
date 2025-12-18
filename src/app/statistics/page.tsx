@@ -4,7 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { fetchAnalyticsData, type AnalyticsData, type TimePeriod } from '@/lib/analytics';
+import type { AnalyticsData, TimePeriod } from '@/lib/analytics';
 
 export default function StatisticsPage() {
     const { data: session } = useSession();
@@ -354,7 +354,7 @@ export default function StatisticsPage() {
                                         </div>
                                     ) : null
                                 ) : (
-                                    <p className='text-gray-500 text-sm'>Няма налични данни за времеви ред</p>
+                                    <p className='text-gray-500 text-sm'>Няма налични данни за конкретния времеви период</p>
                                 )}
                             </div>
 
