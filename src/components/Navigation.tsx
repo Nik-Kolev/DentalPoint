@@ -67,22 +67,22 @@ export default function Navigation({ locale, translations }: NavigationProps) {
         <>
             {/* Desktop Navigation */}
             <div className='hidden lg:flex space-x-6 xl:space-x-8'>
-                <Link href={`/${locale}`} className={linkClass('')}>
+                <Link href={`/${locale}`} className={linkClass('')} prefetch={true}>
                     {translations.home}
                 </Link>
-                <Link href={`/${locale}/contact`} className={linkClass('contact')}>
+                <Link href={`/${locale}/contact`} className={linkClass('contact')} prefetch={true}>
                     {translations.contact}
                 </Link>
-                <Link href={`/${locale}/team`} className={linkClass('team')}>
+                <Link href={`/${locale}/team`} className={linkClass('team')} prefetch={true}>
                     {translations.team}
                 </Link>
-                <Link href={`/${locale}/gallery`} className={linkClass('gallery')}>
+                <Link href={`/${locale}/gallery`} className={linkClass('gallery')} prefetch={true}>
                     {translations.gallery}
                 </Link>
-                <Link href={`/${locale}/licenses`} className={linkClass('licenses')}>
+                <Link href={`/${locale}/licenses`} className={linkClass('licenses')} prefetch={true}>
                     {translations.licenses}
                 </Link>
-                <Link href={`/${locale}/reviews`} className={linkClass('reviews')}>
+                <Link href={`/${locale}/reviews`} className={linkClass('reviews')} prefetch={true}>
                     {translations.reviews}
                 </Link>
             </div>
@@ -123,22 +123,22 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                 }`}
             >
                 <div className='py-2'>
-                    <Link href={`/${locale}`} className={mobileLinkClass('')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}`} className={mobileLinkClass('')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.home}
                     </Link>
-                    <Link href={`/${locale}/contact`} className={mobileLinkClass('contact')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}/contact`} className={mobileLinkClass('contact')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.contact}
                     </Link>
-                    <Link href={`/${locale}/team`} className={mobileLinkClass('team')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}/team`} className={mobileLinkClass('team')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.team}
                     </Link>
-                    <Link href={`/${locale}/gallery`} className={mobileLinkClass('gallery')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}/gallery`} className={mobileLinkClass('gallery')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.gallery}
                     </Link>
-                    <Link href={`/${locale}/licenses`} className={mobileLinkClass('licenses')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}/licenses`} className={mobileLinkClass('licenses')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.licenses}
                     </Link>
-                    <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} onClick={closeMobileMenu}>
+                    <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} onClick={closeMobileMenu} prefetch={true}>
                         {translations.reviews}
                     </Link>
 

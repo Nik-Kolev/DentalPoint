@@ -148,28 +148,36 @@ function StatisticsSection({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (hasAnimatedRef.current) return;
 
+        const currentElement = sectionRef.current;
+        if (!currentElement) return;
+
+        // Check if already visible on mount (faster)
+        const rect = currentElement.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+        if (isVisible && !hasAnimatedRef.current) {
+            hasAnimatedRef.current = true;
+            setStartTime(performance.now());
+            return;
+        }
+
+        // Otherwise use IntersectionObserver with lower threshold for faster trigger
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !hasAnimatedRef.current) {
                         hasAnimatedRef.current = true;
-                        // Start all animations at the same time
                         setStartTime(performance.now());
                     }
                 });
             },
-            { threshold: 0.5 }
+            { threshold: 0.1, rootMargin: '50px' } // Lower threshold, start earlier
         );
 
-        const currentElement = sectionRef.current;
-        if (currentElement) {
-            observer.observe(currentElement);
-        }
+        observer.observe(currentElement);
 
         return () => {
-            if (currentElement) {
-                observer.unobserve(currentElement);
-            }
+            observer.unobserve(currentElement);
         };
     }, []);
 
