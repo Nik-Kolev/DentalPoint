@@ -25,7 +25,7 @@ export default function Contact({ params }: { params: { locale: string } }) {
                     <p className='mt-4 text-xl text-gray-600'>{t('contact', 'subtitle')}</p>
                 </div>
 
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12'>
                     {/* Contact Information */}
                     <div className='bg-white rounded-lg shadow-lg p-8'>
                         <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('contact', 'infoTitle')}</h2>
@@ -111,7 +111,8 @@ export default function Contact({ params }: { params: { locale: string } }) {
                             <iframe
                                 src={`https://www.google.com/maps?q=${latitude},${longitude}&z=17&output=embed`}
                                 width='100%'
-                                height='480'
+                                height='400'
+                                className='h-[300px] sm:h-[400px]'
                                 style={{ border: 0 }}
                                 allowFullScreen
                                 loading='lazy'
