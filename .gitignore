@@ -27,6 +27,13 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.production
+
+# documentation files (sensitive info)
+GA_CREDENTIALS_README.md
+GA_SETUP_GUIDE.md
+DENTALPOINT_DEPLOYMENT_GUIDE.md
+DEPLOYMENT_QUICK_REFERENCE.md
 
 # vercel
 .vercel
