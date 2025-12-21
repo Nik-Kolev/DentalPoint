@@ -38,19 +38,6 @@ export default function Home({ params }: { params: { locale: string } }) {
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
     const [galleryVisible, setGalleryVisible] = useState(false);
 
-    // Preload first gallery image for instant display
-    useEffect(() => {
-        const preloadImages = () => {
-            const link = document.createElement('link');
-            link.rel = 'preload';
-            link.as = 'image';
-            link.href = getImageUrl(`/Images/front/${clinicImages[0]}`);
-            link.setAttribute('fetchpriority', 'high');
-            document.head.appendChild(link);
-        };
-        preloadImages();
-    }, []);
-
     // Lazy load gallery when user starts scrolling
     useEffect(() => {
         const handleScroll = () => {
@@ -82,9 +69,11 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={70}
-                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
+                            quality={60}
+                            sizes='(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px'
                             fetchPriority='high'
+                            placeholder='blur'
+                            blurDataURL='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
                         />
                     </div>
                 </div>
