@@ -288,7 +288,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                             onImageClick={(element) =>
                                 setSelectedImage({
                                     src: getImageUrl(certificate.image),
-                                    alt: certificate.title,
+                                    alt: certificate.title || certificate.shortText || 'Certificate',
                                     element,
                                     year: certificate.year,
                                     title: certificate.title,
