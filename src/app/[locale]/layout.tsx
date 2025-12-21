@@ -124,6 +124,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                             width={40}
                             height={40}
                             priority
+                            quality={75}
                             sizes='(max-width: 768px) 48px, 40px'
                             className='w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
                         />
