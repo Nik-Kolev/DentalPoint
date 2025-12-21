@@ -30,13 +30,8 @@ yarn-error.log*
 .env.production
 
 # documentation files (sensitive info)
-GA_CREDENTIALS_README.md
-GA_SETUP_GUIDE.md
+GA_SETUP_AND_CREDENTIALS.md
 DENTALPOINT_DEPLOYMENT_GUIDE.md
-DEPLOYMENT_QUICK_REFERENCE.md
-OPTIMIZE_IMAGES.md
-PERFORMANCE_TESTING.md
-PERFORMANCE_FIXES.md
 
 # vercel
 .vercel
