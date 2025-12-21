@@ -126,12 +126,12 @@ export default function Home({ params }: { params: { locale: string } }) {
                                 <Image
                                     src={getImageUrl(`/Images/front/${imageName}`)}
                                     alt={`Clinic image ${i + 1}`}
-                                    width={300}
+                                    width={400}
                                     height={300}
                                     quality={70}
                                     priority={i < 2}
                                     loading={i < 2 ? 'eager' : 'lazy'}
-                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
+                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 400px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
                             </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslation } from '../../../lib/useTranslation';
+import ContactMap from './ContactMap';
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
     const locale = params?.locale || 'bg';
@@ -13,9 +14,6 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 
 export default function Contact({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
-
-    const latitude = 43.221575025798415;
-    const longitude = 27.91784662746136;
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
@@ -107,19 +105,7 @@ export default function Contact({ params }: { params: { locale: string } }) {
                     {/* Google Maps */}
                     <div className='bg-white rounded-lg shadow-lg p-8'>
                         <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('contact', 'locationTitle')}</h2>
-                        <div className='rounded-lg overflow-hidden shadow-md'>
-                            <iframe
-                                src={`https://www.google.com/maps?q=${latitude},${longitude}&z=17&output=embed`}
-                                width='100%'
-                                height='400'
-                                className='h-[300px] sm:h-[400px]'
-                                style={{ border: 0 }}
-                                allowFullScreen
-                                loading='eager'
-                                referrerPolicy='no-referrer-when-downgrade'
-                                title='Dental Point Location'
-                            />
-                        </div>
+                        <ContactMap />
                         <div className='mt-8 text-center'>
                             <a
                                 href='https://www.google.com/maps/place/Dental+Point+-+%D0%B4-%D1%80+%D0%AF%D0%B2%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2,+%D0%B4-%D1%80+%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0/@43.221575,27.917847,17z/data=!4m6!3m5!1s0x40a455d3a111b459:0xe737faf0914586ae!8m2!3d43.2215545!4d27.917852!16s%2Fg%2F11l6zqphst?entry=ttu&g_ep=EgoyMDI1MDcxNS4xIKXMDSoASAFQAw%3D%3D'
