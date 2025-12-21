@@ -26,6 +26,18 @@ export default function Home({ params }: { params: { locale: string } }) {
     }, []);
 
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
+    const [galleryVisible, setGalleryVisible] = useState(false);
+
+    // Lazy load gallery when user starts scrolling
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!galleryVisible && window.scrollY > 200) {
+                setGalleryVisible(true);
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [galleryVisible]);
 
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
@@ -94,7 +106,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     width={300}
                                     height={300}
                                     quality={85}
-                                    priority={i < 3}
+                                    loading={galleryVisible ? 'lazy' : 'eager'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
@@ -112,6 +124,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
                     triggerElement={selectedImage.element}
+                    locale={params.locale}
                 />
             )}
         </div>

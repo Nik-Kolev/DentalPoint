@@ -115,7 +115,7 @@ export default function Contact({ params }: { params: { locale: string } }) {
                                 className='h-[300px] sm:h-[400px]'
                                 style={{ border: 0 }}
                                 allowFullScreen
-                                loading='lazy'
+                                loading='eager'
                                 referrerPolicy='no-referrer-when-downgrade'
                                 title='Dental Point Location'
                             />
