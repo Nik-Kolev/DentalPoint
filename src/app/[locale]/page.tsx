@@ -1,14 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
+import StaticCTA from '@/components/StaticCTA';
+import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
-
-// Lazy load non-critical components to reduce initial bundle size
-const StaticCTA = lazy(() => import('@/components/StaticCTA'));
-const ImageLightbox = lazy(() => import('@/components/ImageLightbox'));
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
@@ -106,9 +104,7 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* CTA Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <Suspense fallback={<div className='h-32' />}>
-                        <StaticCTA locale={params.locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
-                    </Suspense>
+                    <StaticCTA locale={params.locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
                 </div>
             </section>
 
@@ -146,16 +142,14 @@ export default function Home({ params }: { params: { locale: string } }) {
 
             {/* Lightbox - Only on desktop */}
             {selectedImage && !isMobile && (
-                <Suspense fallback={null}>
-                    <ImageLightbox
-                        isOpen={!!selectedImage}
-                        onClose={() => setSelectedImage(null)}
-                        imageSrc={selectedImage.src}
-                        alt={selectedImage.alt}
-                        triggerElement={selectedImage.element}
-                        locale={params.locale}
-                    />
-                </Suspense>
+                <ImageLightbox
+                    isOpen={!!selectedImage}
+                    onClose={() => setSelectedImage(null)}
+                    imageSrc={selectedImage.src}
+                    alt={selectedImage.alt}
+                    triggerElement={selectedImage.element}
+                    locale={params.locale}
+                />
             )}
         </div>
     );

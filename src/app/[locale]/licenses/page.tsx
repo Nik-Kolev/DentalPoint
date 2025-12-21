@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import { getTranslation } from '../../../lib/useTranslation';
+import StaticCTA from '@/components/StaticCTA';
 import CertificateCard from './CertificateCard';
+import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
-
-// Lazy load non-critical components
-const StaticCTA = lazy(() => import('@/components/StaticCTA'));
-const ImageLightbox = lazy(() => import('@/components/ImageLightbox'));
 
 // Certificate data array - add your certificate data here
 // Each object should have: year, title, shortText, and image
@@ -337,27 +335,23 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
                 {/* CTA Section */}
                 <div className='pt-8 sm:pt-12'>
-                    <Suspense fallback={<div className='h-32' />}>
-                        <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
-                    </Suspense>
+                    <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
                 </div>
             </div>
 
             {/* Lightbox - rendered outside container for proper positioning - only on desktop */}
             {selectedImage && !isMobile && (
-                <Suspense fallback={null}>
-                    <ImageLightbox
-                        isOpen={!!selectedImage}
-                        onClose={() => setSelectedImage(null)}
-                        imageSrc={selectedImage.src}
-                        alt={selectedImage.alt}
-                        triggerElement={selectedImage.element}
-                        year={selectedImage.year}
-                        title={selectedImage.title}
-                        shortText={selectedImage.shortText}
-                        locale={params.locale}
-                    />
-                </Suspense>
+                <ImageLightbox
+                    isOpen={!!selectedImage}
+                    onClose={() => setSelectedImage(null)}
+                    imageSrc={selectedImage.src}
+                    alt={selectedImage.alt}
+                    triggerElement={selectedImage.element}
+                    year={selectedImage.year}
+                    title={selectedImage.title}
+                    shortText={selectedImage.shortText}
+                    locale={params.locale}
+                />
             )}
         </div>
     );
