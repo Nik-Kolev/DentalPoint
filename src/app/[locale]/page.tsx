@@ -41,7 +41,16 @@ export default function Home({ params }: { params: { locale: string } }) {
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl'>
-                        <Image src={getImageUrl('/Images/front/clinic.jpg')} alt='Dental Point Clinic' fill className='object-cover' priority quality={90} />
+                        <Image
+                            src={getImageUrl('/Images/front/clinic.jpg')}
+                            alt='Dental Point Clinic'
+                            fill
+                            className='object-cover'
+                            priority
+                            quality={90}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
+                            fetchPriority='high'
+                        />
                     </div>
                 </div>
             </section>
@@ -85,7 +94,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     width={300}
                                     height={300}
                                     quality={85}
-                                    loading={i < 3 ? 'eager' : 'lazy'}
+                                    priority={i < 3}
+                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
                             </div>
