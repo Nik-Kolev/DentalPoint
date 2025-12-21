@@ -9,6 +9,14 @@ const nextConfig = {
     },
     compress: true,
     poweredByHeader: false,
+    // Skip linting during production builds (faster, lint locally/CI instead)
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+    // Skip type checking during production builds (faster, check locally/CI instead)
+    typescript: {
+        ignoreBuildErrors: false, // Keep false to catch real errors, but can set true if needed
+    },
     async headers() {
         return [
             {
