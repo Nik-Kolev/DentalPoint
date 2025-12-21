@@ -45,7 +45,7 @@ export default function CertificateCard({ title, description, year, issuer, imag
                     alt={title || description || 'Certificate'}
                     width={400}
                     height={400}
-                    quality={75}
+                    quality={50}
                     loading='lazy'
                     className='max-w-full max-h-full w-auto h-auto object-contain'
                 />

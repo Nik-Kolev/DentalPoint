@@ -34,7 +34,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     width={400}
                                     height={500}
                                     priority
-                                    quality={75}
+                                    quality={50}
                                     sizes='(max-width: 640px) 100vw, 400px'
                                     fetchPriority='high'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
@@ -56,7 +56,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     width={400}
                                     height={500}
                                     priority
-                                    quality={75}
+                                    quality={50}
                                     sizes='(max-width: 1024px) 50vw, 400px'
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
@@ -86,7 +86,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
-                                    quality={75}
+                                    quality={50}
                                     loading='lazy'
                                     sizes='(max-width: 640px) 100vw, 400px'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
@@ -107,7 +107,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
-                                    quality={75}
+                                    quality={50}
                                     loading='lazy'
                                     sizes='(max-width: 1024px) 50vw, 400px'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'

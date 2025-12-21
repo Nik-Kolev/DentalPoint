@@ -6,6 +6,9 @@ const nextConfig = {
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
         minimumCacheTTL: 31536000,
         unoptimized: false,
+        // Aggressive compression for faster loading
+        dangerouslyAllowSVG: false,
+        contentDispositionType: 'inline',
     },
     compress: true,
     poweredByHeader: false,
