@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { getTranslation } from '@/lib/useTranslation';
 
 interface ImageLightboxProps {
     isOpen: boolean;
@@ -11,9 +12,11 @@ interface ImageLightboxProps {
     year?: string;
     title?: string;
     shortText?: string;
+    locale?: string;
 }
 
-export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerElement, year, title, shortText }: ImageLightboxProps) {
+export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerElement, year, title, shortText, locale = 'bg' }: ImageLightboxProps) {
+    const t = getTranslation(locale);
     const containerRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -156,7 +159,12 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                         }}
                         loading='eager'
                     />
-                    {!imageLoaded && <div className='w-full h-full flex items-center justify-center text-gray-400'>Loading...</div>}
+                    {!imageLoaded && (
+                        <div className='w-full h-full flex flex-col items-center justify-center text-gray-400'>
+                            <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#005baa] mb-4'></div>
+                            <p className='text-[#005baa]'>{t('gallery', 'loading')}</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Title and text - centered at bottom */}

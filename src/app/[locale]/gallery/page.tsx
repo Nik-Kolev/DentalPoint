@@ -128,7 +128,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         width={300}
                                         height={300}
                                         quality={85}
-                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        priority={i < 4}
+                                        sizes='(max-width: 640px) 100vw, 50vw'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
@@ -152,7 +153,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         width={300}
                                         height={300}
                                         quality={85}
-                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        priority={i < 4}
+                                        sizes='(max-width: 640px) 100vw, 50vw'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
@@ -206,6 +208,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                         imageSrc={selectedImage.src}
                         alt={selectedImage.alt}
                         triggerElement={selectedImage.element}
+                        locale={params.locale}
                     />
                 )}
             </div>

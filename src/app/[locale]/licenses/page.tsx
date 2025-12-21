@@ -104,26 +104,36 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
         if (startTime === null) return;
 
         let animationFrameId: number;
+        let lastFrameTime = startTime;
         const startValue = 0;
 
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-            const calculated = startValue + (target - startValue) * easeOutQuart;
+            // Use smoother easing function
+            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+            const calculated = startValue + (target - startValue) * easeOutCubic;
 
-            let current = Math.round(calculated);
+            // Only update if significant change (reduces unnecessary renders)
+            const deltaTime = currentTime - lastFrameTime;
+            if (deltaTime >= 16) {
+                // ~60fps
+                let current = Math.round(calculated);
 
-            if (calculated >= target - 0.5) {
-                current = target;
+                // Ensure we don't skip the final value
+                if (calculated >= target - 0.5) {
+                    current = target;
+                }
+
+                setCount(current);
+                lastFrameTime = currentTime;
             }
-
-            setCount(current);
 
             if (progress < 1) {
                 animationFrameId = requestAnimationFrame(animate);
             } else {
+                // Ensure final value is set
                 setCount(target);
             }
         };
@@ -336,6 +346,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                     year={selectedImage.year}
                     title={selectedImage.title}
                     shortText={selectedImage.shortText}
+                    locale={params.locale}
                 />
             )}
         </div>
