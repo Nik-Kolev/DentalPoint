@@ -107,7 +107,6 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
             };
 
             img.onerror = () => {
-                console.error('Failed to load image:', imageSrc);
                 setImageLoaded(false);
             };
 

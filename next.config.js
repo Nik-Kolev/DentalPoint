@@ -10,6 +10,10 @@ const nextConfig = {
     compress: true,
     poweredByHeader: false,
     productionBrowserSourceMaps: false, // Disable source maps in production for smaller bundle
+    swcMinify: true, // Use SWC minifier for better performance
+    experimental: {
+        optimizePackageImports: ['@next-languages/flags', 'react-world-flags'], // Tree-shake unused exports
+    },
     // Skip linting during production builds (faster, lint locally/CI instead)
     eslint: {
         ignoreDuringBuilds: true,
