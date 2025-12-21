@@ -5,6 +5,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
 import Image from 'next/image';
 import { getTranslation } from '../../lib/useTranslation';
+import { getImageUrl } from '@/lib/imageVersion';
 import BackToTop from '@/components/BackToTop';
 import FloatingCTA from '@/components/FloatingCTA';
 import StatisticsLink from '@/components/StatisticsLink';
@@ -117,10 +118,11 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                     {/* Logo and Clinic Name - Centered on mobile */}
                     <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0'>
                         <Image
-                            src='/Images/logo/header_logo.jpg'
+                            src={getImageUrl('/Images/logo/header_logo.jpg')}
                             alt='Dental Point Logo'
                             width={40}
                             height={40}
+                            priority
                             className='w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
                             unoptimized
                         />

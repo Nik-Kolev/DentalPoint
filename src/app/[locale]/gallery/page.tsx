@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getImageUrl } from '@/lib/imageVersion';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import ImageLightbox from '@/components/ImageLightbox';
@@ -122,11 +123,12 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     }}
                                 >
                                     <Image
-                                        src={item.before}
+                                        src={getImageUrl(item.before)}
                                         alt={`Before - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
                                         quality={85}
+                                        loading={i < 2 ? 'eager' : 'lazy'}
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
@@ -145,11 +147,12 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     }}
                                 >
                                     <Image
-                                        src={item.after}
+                                        src={getImageUrl(item.after)}
                                         alt={`After - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
                                         quality={85}
+                                        loading={i < 2 ? 'eager' : 'lazy'}
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>

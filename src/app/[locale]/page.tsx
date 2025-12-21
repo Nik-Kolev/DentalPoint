@@ -6,6 +6,7 @@ import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import ImageLightbox from '@/components/ImageLightbox';
+import { getImageUrl } from '@/lib/imageVersion';
 
 const playfair = Playfair_Display({ subsets: ['latin'] });
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['600', '700'] });
@@ -40,7 +41,7 @@ export default function Home({ params }: { params: { locale: string } }) {
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl'>
-                        <Image src='/Images/front/clinic.jpg' alt='Dental Point Clinic' fill className='object-cover' priority quality={90} unoptimized />
+                        <Image src={getImageUrl('/Images/front/clinic.jpg')} alt='Dental Point Clinic' fill className='object-cover' priority quality={90} />
                     </div>
                 </div>
             </section>
@@ -79,11 +80,12 @@ export default function Home({ params }: { params: { locale: string } }) {
                                 }}
                             >
                                 <Image
-                                    src={`/Images/front/${imageName}`}
+                                    src={getImageUrl(`/Images/front/${imageName}`)}
                                     alt={`Clinic image ${i + 1}`}
                                     width={300}
                                     height={300}
                                     quality={85}
+                                    loading={i < 3 ? 'eager' : 'lazy'}
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
                             </div>

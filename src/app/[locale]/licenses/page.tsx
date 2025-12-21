@@ -6,6 +6,7 @@ import { getTranslation } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import CertificateCard from './CertificateCard';
 import ImageLightbox from '@/components/ImageLightbox';
+import { getImageUrl } from '@/lib/imageVersion';
 
 // Certificate data array - add your certificate data here
 // Each object should have: year, title, shortText, and image
@@ -281,10 +282,10 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                             description={certificate.shortText}
                             year={certificate.year}
                             issuer=''
-                            imageUrl={certificate.image}
+                            imageUrl={getImageUrl(certificate.image)}
                             onImageClick={(element) =>
                                 setSelectedImage({
-                                    src: certificate.image,
+                                    src: getImageUrl(certificate.image),
                                     alt: certificate.title,
                                     element,
                                     year: certificate.year,
