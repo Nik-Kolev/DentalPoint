@@ -9,6 +9,7 @@ const nextConfig = {
     },
     compress: true,
     poweredByHeader: false,
+    productionBrowserSourceMaps: false, // Disable source maps in production for smaller bundle
     // Skip linting during production builds (faster, lint locally/CI instead)
     eslint: {
         ignoreDuringBuilds: true,

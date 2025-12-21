@@ -150,7 +150,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                     <img
                         ref={imgRef}
                         src={imageSrc}
-                        alt={alt}
+                        alt={alt || 'Image'}
                         className='w-auto h-auto object-contain'
                         style={{
                             display: imageLoaded ? 'block' : 'none',

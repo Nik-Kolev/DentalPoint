@@ -18,7 +18,8 @@ export async function generateViewport({ params }: { params: { locale: string } 
     return {
         width: 'device-width',
         initialScale: 1,
-        maximumScale: 1,
+        maximumScale: 5,
+        userScalable: true,
         themeColor: '#009fe3',
         colorScheme: 'light',
     };
