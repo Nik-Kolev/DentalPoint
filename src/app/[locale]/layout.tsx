@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
             address: false,
             telephone: false,
         },
-        metadataBase: new URL('https://dental-point.vercel.app'),
+        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38'),
         alternates: {
             canonical: `/${locale}`,
             languages: {
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
         openGraph: {
             title: t('metadata', 'ogTitle'),
             description: t('metadata', 'ogDescription'),
-            url: `https://dental-point.vercel.app/${locale}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38'}/${locale}`,
             siteName: 'Dental Point',
             images: [
                 {

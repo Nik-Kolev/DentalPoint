@@ -16,6 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {process.env.NEXT_PUBLIC_IMAGE_VERSION && (
                     <>
                         <link rel='preload' as='image' href={`/Images/logo/header_logo.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                        <link rel='preload' as='image' href={`/Images/front/clinic.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                        <link rel='preload' as='image' href={`/Images/owners/iavor.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                        <link rel='preload' as='image' href={`/Images/owners/kati.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
                     </>
                 )}
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (

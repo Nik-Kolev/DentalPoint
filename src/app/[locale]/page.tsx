@@ -25,8 +25,24 @@ export default function Home({ params }: { params: { locale: string } }) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    // Gallery images - first 3 load instantly, rest on scroll
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
     const [galleryVisible, setGalleryVisible] = useState(false);
+
+    // Preload first 3 gallery images for instant display
+    useEffect(() => {
+        const preloadImages = () => {
+            clinicImages.slice(0, 3).forEach((imageName) => {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'image';
+                link.href = getImageUrl(`/Images/front/${imageName}`);
+                link.setAttribute('fetchpriority', 'high');
+                document.head.appendChild(link);
+            });
+        };
+        preloadImages();
+    }, []);
 
     // Lazy load gallery when user starts scrolling
     useEffect(() => {
@@ -106,7 +122,9 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     width={300}
                                     height={300}
                                     quality={85}
-                                    loading={galleryVisible ? 'lazy' : 'eager'}
+                                    priority={i < 3}
+                                    fetchPriority={i < 3 ? 'high' : 'auto'}
+                                    loading={i < 3 ? 'eager' : galleryVisible ? 'lazy' : 'eager'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
