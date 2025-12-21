@@ -33,7 +33,7 @@ export default function ContactMap() {
     }, [mapLoaded]);
 
     return (
-        <div className='rounded-lg overflow-hidden shadow-md'>
+        <div ref={mapRef} className='rounded-lg overflow-hidden shadow-md'>
             {!mapLoaded && (
                 <div className='h-[300px] sm:h-[400px] bg-gray-100 flex items-center justify-center'>
                     <div className='text-center'>
@@ -58,5 +58,3 @@ export default function ContactMap() {
         </div>
     );
 }
-
-
