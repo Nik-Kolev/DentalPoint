@@ -68,23 +68,29 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 const endX = window.innerWidth / 2;
                 const endY = window.innerHeight / 2;
 
-                // Start from clicked position
+                // Start from clicked position - use will-change for better performance
+                container.style.willChange = 'transform, opacity';
                 container.style.transition = 'none';
                 container.style.left = `${startX}px`;
                 container.style.top = `${startY}px`;
-                container.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                container.style.transform = 'translate(-50%, -50%) scale(0.9)';
                 container.style.opacity = '0';
 
-                // Animate to center after a brief delay
+                // Force reflow, then animate to center
                 requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        container.style.transition = 'left 0.3s ease-out, top 0.3s ease-out, transform 0.3s ease-out, opacity 0.3s ease-out';
+                    requestAnimationFrame(() => {
+                        container.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                         container.style.left = `${endX}px`;
                         container.style.top = `${endY}px`;
                         container.style.transform = 'translate(-50%, -50%) scale(1)';
                         container.style.opacity = '1';
                         setIsAnimating(true);
-                    }, 10);
+
+                        // Remove will-change after animation
+                        setTimeout(() => {
+                            container.style.willChange = 'auto';
+                        }, 400);
+                    });
                 });
             } else {
                 setIsAnimating(true);
@@ -98,27 +104,38 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
     useEffect(() => {
         if (isOpen && imgRef.current && imageSrc) {
             setImageLoaded(false);
-            const img = imgRef.current;
+            let isMounted = true;
 
-            // Load the original full-resolution image directly
-            // Using the full path ensures we get the original file without Next.js optimization
-            img.onload = () => {
-                setImageLoaded(true);
+            // Preload image for smoother experience
+            const imageLoader = new Image();
+            imageLoader.onload = () => {
+                if (isMounted && imgRef.current) {
+                    imgRef.current.src = imageSrc;
+                    setImageLoaded(true);
+                }
             };
 
-            img.onerror = () => {
-                setImageLoaded(false);
+            imageLoader.onerror = () => {
+                if (isMounted) {
+                    setImageLoaded(false);
+                }
             };
 
-            // Set src to load the full-resolution image
-            img.src = imageSrc;
+            // Load image
+            imageLoader.src = imageSrc;
+
+            return () => {
+                isMounted = false;
+                imageLoader.onload = null;
+                imageLoader.onerror = null;
+            };
         }
     }, [isOpen, imageSrc]);
 
     if (!isOpen) return null;
 
     return (
-        <div className='fixed inset-0 z-50 transition-opacity duration-300' onClick={onClose}>
+        <div className='fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300' onClick={onClose}>
             <button
                 className='absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition-colors z-10 bg-white rounded-full p-2 shadow-lg'
                 onClick={onClose}
@@ -135,6 +152,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 style={{
                     maxWidth: '65vw',
                     maxHeight: '88vh',
+                    willChange: 'transform',
                 }}
             >
                 {/* Year badge - centered at top */}

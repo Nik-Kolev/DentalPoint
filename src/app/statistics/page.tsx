@@ -127,7 +127,6 @@ export default function StatisticsPage() {
                 const analyticsData = await fetchAnalyticsData(timePeriod);
                 setData(analyticsData);
             } catch (err: any) {
-                console.error('Failed to load analytics:', err);
                 setError(err.message || 'Неуспешно зареждане на данни за аналитика');
             } finally {
                 setLoading(false);
