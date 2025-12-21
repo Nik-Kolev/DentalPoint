@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getTranslation } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
+import { getImageUrl } from '@/lib/imageVersion';
 
 export const metadata: Metadata = {
     title: 'Our Team',
@@ -28,10 +29,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person1Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src='/Images/owners/iavor.jpg'
+                                    src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
+                                    priority
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                 />
                             </div>
@@ -46,10 +48,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src='/Images/owners/iavor.jpg'
+                                    src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
+                                    priority
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                 />
                             </div>
@@ -73,10 +76,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person2Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src='/Images/owners/kati.jpg'
+                                    src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
+                                    priority
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                 />
                             </div>
@@ -91,10 +95,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src='/Images/owners/kati.jpg'
+                                    src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
+                                    priority
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                 />
                             </div>
