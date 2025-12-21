@@ -159,9 +159,12 @@ function StatisticsSection({ children }: { children: React.ReactNode }) {
     const [startTime, setStartTime] = useState<number | null>(null);
     const sectionRef = useRef<HTMLDivElement>(null);
     const hasAnimatedRef = useRef(false);
+    const observerRef = useRef<IntersectionObserver | null>(null);
 
     useEffect(() => {
-        if (hasAnimatedRef.current) return;
+        // Reset animation state on mount (for navigation/hard refresh)
+        hasAnimatedRef.current = false;
+        setStartTime(null);
 
         const currentElement = sectionRef.current;
         if (!currentElement) return;
@@ -171,28 +174,36 @@ function StatisticsSection({ children }: { children: React.ReactNode }) {
         const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
 
         if (isVisible && !hasAnimatedRef.current) {
-            hasAnimatedRef.current = true;
-            setStartTime(performance.now());
-            return;
+            // Small delay to avoid blocking initial render
+            const timeoutId = setTimeout(() => {
+                hasAnimatedRef.current = true;
+                setStartTime(performance.now());
+            }, 100);
+            return () => clearTimeout(timeoutId);
         }
 
         // Otherwise use IntersectionObserver with lower threshold for faster trigger
-        const observer = new IntersectionObserver(
+        observerRef.current = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && !hasAnimatedRef.current) {
                         hasAnimatedRef.current = true;
-                        setStartTime(performance.now());
+                        // Delay to avoid blocking during navigation
+                        requestAnimationFrame(() => {
+                            setStartTime(performance.now());
+                        });
                     }
                 });
             },
             { threshold: 0.1, rootMargin: '50px' } // Lower threshold, start earlier
         );
 
-        observer.observe(currentElement);
+        observerRef.current.observe(currentElement);
 
         return () => {
-            observer.unobserve(currentElement);
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
         };
     }, []);
 
