@@ -104,8 +104,8 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
         if (startTime === null) return;
 
         let animationFrameId: number;
-        let lastFrameTime = startTime;
         const startValue = 0;
+        let lastCount = 0;
 
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
@@ -114,20 +114,12 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
             // Use smoother easing function
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             const calculated = startValue + (target - startValue) * easeOutCubic;
+            const current = Math.round(calculated);
 
-            // Only update if significant change (reduces unnecessary renders)
-            const deltaTime = currentTime - lastFrameTime;
-            if (deltaTime >= 16) {
-                // ~60fps
-                let current = Math.round(calculated);
-
-                // Ensure we don't skip the final value
-                if (calculated >= target - 0.5) {
-                    current = target;
-                }
-
+            // Always update if count changed (prevents skipping)
+            if (current !== lastCount) {
                 setCount(current);
-                lastFrameTime = currentTime;
+                lastCount = current;
             }
 
             if (progress < 1) {
