@@ -1,15 +1,26 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
 
-const playfair = Playfair_Display({ subsets: ['latin'] });
-const montserrat = Montserrat({ subsets: ['latin'], weight: ['600', '700'] });
+// Lazy load non-critical components to reduce initial bundle size
+const StaticCTA = lazy(() => import('@/components/StaticCTA'));
+const ImageLightbox = lazy(() => import('@/components/ImageLightbox'));
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    display: 'swap',
+    preload: false, // Not critical for homepage
+});
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    weight: ['600', '700'],
+    display: 'swap',
+    preload: false, // Not critical for homepage
+});
 
 export default function Home({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
@@ -73,7 +84,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={75}
+                            quality={70}
                             sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
                             fetchPriority='high'
                         />
@@ -95,7 +106,9 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* CTA Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <StaticCTA locale={params.locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
+                    <Suspense fallback={<div className='h-32' />}>
+                        <StaticCTA locale={params.locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
+                    </Suspense>
                 </div>
             </section>
 
@@ -119,7 +132,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     alt={`Clinic image ${i + 1}`}
                                     width={300}
                                     height={300}
-                                    quality={75}
+                                    quality={70}
                                     priority={i === 0}
                                     loading={i === 0 ? 'eager' : 'lazy'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
@@ -133,14 +146,16 @@ export default function Home({ params }: { params: { locale: string } }) {
 
             {/* Lightbox - Only on desktop */}
             {selectedImage && !isMobile && (
-                <ImageLightbox
-                    isOpen={!!selectedImage}
-                    onClose={() => setSelectedImage(null)}
-                    imageSrc={selectedImage.src}
-                    alt={selectedImage.alt}
-                    triggerElement={selectedImage.element}
-                    locale={params.locale}
-                />
+                <Suspense fallback={null}>
+                    <ImageLightbox
+                        isOpen={!!selectedImage}
+                        onClose={() => setSelectedImage(null)}
+                        imageSrc={selectedImage.src}
+                        alt={selectedImage.alt}
+                        triggerElement={selectedImage.element}
+                        locale={params.locale}
+                    />
+                </Suspense>
             )}
         </div>
     );

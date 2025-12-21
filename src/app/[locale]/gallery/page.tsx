@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import Image from 'next/image';
 import { getImageUrl } from '@/lib/imageVersion';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import ImageLightbox from '@/components/ImageLightbox';
+
+// Lazy load non-critical components
+const StaticCTA = lazy(() => import('@/components/StaticCTA'));
+const ImageLightbox = lazy(() => import('@/components/ImageLightbox'));
 
 interface GalleryItem {
     before: string;
@@ -198,19 +200,23 @@ export default function Gallery({ params }: { params: { locale: string } }) {
 
                 {/* CTA Section */}
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                    <Suspense fallback={<div className='h-32' />}>
+                        <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                    </Suspense>
                 </div>
 
                 {/* Lightbox - Only on desktop */}
                 {selectedImage && !isMobile && (
-                    <ImageLightbox
-                        isOpen={!!selectedImage}
-                        onClose={() => setSelectedImage(null)}
-                        imageSrc={selectedImage.src}
-                        alt={selectedImage.alt}
-                        triggerElement={selectedImage.element}
-                        locale={params.locale}
-                    />
+                    <Suspense fallback={null}>
+                        <ImageLightbox
+                            isOpen={!!selectedImage}
+                            onClose={() => setSelectedImage(null)}
+                            imageSrc={selectedImage.src}
+                            alt={selectedImage.alt}
+                            triggerElement={selectedImage.element}
+                            locale={params.locale}
+                        />
+                    </Suspense>
                 )}
             </div>
         </div>

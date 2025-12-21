@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Playfair_Display } from 'next/font/google';
 import '../globals.css';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
@@ -10,8 +10,11 @@ import BackToTop from '@/components/BackToTop';
 import FloatingCTA from '@/components/FloatingCTA';
 import StatisticsLink from '@/components/StatisticsLink';
 
-const inter = Inter({ subsets: ['latin'] });
-const playfair = Playfair_Display({ subsets: ['latin'] });
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    display: 'swap',
+    preload: true,
+});
 
 // Separate viewport function for Next.js 15+ compatibility
 export async function generateViewport({ params }: { params: { locale: string } }): Promise<Viewport> {
