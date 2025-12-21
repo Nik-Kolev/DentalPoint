@@ -75,7 +75,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={90}
+                            quality={85}
                             sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
                             fetchPriority='high'
                         />
@@ -87,7 +87,7 @@ export default function Home({ params }: { params: { locale: string } }) {
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <div className='bg-white/80 backdrop-blur-sm rounded-lg p-6 sm:p-8 shadow-md text-center'>
-                        <h3 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('home', 'aboutTitle')}</h3>
+                        <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('home', 'aboutTitle')}</h2>
                         <p className='text-gray-600 leading-relaxed text-lg mb-2'>{t('home', 'aboutTextLine1')}</p>
                         <p className='text-gray-600 leading-relaxed text-lg'>{t('home', 'aboutTextLine2')}</p>
                     </div>
