@@ -127,9 +127,9 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`Before - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={85}
-                                        priority={i < 4}
-                                        fetchPriority={i < 4 ? 'high' : 'auto'}
+                                        quality={75}
+                                        priority={i === 0}
+                                        loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, 50vw'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
@@ -153,9 +153,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`After - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={85}
-                                        priority={i < 4}
-                                        fetchPriority={i < 4 ? 'high' : 'auto'}
+                                        quality={75}
+                                        loading='lazy'
                                         sizes='(max-width: 640px) 100vw, 50vw'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />

@@ -29,17 +29,15 @@ export default function Home({ params }: { params: { locale: string } }) {
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
     const [galleryVisible, setGalleryVisible] = useState(false);
 
-    // Preload first 3 gallery images for instant display
+    // Preload first gallery image for instant display
     useEffect(() => {
         const preloadImages = () => {
-            clinicImages.slice(0, 3).forEach((imageName) => {
-                const link = document.createElement('link');
-                link.rel = 'preload';
-                link.as = 'image';
-                link.href = getImageUrl(`/Images/front/${imageName}`);
-                link.setAttribute('fetchpriority', 'high');
-                document.head.appendChild(link);
-            });
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'image';
+            link.href = getImageUrl(`/Images/front/${clinicImages[0]}`);
+            link.setAttribute('fetchpriority', 'high');
+            document.head.appendChild(link);
         };
         preloadImages();
     }, []);
@@ -75,7 +73,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={85}
+                            quality={75}
                             sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
                             fetchPriority='high'
                         />
@@ -121,10 +119,9 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     alt={`Clinic image ${i + 1}`}
                                     width={300}
                                     height={300}
-                                    quality={85}
-                                    priority={i < 3}
-                                    fetchPriority={i < 3 ? 'high' : 'auto'}
-                                    loading={i < 3 ? 'eager' : galleryVisible ? 'lazy' : 'eager'}
+                                    quality={75}
+                                    priority={i === 0}
+                                    loading={i === 0 ? 'eager' : 'lazy'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />
