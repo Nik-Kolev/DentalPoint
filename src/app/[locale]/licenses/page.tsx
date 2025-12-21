@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import React from 'react';
 import { getTranslation } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
 import CertificateCard from './CertificateCard';
-import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
+
+// Lazy load non-critical components
+const StaticCTA = lazy(() => import('@/components/StaticCTA'));
+const ImageLightbox = lazy(() => import('@/components/ImageLightbox'));
 
 // Certificate data array - add your certificate data here
 // Each object should have: year, title, shortText, and image
@@ -97,7 +99,7 @@ const certificatesData = [
     },
 ];
 
-function useCountUp(target: number, suffix: string = '', startTime: number | null, duration: number = 2000) {
+function useCountUp(target: number, suffix: string = '', startTime: number | null, duration: number = 1500) {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -106,17 +108,26 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
         let animationFrameId: number;
         const startValue = 0;
         let lastCount = 0;
+        let lastUpdateTime = startTime;
 
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
+
+            // Throttle updates to every 16ms (60fps) to reduce main-thread work
+            if (currentTime - lastUpdateTime < 16 && progress < 1) {
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+
+            lastUpdateTime = currentTime;
 
             // Use smoother easing function
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             const calculated = startValue + (target - startValue) * easeOutCubic;
             const current = Math.round(calculated);
 
-            // Always update if count changed (prevents skipping)
+            // Only update if count changed (reduces re-renders)
             if (current !== lastCount) {
                 setCount(current);
                 lastCount = current;
@@ -130,7 +141,10 @@ function useCountUp(target: number, suffix: string = '', startTime: number | nul
             }
         };
 
-        animationFrameId = requestAnimationFrame(animate);
+        // Delay start slightly to avoid blocking initial render
+        animationFrameId = requestAnimationFrame(() => {
+            animationFrameId = requestAnimationFrame(animate);
+        });
 
         return () => {
             if (animationFrameId) {
@@ -323,23 +337,27 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
                 {/* CTA Section */}
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                    <Suspense fallback={<div className='h-32' />}>
+                        <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                    </Suspense>
                 </div>
             </div>
 
             {/* Lightbox - rendered outside container for proper positioning - only on desktop */}
             {selectedImage && !isMobile && (
-                <ImageLightbox
-                    isOpen={!!selectedImage}
-                    onClose={() => setSelectedImage(null)}
-                    imageSrc={selectedImage.src}
-                    alt={selectedImage.alt}
-                    triggerElement={selectedImage.element}
-                    year={selectedImage.year}
-                    title={selectedImage.title}
-                    shortText={selectedImage.shortText}
-                    locale={params.locale}
-                />
+                <Suspense fallback={null}>
+                    <ImageLightbox
+                        isOpen={!!selectedImage}
+                        onClose={() => setSelectedImage(null)}
+                        imageSrc={selectedImage.src}
+                        alt={selectedImage.alt}
+                        triggerElement={selectedImage.element}
+                        year={selectedImage.year}
+                        title={selectedImage.title}
+                        shortText={selectedImage.shortText}
+                        locale={params.locale}
+                    />
+                </Suspense>
             )}
         </div>
     );

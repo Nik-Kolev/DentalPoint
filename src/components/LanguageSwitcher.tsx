@@ -23,7 +23,7 @@ export default function LanguageSwitcher({ locale }: { locale: string }) {
                 aria-label='Switch to Bulgarian'
             >
                 <div style={{ width: 40, height: 24, borderRadius: 6, overflow: 'hidden', display: 'flex' }}>
-                    <Flag code='BG' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <Flag code='BG' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt='Bulgarian flag' />
                 </div>
             </button>
 
@@ -35,7 +35,7 @@ export default function LanguageSwitcher({ locale }: { locale: string }) {
                 aria-label='Switch to English'
             >
                 <div style={{ width: 40, height: 24, borderRadius: 6, overflow: 'hidden', display: 'flex' }}>
-                    <Flag code='GB' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <Flag code='GB' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt='British flag' />
                 </div>
             </button>
         </div>
