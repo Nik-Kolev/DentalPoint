@@ -3,9 +3,9 @@ const nextConfig = {
     images: {
         // AVIF first (smallest, best compression), then WebP fallback
         formats: ['image/avif', 'image/webp'],
-        // Optimized device sizes for responsive images
+        // Optimized device sizes - smaller sizes for mobile, larger for desktop
         deviceSizes: [640, 750, 828, 1080, 1200],
-        // Image sizes for different use cases
+        // Image sizes for different use cases - optimized for mobile
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
         // Cache optimized images for 1 year
         minimumCacheTTL: 31536000,
