@@ -127,7 +127,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`Before - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={50}
+                                        quality={35}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, 50vw'
@@ -153,7 +153,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`After - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={50}
+                                        quality={35}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, 50vw'

@@ -62,16 +62,18 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* Clinic Image Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-gray-200'>
+                    <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
                             src={getImageUrl('/Images/front/clinic.jpg')}
                             alt='Dental Point Clinic'
                             fill
                             className='object-cover'
                             priority
-                            quality={40}
+                            quality={35}
                             sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
                             fetchPriority='high'
+                            placeholder='blur'
+                            blurDataURL='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
                         />
                     </div>
                 </div>
@@ -115,7 +117,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     alt={`Clinic image ${i + 1}`}
                                     width={400}
                                     height={300}
-                                    quality={50}
+                                    quality={35}
                                     priority={i < 3}
                                     loading={i < 3 ? 'eager' : 'lazy'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 400px'
