@@ -13,30 +13,31 @@ const path = require('path');
 const IMAGES_DIR = path.join(__dirname, '../public/Images');
 
 // Configuration for different image types
+// Higher quality settings to preserve detail while still reducing file size
 const CONFIG = {
-    // Large photos (clinic, front images)
+    // Large photos (clinic, front images) - need high res for hero sections
     large: {
-        maxWidth: 1200,
-        maxHeight: 900,
-        quality: 80,
+        maxWidth: 1920,
+        maxHeight: 1440,
+        quality: 85,
     },
     // Medium images (team, certificates)
     medium: {
-        maxWidth: 800,
-        maxHeight: 600,
-        quality: 80,
+        maxWidth: 1200,
+        maxHeight: 900,
+        quality: 85,
     },
     // Small images (gallery before/after, thumbnails)
     small: {
-        maxWidth: 600,
-        maxHeight: 600,
-        quality: 80,
-    },
-    // Logos
-    logo: {
-        maxWidth: 400,
-        maxHeight: 200,
+        maxWidth: 800,
+        maxHeight: 800,
         quality: 85,
+    },
+    // Logos - keep crisp
+    logo: {
+        maxWidth: 600,
+        maxHeight: 300,
+        quality: 90,
     },
 };
 

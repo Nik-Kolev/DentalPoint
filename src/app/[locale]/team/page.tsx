@@ -29,7 +29,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person1Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/Iavor.jpg')}
+                                    src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
@@ -39,7 +39,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/Iavor.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/iavor.jpg')}
                                 />
                             </div>
                             <div className='flex justify-center gap-4 text-sm'>
@@ -53,7 +53,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/Iavor.jpg')}
+                                    src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
                                     width={400}
                                     height={500}
@@ -63,7 +63,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/Iavor.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/iavor.jpg')}
                                 />
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
@@ -86,7 +86,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person2Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/Kati.jpg')}
+                                    src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
@@ -96,7 +96,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/Kati.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/kati.jpg')}
                                 />
                             </div>
                             <div className='flex justify-center gap-4 text-sm'>
@@ -110,7 +110,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/Kati.jpg')}
+                                    src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
                                     width={400}
                                     height={500}
@@ -120,7 +120,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/Kati.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/kati.jpg')}
                                 />
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
