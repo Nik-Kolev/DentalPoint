@@ -154,7 +154,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         width={300}
                                         height={300}
                                         quality={50}
-                                        loading='lazy'
+                                        priority={i === 0}
+                                        loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, 50vw'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
