@@ -116,8 +116,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     width={400}
                                     height={300}
                                     quality={50}
-                                    priority={i < 2}
-                                    loading={i < 2 ? 'eager' : 'lazy'}
+                                    priority={i < 3}
+                                    loading={i < 3 ? 'eager' : 'lazy'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 400px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
                                 />

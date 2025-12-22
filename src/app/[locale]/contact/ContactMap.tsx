@@ -1,39 +1,25 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function ContactMap() {
     const [mapLoaded, setMapLoaded] = useState(false);
-    const mapRef = useRef<HTMLDivElement>(null);
 
     const latitude = 43.221575025798415;
     const longitude = 27.91784662746136;
 
-    // Lazy load map when it comes into view
+    // Load map immediately on mount (it's in viewport)
     useEffect(() => {
-        if (!mapRef.current || mapLoaded) return;
+        // Small delay to allow page to render first, then load map
+        const timer = setTimeout(() => {
+            setMapLoaded(true);
+        }, 100);
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setMapLoaded(true);
-                        observer.disconnect();
-                    }
-                });
-            },
-            { rootMargin: '100px' } // Start loading 100px before visible
-        );
-
-        observer.observe(mapRef.current);
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [mapLoaded]);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
-        <div ref={mapRef} className='rounded-lg overflow-hidden shadow-md'>
+        <div className='rounded-lg overflow-hidden shadow-md'>
             {!mapLoaded && (
                 <div className='h-[300px] sm:h-[400px] bg-gray-100 flex items-center justify-center'>
                     <div className='text-center'>
@@ -50,7 +36,7 @@ export default function ContactMap() {
                     className='h-[300px] sm:h-[400px]'
                     style={{ border: 0 }}
                     allowFullScreen
-                    loading='lazy'
+                    loading='eager'
                     referrerPolicy='no-referrer-when-downgrade'
                     title='Dental Point Location'
                 />

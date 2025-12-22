@@ -8,93 +8,22 @@ import CertificateCard from './CertificateCard';
 import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
 
-// Certificate data array - add your certificate data here
-// Each object should have: year, title, shortText, and image
+// Certificate data array - only images needed
 const certificatesData = [
-    {
-        year: '2022',
-        title: 'Test',
-        shortText: 'testing the tests, more tests, even more tests',
-        image: '/Images/certificates/CCI_000058.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000059.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000060.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000061.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000063.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000065.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000064.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000062.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000066.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000067.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000068.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000069.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000070.jpg',
-    },
-    {
-        year: '',
-        title: '',
-        shortText: '',
-        image: '/Images/certificates/CCI_000073.jpg',
-    },
+    '/Images/certificates/CCI_000058.jpg',
+    '/Images/certificates/CCI_000059.jpg',
+    '/Images/certificates/CCI_000060.jpg',
+    '/Images/certificates/CCI_000061.jpg',
+    '/Images/certificates/CCI_000063.jpg',
+    '/Images/certificates/CCI_000065.jpg',
+    '/Images/certificates/CCI_000064.jpg',
+    '/Images/certificates/CCI_000062.jpg',
+    '/Images/certificates/CCI_000066.jpg',
+    '/Images/certificates/CCI_000067.jpg',
+    '/Images/certificates/CCI_000068.jpg',
+    '/Images/certificates/CCI_000069.jpg',
+    '/Images/certificates/CCI_000070.jpg',
+    '/Images/certificates/CCI_000073.jpg',
 ];
 
 function useCountUp(target: number, suffix: string = '', startTime: number | null, duration: number = 1500) {
@@ -239,9 +168,6 @@ export default function Licenses({ params }: { params: { locale: string } }) {
         src: string;
         alt: string;
         element: HTMLElement | null;
-        year?: string;
-        title?: string;
-        shortText?: string;
     } | null>(null);
 
     // Mobile: show 3 initially, desktop: show all
@@ -300,22 +226,16 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
                 {/* Certificates Grid */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
-                    {visibleCertificates.map((certificate: { year: string; title: string; shortText: string; image: string }, index: number) => (
+                    {visibleCertificates.map((imagePath: string, index: number) => (
                         <CertificateCard
                             key={index}
-                            title={certificate.title}
-                            description={certificate.shortText}
-                            year={certificate.year}
-                            issuer=''
-                            imageUrl={getImageUrl(certificate.image)}
+                            imageUrl={getImageUrl(imagePath)}
+                            priority={index < 6}
                             onImageClick={(element) =>
                                 setSelectedImage({
-                                    src: getImageUrl(certificate.image),
-                                    alt: certificate.title || certificate.shortText || 'Certificate',
+                                    src: getImageUrl(imagePath),
+                                    alt: 'Certificate',
                                     element,
-                                    year: certificate.year,
-                                    title: certificate.title,
-                                    shortText: certificate.shortText,
                                 })
                             }
                         />
@@ -358,9 +278,6 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
                     triggerElement={selectedImage.element}
-                    year={selectedImage.year}
-                    title={selectedImage.title}
-                    shortText={selectedImage.shortText}
                     locale={params.locale}
                 />
             )}
