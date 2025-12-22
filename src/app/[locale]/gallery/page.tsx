@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getImageUrl } from '@/lib/imageVersion';
+import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import ImageLightbox from '@/components/ImageLightbox';
@@ -16,43 +16,43 @@ interface GalleryItem {
 // Gallery items - before and after treatment results
 const galleryItems: GalleryItem[] = [
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 0,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 1,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 2,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 3,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 4,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 5,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 6,
     },
     {
-        before: '/Images/gallery/before.png',
-        after: '/Images/gallery/after.png',
+        before: '/Images/gallery/before.jpg',
+        after: '/Images/gallery/after.jpg',
         descriptionKey: 7,
     },
 ];
@@ -127,11 +127,13 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`Before - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={30}
+                                        quality={75}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder(item.before)}
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'before')}
@@ -153,11 +155,13 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`After - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={30}
+                                        quality={75}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder(item.after)}
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
                                         {t('gallery', 'after')}

@@ -6,7 +6,10 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "optimize-images": "node scripts/optimize-images.js",
+        "generate-blur": "node scripts/generate-blur-placeholders.js",
+        "prebuild": "node scripts/optimize-images.js && node scripts/generate-blur-placeholders.js"
     },
     "dependencies": {
         "@next-languages/flags": "^0.4.2",
