@@ -1,9 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        formats: ['image/webp', 'image/avif'],
+        // AVIF first (smallest, best compression), then WebP fallback
+        formats: ['image/avif', 'image/webp'],
+        // Optimized device sizes for responsive images
         deviceSizes: [640, 750, 828, 1080, 1200],
+        // Image sizes for different use cases
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+        // Cache optimized images for 1 year
         minimumCacheTTL: 31536000,
         unoptimized: false,
         // Aggressive compression for faster loading
