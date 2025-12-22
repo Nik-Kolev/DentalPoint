@@ -53,7 +53,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/iavor.jpg')}
+                                    src={getImageUrl('/Images/owners/dr-iavor.jpg')}
                                     alt={t('team', 'person1Name')}
                                     width={600}
                                     height={750}
@@ -63,7 +63,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/iavor.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-iavor.jpg')}
                                 />
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
@@ -110,7 +110,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
                                 <Image
-                                    src={getImageUrl('/Images/owners/kati.jpg')}
+                                    src={getImageUrl('/Images/owners/dr-kati.jpg')}
                                     alt={t('team', 'person2Name')}
                                     width={600}
                                     height={750}
@@ -120,7 +120,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/kati.jpg')}
+                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-kati.jpg')}
                                 />
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
