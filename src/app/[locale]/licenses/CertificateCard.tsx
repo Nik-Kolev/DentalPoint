@@ -41,12 +41,12 @@ export default function CertificateCard({ imageUrl, imagePath, onImageClick, pri
                 <Image
                     src={imageUrl}
                     alt='Certificate'
-                    width={400}
-                    height={400}
-                    quality={75}
+                    width={600}
+                    height={600}
+                    quality={90}
                     priority={priority}
                     loading={priority ? 'eager' : 'lazy'}
-                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
                     className='max-w-full max-h-full w-auto h-auto object-contain'
                     placeholder='blur'
                     blurDataURL={getBlurPlaceholder(imagePath)}
