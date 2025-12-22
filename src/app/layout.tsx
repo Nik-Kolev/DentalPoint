@@ -16,10 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel='icon' href='/favicon.png' type='image/jpg' />
                 <link rel='apple-touch-icon' href='/favicon.png' />
                 <link rel='manifest' href='/manifest.json' />
-                {/* Preload critical images for instant loading - only logo and LCP image */}
-                {/* Note: Next.js Image component with priority automatically preloads optimized images */}
+                {/* DNS prefetch for faster image loading */}
+                <link rel='dns-prefetch' href='//209.38.210.38' />
+                {/* Preload critical images for instant loading */}
                 {process.env.NEXT_PUBLIC_IMAGE_VERSION && (
-                    <link rel='preload' as='image' href={`/Images/logo/header_logo.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                    <>
+                        <link rel='preload' as='image' href={`/Images/logo/header_logo.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                        {/* Preload LCP image - Next.js will optimize it */}
+                        <link rel='preload' as='image' href={`/Images/front/clinic.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
+                    </>
                 )}
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
                     <>
