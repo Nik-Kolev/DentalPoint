@@ -22,7 +22,7 @@ const CONFIG = {
         maxWidth: 1600,
         maxHeight: 1600,
         quality: 95, // Near lossless
-        minSize: 200 * 1024, // Don't touch files smaller than 200KB
+        minSize: 300 * 1024, // Don't touch files smaller than 300KB
     },
     // Certificates - readability is key
     certificates: {
