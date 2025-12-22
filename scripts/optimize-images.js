@@ -1,9 +1,6 @@
 /**
  * Image Optimization Script
  * Run with: node scripts/optimize-images.js
- *
- * This script compresses and resizes all images in public/Images
- * to improve PageSpeed scores.
  */
 
 const sharp = require('sharp');
@@ -12,41 +9,41 @@ const path = require('path');
 
 const IMAGES_DIR = path.join(__dirname, '../public/Images');
 
-// Configuration for different image types
-// Higher quality settings to preserve detail while still reducing file size
 const CONFIG = {
-    // Large photos (clinic, front images) - need high res for hero sections
+    // Large photos (hero sections) - Optimize but keep high detail
     large: {
         maxWidth: 1920,
         maxHeight: 1440,
-        quality: 85,
+        quality: 90, // Increased from 85
+        minSize: 500 * 1024, // Don't touch files smaller than 500KB
     },
-    // Medium images (team, certificates)
-    medium: {
-        maxWidth: 1200,
-        maxHeight: 900,
-        quality: 85,
+    // Faces/People - Highest quality
+    people: {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        quality: 95, // Near lossless
+        minSize: 200 * 1024, // Don't touch files smaller than 200KB
     },
-    // Small images (gallery before/after, thumbnails)
-    small: {
+    // Certificates - readability is key
+    certificates: {
+        maxWidth: 1600,
+        maxHeight: 1600,
+        quality: 90,
+        minSize: 300 * 1024,
+    },
+    // Logos
+    logo: {
         maxWidth: 800,
         maxHeight: 800,
-        quality: 85,
-    },
-    // Logos - keep crisp
-    logo: {
-        maxWidth: 600,
-        maxHeight: 300,
-        quality: 90,
+        quality: 100, // Lossless for logos
     },
 };
 
-// Map folders to config
 const FOLDER_CONFIG = {
     front: 'large',
-    owners: 'medium',
-    certificates: 'medium',
-    gallery: 'small',
+    owners: 'people',
+    certificates: 'certificates',
+    gallery: 'large',
     logo: 'logo',
 };
 
@@ -68,71 +65,58 @@ async function getImageFiles(dir) {
 async function optimizeImage(filePath) {
     const relativePath = path.relative(IMAGES_DIR, filePath);
     const folder = relativePath.split(path.sep)[0];
-    const configKey = FOLDER_CONFIG[folder] || 'medium';
+    const configKey = FOLDER_CONFIG[folder] || 'large';
     const config = CONFIG[configKey];
 
-    const ext = path.extname(filePath).toLowerCase();
     const originalSize = fs.statSync(filePath).size;
 
+    // Skip small files to preserve original quality
+    if (config.minSize && originalSize < config.minSize) {
+        console.log(`○ ${relativePath}: Skipped (Small enough: ${(originalSize / 1024).toFixed(0)}KB)`);
+        return { original: originalSize, optimized: originalSize };
+    }
+
     try {
-        // Read file into buffer first to avoid file locking issues on Windows
         const inputBuffer = fs.readFileSync(filePath);
         let image = sharp(inputBuffer);
         const metadata = await image.metadata();
 
-        // Resize if needed
-        if (metadata.width > config.maxWidth || metadata.height > config.maxHeight) {
+        // Only resize if significantly larger
+        if (metadata.width > config.maxWidth) {
             image = image.resize(config.maxWidth, config.maxHeight, {
                 fit: 'inside',
                 withoutEnlargement: true,
             });
         }
 
-        // Convert PNG to JPEG (except logos which need transparency)
-        let outputPath = filePath;
         let outputBuffer;
+        const ext = path.extname(filePath).toLowerCase();
 
-        if (ext === '.png' && folder !== 'logo') {
-            // Convert PNG to JPEG
-            outputPath = filePath.replace('.png', '.jpg');
-            outputBuffer = await image.jpeg({ quality: config.quality, mozjpeg: true }).toBuffer();
-        } else if (ext === '.png') {
-            // Optimize PNG
-            outputBuffer = await image.png({ quality: config.quality, compressionLevel: 9 }).toBuffer();
+        if (ext === '.png') {
+            outputBuffer = await image.png({ quality: config.quality, compressionLevel: 8 }).toBuffer();
         } else {
-            // Optimize JPEG
             outputBuffer = await image.jpeg({ quality: config.quality, mozjpeg: true }).toBuffer();
         }
 
-        // Only save if smaller
+        // Only save if we actually save space
         if (outputBuffer.length < originalSize) {
-            fs.writeFileSync(outputPath, outputBuffer);
-
-            // Remove old PNG if converted
-            if (outputPath !== filePath && ext === '.png') {
-                fs.unlinkSync(filePath);
-            }
-
-            const newSize = outputBuffer.length;
-            const savings = (((originalSize - newSize) / originalSize) * 100).toFixed(1);
-            console.log(`✓ ${relativePath}: ${(originalSize / 1024).toFixed(0)}KB → ${(newSize / 1024).toFixed(0)}KB (-${savings}%)`);
-            return { original: originalSize, optimized: newSize, path: relativePath };
+            fs.writeFileSync(filePath, outputBuffer);
+            const savings = (((originalSize - outputBuffer.length) / originalSize) * 100).toFixed(1);
+            console.log(`✓ ${relativePath}: ${(originalSize / 1024).toFixed(0)}KB → ${(outputBuffer.length / 1024).toFixed(0)}KB (-${savings}%)`);
+            return { original: originalSize, optimized: outputBuffer.length };
         } else {
-            console.log(`○ ${relativePath}: Already optimized`);
-            return { original: originalSize, optimized: originalSize, path: relativePath, skipped: true };
+            console.log(`○ ${relativePath}: Already optimal`);
+            return { original: originalSize, optimized: originalSize };
         }
     } catch (error) {
         console.error(`✗ ${relativePath}: ${error.message}`);
-        return { original: originalSize, optimized: originalSize, path: relativePath, error: true };
+        return { original: originalSize, optimized: originalSize };
     }
 }
 
 async function main() {
-    console.log('🖼️  Image Optimization Script\n');
-    console.log('Scanning for images...\n');
-
+    console.log('🖼️  Smart Image Optimization\n');
     const files = await getImageFiles(IMAGES_DIR);
-    console.log(`Found ${files.length} images\n`);
 
     let totalOriginal = 0;
     let totalOptimized = 0;
@@ -145,9 +129,6 @@ async function main() {
 
     console.log('\n═══════════════════════════════════════');
     console.log(`Total: ${(totalOriginal / 1024 / 1024).toFixed(2)}MB → ${(totalOptimized / 1024 / 1024).toFixed(2)}MB`);
-    console.log(
-        `Saved: ${((totalOriginal - totalOptimized) / 1024 / 1024).toFixed(2)}MB (${(((totalOriginal - totalOptimized) / totalOriginal) * 100).toFixed(1)}%)`
-    );
     console.log('═══════════════════════════════════════\n');
 }
 

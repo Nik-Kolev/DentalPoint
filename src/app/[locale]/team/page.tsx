@@ -31,11 +31,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <Image
                                     src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
-                                    width={400}
-                                    height={500}
+                                    width={600}
+                                    height={750}
                                     priority
-                                    quality={75}
-                                    sizes='(max-width: 640px) 100vw, 400px'
+                                    quality={95}
+                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
                                     fetchPriority='high'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
@@ -55,10 +55,10 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <Image
                                     src={getImageUrl('/Images/owners/iavor.jpg')}
                                     alt={t('team', 'person1Name')}
-                                    width={400}
-                                    height={500}
+                                    width={600}
+                                    height={750}
                                     priority
-                                    quality={75}
+                                    quality={95}
                                     sizes='(max-width: 1024px) 50vw, 400px'
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
@@ -88,11 +88,11 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <Image
                                     src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
-                                    width={400}
-                                    height={500}
+                                    width={600}
+                                    height={750}
                                     priority
-                                    quality={75}
-                                    sizes='(max-width: 640px) 100vw, 400px'
+                                    quality={95}
+                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
                                     fetchPriority='high'
                                     className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
                                     placeholder='blur'
@@ -112,10 +112,10 @@ export default function Team({ params }: { params: { locale: string } }) {
                                 <Image
                                     src={getImageUrl('/Images/owners/kati.jpg')}
                                     alt={t('team', 'person2Name')}
-                                    width={400}
-                                    height={500}
+                                    width={600}
+                                    height={750}
                                     priority
-                                    quality={75}
+                                    quality={95}
                                     sizes='(max-width: 1024px) 50vw, 400px'
                                     fetchPriority='high'
                                     className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
