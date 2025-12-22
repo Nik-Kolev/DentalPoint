@@ -6,7 +6,7 @@ import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
 import ImageLightbox from '@/components/ImageLightbox';
-import { getImageUrl } from '@/lib/imageVersion';
+import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
@@ -69,11 +69,11 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={30}
+                            quality={75}
                             sizes='(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px'
                             fetchPriority='high'
                             placeholder='blur'
-                            blurDataURL='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
+                            blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
                         />
                     </div>
                 </div>
@@ -117,11 +117,13 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     alt={`Clinic image ${i + 1}`}
                                     width={400}
                                     height={300}
-                                    quality={30}
+                                    quality={75}
                                     priority={i < 1}
                                     loading={i < 1 ? 'eager' : 'lazy'}
                                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
                                     className='rounded-md object-cover w-full h-48 sm:h-32'
+                                    placeholder='blur'
+                                    blurDataURL={getBlurPlaceholder(`/Images/front/${imageName}`)}
                                 />
                             </div>
                         ))}

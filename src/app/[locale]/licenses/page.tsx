@@ -230,6 +230,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                         <CertificateCard
                             key={index}
                             imageUrl={getImageUrl(imagePath)}
+                            imagePath={imagePath}
                             priority={index < 3}
                             onImageClick={(element) =>
                                 setSelectedImage({

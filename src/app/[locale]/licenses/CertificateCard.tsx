@@ -2,15 +2,16 @@
 
 import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getImageUrl } from '@/lib/imageVersion';
+import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
 interface CertificateCardProps {
     imageUrl: string;
+    imagePath: string; // Original path for blur placeholder
     onImageClick: (element: HTMLElement) => void;
     priority?: boolean;
 }
 
-export default function CertificateCard({ imageUrl, onImageClick, priority = false }: CertificateCardProps) {
+export default function CertificateCard({ imageUrl, imagePath, onImageClick, priority = false }: CertificateCardProps) {
     const imageRef = useRef<HTMLDivElement>(null);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -38,15 +39,17 @@ export default function CertificateCard({ imageUrl, onImageClick, priority = fal
                 onClick={handleClick}
             >
                 <Image
-                    src={getImageUrl(imageUrl)}
+                    src={imageUrl}
                     alt='Certificate'
                     width={400}
                     height={400}
-                    quality={30}
+                    quality={75}
                     priority={priority}
                     loading={priority ? 'eager' : 'lazy'}
                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
                     className='max-w-full max-h-full w-auto h-auto object-contain'
+                    placeholder='blur'
+                    blurDataURL={getBlurPlaceholder(imagePath)}
                 />
             </div>
         </div>
