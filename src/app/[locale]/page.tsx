@@ -69,8 +69,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={50}
-                            sizes='(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px'
+                            quality={40}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1280px'
                             fetchPriority='high'
                         />
                     </div>
