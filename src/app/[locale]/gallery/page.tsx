@@ -127,10 +127,10 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`Before - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={35}
+                                        quality={30}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, 50vw'
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
@@ -153,10 +153,10 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         alt={`After - Gallery item ${i + 1}`}
                                         width={300}
                                         height={300}
-                                        quality={35}
+                                        quality={30}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, 50vw'
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
                                         className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
                                     />
                                     <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
