@@ -117,15 +117,6 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
 
     return (
         <>
-            {/* Preload hero image for faster LCP */}
-            <link
-                rel='preload'
-                as='image'
-                href='/Images/front/clinic.jpg'
-                // @ts-ignore - Next.js will handle imageSrcSet
-                imageSrcSet='/_next/image?url=%2FImages%2Ffront%2Fclinic.jpg&w=640&q=85 640w, /_next/image?url=%2FImages%2Ffront%2Fclinic.jpg&w=1080&q=85 1080w, /_next/image?url=%2FImages%2Ffront%2Fclinic.jpg&w=1920&q=85 1920w'
-                imageSizes='100vw'
-            />
             <header className='w-full shadow-sm bg-white relative z-40'>
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
                     {/* Logo and Clinic Name - Centered on mobile */}
