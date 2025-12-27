@@ -52,7 +52,7 @@ export default function Home({ params }: { params: { locale: string } }) {
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
             {/* Main Title - Centered */}
-            <div className='text-center pt-8 sm:pt-12 pb-8 sm:pb-12 px-4'>
+            <div className='text-center pt-6 sm:pt-10 pb-6 sm:pb-8 px-4'>
                 <h1 className={`flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#005baa] ${playfair.className}`}>
                     <span className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium opacity-80'>{t('home', 'heroTitlePrefix')}</span>
                     <span className={`${montserrat.className} font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl`}>{t('home', 'heroTitleClinic')}</span>
@@ -60,18 +60,18 @@ export default function Home({ params }: { params: { locale: string } }) {
             </div>
 
             {/* Clinic Image Section */}
-            <section className='pb-8 sm:pb-12 px-4'>
-                <div className='max-w-6xl mx-auto'>
-                    <div className='relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
+            <section className='pb-6 sm:pb-8 px-4'>
+                <div className='max-w-5xl mx-auto'>
+                    <div className='relative w-full h-[280px] sm:h-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
-                            src={getImageUrl('/Images/front/clinic.jpg')}
+                            src='/Images/front/clinic.jpg'
                             alt='Dental Point Clinic'
                             fill
                             className='object-cover'
                             priority
                             loading='eager'
-                            quality={85}
-                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px'
+                            quality={80}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1000px'
                             fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
