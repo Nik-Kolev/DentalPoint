@@ -71,7 +71,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             priority
                             loading='eager'
                             quality={85}
-                            sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 1024px, 1280px'
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px'
+                            fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
                         />
