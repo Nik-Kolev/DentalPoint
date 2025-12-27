@@ -25,7 +25,6 @@ const nextConfig = {
     },
     experimental: {
         optimizePackageImports: ['@next-languages/flags', 'react-world-flags'], // Tree-shake unused exports
-        optimizeCss: true, // Optimize CSS bundle size
     },
     // Skip linting during production builds (faster, lint locally/CI instead)
     eslint: {
