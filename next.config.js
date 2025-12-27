@@ -20,8 +20,12 @@ const nextConfig = {
     swcMinify: true, // Use SWC minifier for better performance
     // Optimize CSS loading
     optimizeFonts: true,
+    compiler: {
+        removeConsole: process.env.NODE_ENV === 'production', // Remove console.log in production
+    },
     experimental: {
         optimizePackageImports: ['@next-languages/flags', 'react-world-flags'], // Tree-shake unused exports
+        optimizeCss: true, // Optimize CSS bundle size
     },
     // Skip linting during production builds (faster, lint locally/CI instead)
     eslint: {

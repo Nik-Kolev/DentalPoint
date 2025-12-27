@@ -70,8 +70,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             className='object-cover'
                             priority
                             loading='eager'
-                            quality={75}
-                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1000px'
+                            quality={70}
+                            sizes='(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 1000px'
                             fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
@@ -118,9 +118,9 @@ export default function Home({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(`/Images/front/${imageName}`)}
                                         alt={`Clinic image ${i + 1}`}
                                         fill
-                                        quality={85}
-                                        priority={i < 2}
-                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        quality={80}
+                                        priority={false}
+                                        loading='lazy'
                                         sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px'
                                         className='rounded-md object-cover'
                                         placeholder='blur'
