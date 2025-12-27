@@ -16,16 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel='icon' href='/favicon.png' type='image/jpg' />
                 <link rel='apple-touch-icon' href='/favicon.png' />
                 <link rel='manifest' href='/manifest.json' />
-                {/* DNS prefetch for faster image loading */}
-                <link rel='dns-prefetch' href='//209.38.210.38' />
-                {/* Preload critical images for instant loading */}
-                {process.env.NEXT_PUBLIC_IMAGE_VERSION && (
-                    <>
-                        <link rel='preload' as='image' href={`/Images/logo/header_logo.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
-                        {/* Preload LCP image - Next.js will optimize it */}
-                        <link rel='preload' as='image' href={`/Images/front/clinic.jpg?v=${process.env.NEXT_PUBLIC_IMAGE_VERSION}`} fetchPriority='high' />
-                    </>
-                )}
+                {/* Preconnect to Google Fonts for faster font loading */}
+                <link rel='preconnect' href='https://fonts.googleapis.com' />
+                <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
                     <>
                         <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`} strategy='lazyOnload' />

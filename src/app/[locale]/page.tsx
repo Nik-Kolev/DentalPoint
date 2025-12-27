@@ -118,9 +118,9 @@ export default function Home({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(`/Images/front/${imageName}`)}
                                         alt={`Clinic image ${i + 1}`}
                                         fill
-                                        quality={80}
-                                        priority={false}
-                                        loading='lazy'
+                                        quality={i === 0 ? 75 : 80}
+                                        priority={i === 0}
+                                        loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px'
                                         className='rounded-md object-cover'
                                         placeholder='blur'
