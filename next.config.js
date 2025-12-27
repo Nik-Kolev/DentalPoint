@@ -32,7 +32,7 @@ const nextConfig = {
     },
     // Skip type checking during production builds (faster, check locally/CI instead)
     typescript: {
-        ignoreBuildErrors: false, // Keep false to catch real errors, but can set true if needed
+        ignoreBuildErrors: true, // Required for 1GB server - OOM during type checking
     },
     async headers() {
         return [
