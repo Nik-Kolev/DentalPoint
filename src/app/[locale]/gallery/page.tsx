@@ -13,7 +13,6 @@ interface GalleryItem {
     descriptionKey?: number;
 }
 
-// Gallery items - before and after treatment results
 const galleryItems: GalleryItem[] = [
     {
         before: '/Images/gallery/before.jpg',
@@ -62,21 +61,16 @@ export default function Gallery({ params }: { params: { locale: string } }) {
     const gallery = getSection(params.locale, 'gallery') as any;
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
 
-    // Mobile: show 3 initially, desktop: show all
     const [visibleCount, setVisibleCount] = useState(3);
     const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
-        // Check if mobile on mount and resize
         const checkMobile = () => {
             const mobile = window.innerWidth < 768;
             setIsMobile(mobile);
-
-            // On desktop, show all items
             if (!mobile) {
                 setVisibleCount(galleryItems.length);
             }
-            // On mobile, initial state is already 3, no need to reset
         };
 
         checkMobile();
@@ -84,12 +78,10 @@ export default function Gallery({ params }: { params: { locale: string } }) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Show more items (3 at a time)
     const loadMore = () => {
         setVisibleCount((prev) => Math.min(prev + 3, galleryItems.length));
     };
 
-    // Show less (collapse back to 3)
     const showLess = () => {
         setVisibleCount(3);
     };
@@ -110,14 +102,11 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 pb-8 sm:pb-12'>
                     {visibleItems.map((item, i) => (
                         <div key={i} className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden'>
-                            {/* Mobile: Stacked layout (Before, After, Text) | Desktop: Side by side (Before/After, Text below) */}
                             <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
-                                {/* Before Image */}
                                 <div
                                     className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
                                     style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
-                                        // Only open lightbox on desktop
                                         if (!isMobile) {
                                             setSelectedImage({ src: item.before, alt: `Before - Gallery item ${i + 1}`, element: e.currentTarget });
                                         }
@@ -140,12 +129,10 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     </div>
                                 </div>
 
-                                {/* After Image */}
                                 <div
                                     className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
                                     style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
-                                        // Only open lightbox on desktop
                                         if (!isMobile) {
                                             setSelectedImage({ src: item.after, alt: `After - Gallery item ${i + 1}`, element: e.currentTarget });
                                         }
@@ -169,7 +156,6 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                 </div>
                             </div>
 
-                            {/* Description Text - Below images on both mobile and desktop */}
                             {item.descriptionKey !== undefined && gallery.items?.[item.descriptionKey]?.description && (
                                 <div className='p-4 sm:p-4'>
                                     <p className='text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
@@ -179,7 +165,6 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     ))}
                 </div>
 
-                {/* Load More / Show Less Buttons - Show on mobile */}
                 {(hasMore || hasExpanded) && (
                     <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
                         {hasMore && (
@@ -201,12 +186,10 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     </div>
                 )}
 
-                {/* CTA Section */}
                 <div className='pt-8 sm:pt-12'>
                     <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
 
-                {/* Lightbox - Only on desktop */}
                 {selectedImage && !isMobile && (
                     <ImageLightbox
                         isOpen={!!selectedImage}

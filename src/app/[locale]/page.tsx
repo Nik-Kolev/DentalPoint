@@ -11,13 +11,13 @@ import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 const playfair = Playfair_Display({
     subsets: ['latin'],
     display: 'swap',
-    preload: false, // Not critical for homepage
+    preload: false,
 });
 const montserrat = Montserrat({
     subsets: ['latin'],
     weight: ['600', '700'],
     display: 'swap',
-    preload: false, // Not critical for homepage
+    preload: false,
 });
 
 export default function Home({ params }: { params: { locale: string } }) {
@@ -34,11 +34,9 @@ export default function Home({ params }: { params: { locale: string } }) {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Gallery images - first 3 load instantly, rest on scroll
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
     const [galleryVisible, setGalleryVisible] = useState(false);
 
-    // Lazy load gallery when user starts scrolling
     useEffect(() => {
         const handleScroll = () => {
             if (!galleryVisible && window.scrollY > 200) {
@@ -107,7 +105,6 @@ export default function Home({ params }: { params: { locale: string } }) {
                                 key={i}
                                 className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 sm:cursor-pointer'
                                 onClick={(e) => {
-                                    // Only open lightbox on desktop
                                     if (!isMobile) {
                                         setSelectedImage({ src: `/Images/front/${imageName}`, alt: `Clinic image ${i + 1}`, element: e.currentTarget });
                                     }
