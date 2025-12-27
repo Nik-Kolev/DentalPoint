@@ -35,19 +35,19 @@ export default function CertificateCard({ imageUrl, imagePath, onImageClick, pri
         <div className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300'>
             <div
                 ref={imageRef}
-                className={`relative bg-gray-50 flex items-center justify-center p-4 min-h-[200px] max-h-[400px] ${!isMobile ? 'cursor-pointer group' : ''}`}
+                className={`relative bg-gray-50 flex items-center justify-center p-4 aspect-square ${!isMobile ? 'cursor-pointer group' : ''}`}
+                style={{ aspectRatio: '1/1' }}
                 onClick={handleClick}
             >
                 <Image
                     src={imageUrl}
                     alt='Certificate'
-                    width={600}
-                    height={600}
-                    quality={90}
+                    fill
+                    quality={priority ? 90 : 85}
                     priority={priority}
                     loading={priority ? 'eager' : 'lazy'}
                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                    className='max-w-full max-h-full w-auto h-auto object-contain'
+                    className='object-contain'
                     placeholder='blur'
                     blurDataURL={getBlurPlaceholder(imagePath)}
                 />
