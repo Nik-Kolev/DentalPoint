@@ -117,9 +117,6 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
 
     return (
         <>
-            {/* Preconnect to Google Fonts to reduce latency */}
-            <link rel='preconnect' href='https://fonts.googleapis.com' />
-            <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
             <header className='w-full shadow-sm bg-white relative z-40'>
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
                     {/* Logo and Clinic Name - Centered on mobile */}
