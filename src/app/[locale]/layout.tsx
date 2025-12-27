@@ -12,7 +12,7 @@ import StatisticsLink from '@/components/StatisticsLink';
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
-    display: 'swap',
+    display: 'optional',
     preload: true,
 });
 
