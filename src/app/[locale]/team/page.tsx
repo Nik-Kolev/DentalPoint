@@ -28,19 +28,21 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] font-serif'>{t('team', 'person1Name')}</h2>
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person1Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
-                                <Image
-                                    src={getImageUrl('/Images/owners/dr-iavor.jpg')}
-                                    alt={t('team', 'person1Name')}
-                                    width={600}
-                                    height={750}
-                                    priority
-                                    quality={95}
-                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                                    fetchPriority='high'
-                                    className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
-                                    placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-iavor.jpg')}
-                                />
+                                <div className='relative aspect-[4/5] rounded-lg overflow-hidden bg-gray-100 shadow-lg' style={{ aspectRatio: '4/5' }}>
+                                    <Image
+                                        src={getImageUrl('/Images/owners/dr-iavor.jpg')}
+                                        alt={t('team', 'person1Name')}
+                                        fill
+                                        priority
+                                        loading='eager'
+                                        quality={90}
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+                                        fetchPriority='high'
+                                        className='object-cover'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder('/Images/owners/dr-iavor.jpg')}
+                                    />
+                                </div>
                             </div>
                             <div className='flex justify-center gap-4 text-sm'>
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'experience')}</span>
@@ -52,19 +54,21 @@ export default function Team({ params }: { params: { locale: string } }) {
                         {/* Desktop Layout */}
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
-                                <Image
-                                    src={getImageUrl('/Images/owners/dr-iavor.jpg')}
-                                    alt={t('team', 'person1Name')}
-                                    width={600}
-                                    height={750}
-                                    priority
-                                    quality={95}
-                                    sizes='(max-width: 1024px) 50vw, 400px'
-                                    fetchPriority='high'
-                                    className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
-                                    placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-iavor.jpg')}
-                                />
+                                <div className='relative aspect-[4/5] rounded-lg overflow-hidden bg-gray-100 shadow-lg' style={{ aspectRatio: '4/5' }}>
+                                    <Image
+                                        src={getImageUrl('/Images/owners/dr-iavor.jpg')}
+                                        alt={t('team', 'person1Name')}
+                                        fill
+                                        priority
+                                        loading='eager'
+                                        quality={90}
+                                        sizes='(max-width: 1024px) 33vw, (max-width: 1280px) 30vw, 400px'
+                                        fetchPriority='high'
+                                        className='object-cover'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder('/Images/owners/dr-iavor.jpg')}
+                                    />
+                                </div>
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
                                 <h2 className='text-3xl xl:text-4xl font-bold text-[#005baa] mb-3 font-serif'>{t('team', 'person1Name')}</h2>
@@ -85,19 +89,21 @@ export default function Team({ params }: { params: { locale: string } }) {
                             <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] font-serif'>{t('team', 'person2Name')}</h2>
                             <p className='text-lg sm:text-xl text-[#005baa] font-medium'>{t('team', 'person2Title')}</p>
                             <div className='w-full max-w-sm mx-auto'>
-                                <Image
-                                    src={getImageUrl('/Images/owners/dr-kati.jpg')}
-                                    alt={t('team', 'person2Name')}
-                                    width={600}
-                                    height={750}
-                                    priority
-                                    quality={95}
-                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                                    fetchPriority='high'
-                                    className='w-full h-[280px] sm:h-[320px] object-cover rounded-lg shadow-lg'
-                                    placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-kati.jpg')}
-                                />
+                                <div className='relative aspect-[4/5] rounded-lg overflow-hidden bg-gray-100 shadow-lg' style={{ aspectRatio: '4/5' }}>
+                                    <Image
+                                        src={getImageUrl('/Images/owners/dr-kati.jpg')}
+                                        alt={t('team', 'person2Name')}
+                                        fill
+                                        priority
+                                        loading='eager'
+                                        quality={90}
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px'
+                                        fetchPriority='high'
+                                        className='object-cover'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder('/Images/owners/dr-kati.jpg')}
+                                    />
+                                </div>
                             </div>
                             <div className='flex justify-center gap-4 text-sm'>
                                 <span className='bg-[#005baa] text-white px-3 py-1 rounded-full'>{t('team', 'orthodontistSpecialist')}</span>
@@ -109,19 +115,21 @@ export default function Team({ params }: { params: { locale: string } }) {
                         {/* Desktop Layout */}
                         <div className='hidden lg:flex lg:w-full lg:gap-8 xl:gap-12'>
                             <div className='lg:w-1/3 xl:w-2/5'>
-                                <Image
-                                    src={getImageUrl('/Images/owners/dr-kati.jpg')}
-                                    alt={t('team', 'person2Name')}
-                                    width={600}
-                                    height={750}
-                                    priority
-                                    quality={95}
-                                    sizes='(max-width: 1024px) 50vw, 400px'
-                                    fetchPriority='high'
-                                    className='w-full h-[400px] xl:h-[450px] object-cover rounded-lg shadow-lg'
-                                    placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/owners/dr-kati.jpg')}
-                                />
+                                <div className='relative aspect-[4/5] rounded-lg overflow-hidden bg-gray-100 shadow-lg' style={{ aspectRatio: '4/5' }}>
+                                    <Image
+                                        src={getImageUrl('/Images/owners/dr-kati.jpg')}
+                                        alt={t('team', 'person2Name')}
+                                        fill
+                                        priority
+                                        loading='eager'
+                                        quality={90}
+                                        sizes='(max-width: 1024px) 33vw, (max-width: 1280px) 30vw, 400px'
+                                        fetchPriority='high'
+                                        className='object-cover'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder('/Images/owners/dr-kati.jpg')}
+                                    />
+                                </div>
                             </div>
                             <div className='lg:w-2/3 xl:w-3/5 lg:pt-0'>
                                 <h2 className='text-3xl xl:text-4xl font-bold text-[#005baa] mb-3 font-serif'>{t('team', 'person2Name')}</h2>

@@ -5,7 +5,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
 import Image from 'next/image';
 import { getTranslation } from '../../lib/useTranslation';
-import { getImageUrl } from '@/lib/imageVersion';
+import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import BackToTop from '@/components/BackToTop';
 import FloatingCTA from '@/components/FloatingCTA';
 import StatisticsLink from '@/components/StatisticsLink';
@@ -121,16 +121,24 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
                     {/* Logo and Clinic Name - Centered on mobile */}
                     <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0'>
-                        <Image
-                            src={getImageUrl('/Images/logo/header_logo.jpg')}
-                            alt='Dental Point Logo'
-                            width={40}
-                            height={40}
-                            priority
-                            quality={75}
-                            sizes='(max-width: 768px) 48px, 40px'
-                            className='w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white object-cover'
-                        />
+                        <div
+                            className='relative w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white overflow-hidden'
+                            style={{ aspectRatio: '1/1' }}
+                        >
+                            <Image
+                                src={getImageUrl('/Images/logo/header_logo.jpg')}
+                                alt='Dental Point Logo'
+                                fill
+                                priority
+                                loading='eager'
+                                quality={90}
+                                sizes='(max-width: 640px) 48px, (max-width: 768px) 40px, 48px'
+                                fetchPriority='high'
+                                className='object-cover'
+                                placeholder='blur'
+                                blurDataURL={getBlurPlaceholder('/Images/logo/header_logo.jpg')}
+                            />
+                        </div>
                         <div className='flex flex-col'>
                             <span className={`text-2xl sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] ${playfair.className}`}>Dental Point</span>
                         </div>

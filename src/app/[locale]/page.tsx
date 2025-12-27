@@ -62,16 +62,16 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* Clinic Image Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='relative h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
+                    <div className='relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
                             src={getImageUrl('/Images/front/clinic.jpg')}
                             alt='Dental Point Clinic'
                             fill
                             className='object-cover'
                             priority
-                            quality={75}
-                            sizes='(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px'
-                            fetchPriority='high'
+                            loading='eager'
+                            quality={85}
+                            sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 1024px, 1280px'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
                         />
@@ -112,19 +112,20 @@ export default function Home({ params }: { params: { locale: string } }) {
                                     }
                                 }}
                             >
-                                <Image
-                                    src={getImageUrl(`/Images/front/${imageName}`)}
-                                    alt={`Clinic image ${i + 1}`}
-                                    width={400}
-                                    height={300}
-                                    quality={75}
-                                    priority={i < 1}
-                                    loading={i < 1 ? 'eager' : 'lazy'}
-                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 300px'
-                                    className='rounded-md object-cover w-full h-48 sm:h-32'
-                                    placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder(`/Images/front/${imageName}`)}
-                                />
+                                <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
+                                    <Image
+                                        src={getImageUrl(`/Images/front/${imageName}`)}
+                                        alt={`Clinic image ${i + 1}`}
+                                        fill
+                                        quality={85}
+                                        priority={i < 2}
+                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px'
+                                        className='rounded-md object-cover'
+                                        placeholder='blur'
+                                        blurDataURL={getBlurPlaceholder(`/Images/front/${imageName}`)}
+                                    />
+                                </div>
                             </div>
                         ))}
                     </div>

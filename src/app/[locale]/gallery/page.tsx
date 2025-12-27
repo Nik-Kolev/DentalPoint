@@ -114,7 +114,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                             <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
                                 {/* Before Image */}
                                 <div
-                                    className='relative sm:cursor-pointer group'
+                                    className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
+                                    style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
                                         // Only open lightbox on desktop
                                         if (!isMobile) {
@@ -125,13 +126,12 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     <Image
                                         src={getImageUrl(item.before)}
                                         alt={`Before - Gallery item ${i + 1}`}
-                                        width={300}
-                                        height={300}
-                                        quality={75}
-                                        priority={i === 0}
-                                        loading={i === 0 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
-                                        className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        fill
+                                        quality={i < 2 ? 90 : 85}
+                                        priority={i < 2}
+                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                                        className='object-cover group-hover:opacity-90 transition-opacity'
                                         placeholder='blur'
                                         blurDataURL={getBlurPlaceholder(item.before)}
                                     />
@@ -142,7 +142,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
 
                                 {/* After Image */}
                                 <div
-                                    className='relative sm:cursor-pointer group'
+                                    className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
+                                    style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
                                         // Only open lightbox on desktop
                                         if (!isMobile) {
@@ -153,13 +154,12 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     <Image
                                         src={getImageUrl(item.after)}
                                         alt={`After - Gallery item ${i + 1}`}
-                                        width={300}
-                                        height={300}
-                                        quality={75}
-                                        priority={i === 0}
-                                        loading={i === 0 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px'
-                                        className='w-full h-64 sm:h-56 object-cover group-hover:opacity-90 transition-opacity'
+                                        fill
+                                        quality={i < 2 ? 90 : 85}
+                                        priority={i < 2}
+                                        loading={i < 2 ? 'eager' : 'lazy'}
+                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                                        className='object-cover group-hover:opacity-90 transition-opacity'
                                         placeholder='blur'
                                         blurDataURL={getBlurPlaceholder(item.after)}
                                     />
