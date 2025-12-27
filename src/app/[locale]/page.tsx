@@ -70,7 +70,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                             className='object-cover'
                             priority
                             loading='eager'
-                            quality={80}
+                            quality={75}
                             sizes='(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1000px'
                             fetchPriority='high'
                             placeholder='blur'
