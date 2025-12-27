@@ -16,7 +16,6 @@ const playfair = Playfair_Display({
     preload: true,
 });
 
-// Separate viewport function for Next.js 15+ compatibility
 export async function generateViewport({ params }: { params: { locale: string } }): Promise<Viewport> {
     return {
         width: 'device-width',
@@ -28,7 +27,6 @@ export async function generateViewport({ params }: { params: { locale: string } 
     };
 }
 
-// Simplified metadata function using translations
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
     const locale = params?.locale || 'bg';
     const t = getTranslation(locale);
@@ -105,7 +103,6 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
     const locale = params?.locale || 'bg';
     const t = getTranslation(locale);
 
-    // Pre-compute translations for navigation
     const translations = {
         home: t('layout', 'menuHome'),
         contact: t('layout', 'menuContact'),
