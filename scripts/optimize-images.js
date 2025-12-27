@@ -81,6 +81,9 @@ async function optimizeImage(filePath) {
         let image = sharp(inputBuffer);
         const metadata = await image.metadata();
 
+        // Auto-rotate based on EXIF orientation (fixes rotated images)
+        image = image.rotate();
+
         // Only resize if significantly larger
         if (metadata.width > config.maxWidth) {
             image = image.resize(config.maxWidth, config.maxHeight, {
