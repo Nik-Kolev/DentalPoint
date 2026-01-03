@@ -112,8 +112,51 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         reviews: t('layout', 'menuReviews'),
     };
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38';
+    const isBulgarian = locale === 'bg';
+
+    // Structured Data (JSON-LD) for SEO
+    const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'DentalClinic',
+        name: 'Dental Point',
+        description: t('metadata', 'description'),
+        url: `${baseUrl}/${locale}`,
+        logo: `${baseUrl}/Images/logo/DP_Logo.png`,
+        image: `${baseUrl}/og-image.jpg`,
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: isBulgarian ? 'ул. "Ген. Гурко" 5' : '5 "Gen. Gurko" St.',
+            addressLocality: 'Varna',
+            addressRegion: 'Varna',
+            postalCode: '9000',
+            addressCountry: 'BG',
+        },
+        geo: {
+            '@type': 'GeoCoordinates',
+            latitude: '43.22171865355527',
+            longitude: '27.91822750627432',
+        },
+        telephone: '+359876346261',
+        priceRange: '$$',
+        openingHoursSpecification: [
+            {
+                '@type': 'OpeningHoursSpecification',
+                dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                opens: '09:00',
+                closes: '18:00',
+            },
+        ],
+        medicalSpecialty: ['Dentistry', 'Orthodontics', 'Pediatric Dentistry'],
+        areaServed: {
+            '@type': 'City',
+            name: 'Varna',
+        },
+    };
+
     return (
         <>
+            <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
             <header className='w-full shadow-sm bg-white relative z-40'>
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
                     {/* Logo and Clinic Name - Centered on mobile */}
