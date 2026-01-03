@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
 
+# Disallow admin/statistics pages
+User-agent: *
+Disallow: /statistics
+Disallow: /api/
