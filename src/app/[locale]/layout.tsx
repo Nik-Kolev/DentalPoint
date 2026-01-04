@@ -9,6 +9,7 @@ import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import BackToTop from '@/components/BackToTop';
 import FloatingCTA from '@/components/FloatingCTA';
 import StatisticsLink from '@/components/StatisticsLink';
+import CookieConsent from '@/components/CookieConsent';
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
@@ -227,7 +228,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                                 </svg>
                             </a>
                             <a
-                                href='https://instagram.com/dentalpoint'
+                                href='https://www.instagram.com/dentalpoint_drivanov/'
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='text-gray-600 hover:text-[#E4405F] transition-colors duration-200'
@@ -248,6 +249,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
             </footer>
             <BackToTop />
             <FloatingCTA locale={locale} />
+            <CookieConsent locale={locale} />
         </>
     );
 }

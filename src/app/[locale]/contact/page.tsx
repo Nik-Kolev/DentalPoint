@@ -42,14 +42,14 @@ export default function Contact({ params }: { params: { locale: string } }) {
                                     </svg>
                                     {t('contact', 'addressTitle')}
                                 </h3>
-                                <div className='text-gray-700 ml-9 leading-relaxed'>
+                                <div className='text-gray-700 ml-9 leading-relaxed text-lg'>
                                     <p>{t('contact', 'addressLine1')}</p>
                                     <p>{t('contact', 'addressLine2')}</p>
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-3 flex items-center'>
+                                <h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
                                     <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                         <path
                                             strokeLinecap='round'
@@ -60,44 +60,48 @@ export default function Contact({ params }: { params: { locale: string } }) {
                                     </svg>
                                     {t('contact', 'phoneTitle')}
                                 </h3>
-                                <p className='text-gray-700 ml-9'>
-                                    <a href='tel:+359876346261' className='hover:text-[#009fe3] transition-colors duration-200'>
-                                        087 634 6261
-                                    </a>
-                                </p>
+                                <div className='text-gray-700 ml-9 space-y-2 text-lg'>
+                                    <div className='flex justify-between items-center'>
+                                        <span className='font-medium'>Д-р Явор Иванов</span>
+                                        <span className='font-bold tabular-nums'>0876 346 261</span>
+                                    </div>
+                                    <div className='flex justify-between items-center'>
+                                        <span className='font-medium'>Д-р Екатерина Иванова</span>
+                                        <span className='font-bold tabular-nums'>0878 355 494</span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-3 flex items-center'>
+                                <h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
                                     <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
                                     </svg>
                                     {t('contact', 'workingHoursTitle')}
                                 </h3>
-                                <div className='text-gray-700 ml-9 space-y-1'>
-                                    <p>{t('contact', 'workingHoursMonday')}</p>
-                                    <p>{t('contact', 'workingHoursTuesday')}</p>
-                                    <p>{t('contact', 'workingHoursWednesday')}</p>
-                                    <p>{t('contact', 'workingHoursThursday')}</p>
-                                    <p>{t('contact', 'workingHoursFriday')}</p>
-                                    <p>{t('contact', 'workingHoursSaturday')}</p>
-                                    <p>{t('contact', 'workingHoursSunday')}</p>
-                                </div>
-                            </div>
+                                <div className='text-gray-700 ml-9 space-y-2 text-lg'>
+                                    {[
+                                        'workingHoursMonday',
+                                        'workingHoursTuesday',
+                                        'workingHoursWednesday',
+                                        'workingHoursThursday',
+                                        'workingHoursFriday',
+                                        'workingHoursSaturday',
+                                        'workingHoursSunday',
+                                    ].map((day) => {
+                                        const text = t('contact', day);
+                                        const parts = text.split(':');
+                                        const dayName = parts[0];
+                                        const time = parts.slice(1).join(':').trim();
 
-                            <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-3 flex items-center'>
-                                    <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                                        />
-                                    </svg>
-                                    {t('contact', 'holidaysTitle')}
-                                </h3>
-                                <p className='text-gray-700 ml-9'>{t('contact', 'holidaysText')}</p>
+                                        return (
+                                            <div key={day} className='flex justify-between items-center border-b border-gray-100 last:border-0 pb-1 last:pb-0'>
+                                                <span className='font-medium'>{dayName}</span>
+                                                <span className='font-bold'>{time}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>

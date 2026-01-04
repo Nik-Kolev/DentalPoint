@@ -83,8 +83,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                 <div className='max-w-6xl mx-auto'>
                     <div className='bg-white/80 backdrop-blur-sm rounded-lg p-6 sm:p-8 shadow-md text-center'>
                         <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('home', 'aboutTitle')}</h2>
-                        <p className='text-gray-600 leading-relaxed text-lg mb-2'>{t('home', 'aboutTextLine1')}</p>
-                        <p className='text-gray-600 leading-relaxed text-lg'>{t('home', 'aboutTextLine2')}</p>
+                        <p className='text-gray-600 leading-relaxed text-lg'>{t('home', 'aboutTextLine1')}</p>
                     </div>
                 </div>
             </section>

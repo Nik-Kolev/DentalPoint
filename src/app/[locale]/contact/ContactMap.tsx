@@ -5,8 +5,10 @@ import { useState, useEffect } from 'react';
 export default function ContactMap() {
     const [mapLoaded, setMapLoaded] = useState(false);
 
-    const latitude = 43.221575025798415;
-    const longitude = 27.91784662746136;
+    const placeName = 'Dental Point Varna';
+    const placeAddress = 'ул. Подполковник Калитин 2, Варна';
+
+    const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(placeName + ', ' + placeAddress)}&z=17&output=embed`;
 
     // Load map immediately on mount (it's in viewport)
     useEffect(() => {
@@ -30,7 +32,7 @@ export default function ContactMap() {
             )}
             {mapLoaded && (
                 <iframe
-                    src={`https://www.google.com/maps?q=${latitude},${longitude}&z=17&output=embed`}
+                    src={mapUrl}
                     width='100%'
                     height='400'
                     className='h-[300px] sm:h-[400px]'

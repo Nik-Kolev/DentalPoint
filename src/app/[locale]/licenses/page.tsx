@@ -218,7 +218,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 <div className='pb-8 sm:pb-12'>
                     <StatisticsSection>
                         <StatisticCard target={certificatesData.length} suffix='+' label={t('licenses', 'statsCertificates')} />
-                        <StatisticCard target={12} suffix='+' label={t('licenses', 'statsExperience')} />
+                        <StatisticCard target={10 + Math.max(0, new Date().getFullYear() - 2026)} suffix='+' label={t('licenses', 'statsExperience')} />
                         <StatisticCard target={500} suffix='+' label={t('licenses', 'statsPatients')} />
                         <StatisticCard target={100} suffix='%' label={t('licenses', 'statsProfessionalism')} />
                     </StatisticsSection>

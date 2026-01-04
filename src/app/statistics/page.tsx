@@ -13,6 +13,8 @@ export default function StatisticsPage() {
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [useMockData, setUseMockData] = useState(false);
+    const isDevelopment = process.env.NODE_ENV === 'development';
 
     // Translation helpers
     const translateDevice = (device: string): string => {
@@ -124,7 +126,7 @@ export default function StatisticsPage() {
             setLoading(true);
             setError(null);
             try {
-                const analyticsData = await fetchAnalyticsData(timePeriod);
+                const analyticsData = await fetchAnalyticsData(timePeriod, useMockData);
                 setData(analyticsData);
             } catch (err: any) {
                 setError(err.message || 'Неуспешно зареждане на данни за аналитика');
@@ -134,7 +136,7 @@ export default function StatisticsPage() {
         };
 
         loadData();
-    }, [timePeriod]);
+    }, [timePeriod, useMockData]);
 
     const handleSignOut = async () => {
         await signOut({ redirect: false });
@@ -202,6 +204,17 @@ export default function StatisticsPage() {
                                             : 'Целия период'}
                                     </button>
                                 ))}
+                                {isDevelopment && (
+                                    <button
+                                        onClick={() => setUseMockData(!useMockData)}
+                                        disabled={loading}
+                                        className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+                                            useMockData ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'
+                                        } ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
+                                    >
+                                        {useMockData ? 'Тестови данни (кликни за реални)' : 'Реални данни (кликни за тестови)'}
+                                    </button>
+                                )}
                             </div>
                             {data && (
                                 <div className='flex items-center gap-2 text-base sm:text-lg text-gray-700'>
@@ -239,7 +252,7 @@ export default function StatisticsPage() {
                                     timePeriod === 'month' ? (
                                         // 30 days - scrollable with large text and columns
                                         <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
+                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
                                                 {data.timeSeries?.map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
@@ -248,7 +261,12 @@ export default function StatisticsPage() {
                                                             key={index}
                                                             className='flex flex-col items-center h-full relative group w-20 sm:w-24 flex-shrink-0'
                                                         >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                                {height <= 20 && (
+                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
+                                                                        {item.visitors}
+                                                                    </span>
+                                                                )}
                                                                 <div
                                                                     className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                     style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
@@ -263,12 +281,6 @@ export default function StatisticsPage() {
                                                             <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                 {translateTimeLabel(item.label, timePeriod)}
                                                             </div>
-                                                            {height <= 20 && (
-                                                                <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
-                                                                    <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     );
                                                 })}
@@ -278,7 +290,7 @@ export default function StatisticsPage() {
                                     // For year and alltime, make scrollable with larger columns
                                     timePeriod === 'year' || timePeriod === 'alltime' ? (
                                         <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
+                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
                                                 {(data.timeSeries || []).map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
@@ -287,7 +299,12 @@ export default function StatisticsPage() {
                                                             key={index}
                                                             className='flex flex-col items-center h-full relative group w-20 sm:w-28 flex-shrink-0'
                                                         >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                                {height <= 20 && (
+                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
+                                                                        {item.visitors}
+                                                                    </span>
+                                                                )}
                                                                 <div
                                                                     className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                     style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
@@ -302,12 +319,6 @@ export default function StatisticsPage() {
                                                             <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                 {translateTimeLabel(item.label, timePeriod)}
                                                             </div>
-                                                            {height <= 20 && (
-                                                                <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
-                                                                    <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     );
                                                 })}
@@ -316,7 +327,7 @@ export default function StatisticsPage() {
                                     ) : timePeriod === 'week' ? (
                                         // Week period - scrollable with large text and columns
                                         <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-start gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max'>
+                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
                                                 {(data.timeSeries || []).map((item, index) => {
                                                     const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
                                                     const height = (item.visitors / maxVisitors) * 100;
@@ -325,7 +336,12 @@ export default function StatisticsPage() {
                                                             key={index}
                                                             className='flex flex-col items-center h-full relative group w-24 sm:w-32 flex-shrink-0'
                                                         >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-hidden'>
+                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
+                                                                {height <= 20 && (
+                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
+                                                                        {item.visitors}
+                                                                    </span>
+                                                                )}
                                                                 <div
                                                                     className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
                                                                     style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
@@ -340,12 +356,6 @@ export default function StatisticsPage() {
                                                             <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
                                                                 {translateTimeLabel(item.label, timePeriod)}
                                                             </div>
-                                                            {height <= 20 && (
-                                                                <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
-                                                                    {translateTimeLabel(item.label, timePeriod)}: {item.visitors.toLocaleString()}
-                                                                    <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     );
                                                 })}

@@ -27,13 +27,13 @@
         "heroSubtitle": "Dr. Yavor Ivanov & Dr. Ekaterina Ivanova",
         "doctorsTitle": "Our Specialists",
         "doctor1Name": "Dr. Yavor Ivanov",
-        "doctor1Specialty": "Chief Doctor - Dentist",
+        "doctor1Specialty": "Doctor of Dental Medicine",
         "doctor2Name": "Dr. Ekaterina Ivanova",
-        "doctor2Specialty": "Dentist - Orthodontist",
+        "doctor2Specialty": "Doctor of Dental Medicine",
         "moreInfo": "More Info",
         "aboutTitle": "About Us",
-        "aboutTextLine1": "In our clinic you will find modern equipment, a personal approach, and care for the whole family.",
-        "aboutTextLine2": "We use the latest technologies and materials to provide the best treatment for our patients.",
+        "aboutTextLine1": "In our clinic, we combine next-generation technology with a personalized approach to every patient. We believe family health requires special attention, so we created a calm and secure environment where you can feel truly cared for.",
+        "aboutTextLine2": "",
         "galleryTitle": "Gallery",
         "ctaTitle": "Browse our modern clinic",
         "ctaSubtitle": "Book an appointment and experience professional care"
@@ -48,11 +48,11 @@
         "phoneTitle": "Phone",
         "emailTitle": "Email",
         "workingHoursTitle": "Working Hours",
-        "workingHoursMonday": "Monday: from 9:30 AM to 6:30 PM",
-        "workingHoursTuesday": "Tuesday: from 9:30 AM to 6:30 PM",
-        "workingHoursWednesday": "Wednesday: from 9:30 AM to 6:30 PM",
-        "workingHoursThursday": "Thursday: from 9:30 AM to 6:30 PM",
-        "workingHoursFriday": "Friday: from 9:30 AM to 6:30 PM",
+        "workingHoursMonday": "Monday: 09:30 - 18:30",
+        "workingHoursTuesday": "Tuesday: 09:30 - 18:30",
+        "workingHoursWednesday": "Wednesday: 09:30 - 18:30",
+        "workingHoursThursday": "Thursday: 09:30 - 18:30",
+        "workingHoursFriday": "Friday: 09:30 - 18:30",
         "workingHoursSaturday": "Saturday: Closed",
         "workingHoursSunday": "Sunday: Closed",
         "holidaysTitle": "Holidays",
@@ -65,10 +65,10 @@
         "title": "Our Team",
         "subtitle": "Meet our specialists",
         "person1Name": "Dr. Iavor Ivanov",
-        "person1Title": "Chief Doctor - Dentist",
+        "person1Title": "Doctor of Dental Medicine",
         "person1Description": "Dr. Ivanov is an experienced dentist with over 9 years of practice in pediatric dentistry. He specializes in preventive care, cavity treatment, and orthodontics. Known for his gentle approach with young patients and his ability to create a comfortable atmosphere during treatment. He holds certifications for working with the latest dental technologies.",
         "person2Name": "Dr. Ekaterina Ivanova",
-        "person2Title": "Dentist - Orthodontist",
+        "person2Title": "Doctor of Dental Medicine",
         "person2Description": "Dr. Ivanova is an orthodontics specialist with rich experience in correcting dental irregularities in adults and children. She has completed specialization in modern orthodontic techniques and works with the latest bracket systems. She is distinguished by her individual approach to each patient and her pursuit of perfect results. She actively participates in professional conferences and improvement courses.",
         "experience": "9+ years experience",
         "pediatricDentistry": "Pediatric Dentistry",
@@ -243,5 +243,12 @@
                 "text": "Professional service and excellent attitude. I recommend!"
             }
         ]
+    },
+    "cookies": {
+        "title": "Cookie Consent",
+        "description": "We use cookies to analyze website traffic and improve your experience. Essential cookies are required for the site to function.",
+        "notice": "By clicking \"Accept\", you consent to the use of analytics cookies. You can change your preference at any time.",
+        "accept": "Accept",
+        "reject": "Reject"
     }
 }
