@@ -30,10 +30,15 @@ function generateTimeSeries(period: TimePeriod): Array<{ label: string; visitors
             const dayName = dayNames[date.getDay()];
             // Weekend typically lower, weekdays higher with some variation
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-            const variation = isWeekend ? -8 : 5;
-            const trend = Math.sin((6 - i) * 0.5) * 3; // Subtle trend
-            const visitors = Math.max(20, Math.floor(baseVisitors + variation + trend + (Math.random() * 10 - 5)));
-            timeSeries.push({ label: dayName, visitors });
+            // Make Sunday (day 0) have a very low number to test small bar display
+            if (date.getDay() === 0) {
+                timeSeries.push({ label: dayName, visitors: 5 });
+            } else {
+                const variation = isWeekend ? -8 : 5;
+                const trend = Math.sin((6 - i) * 0.5) * 3; // Subtle trend
+                const visitors = Math.max(20, Math.floor(baseVisitors + variation + trend + (Math.random() * 10 - 5)));
+                timeSeries.push({ label: dayName, visitors });
+            }
         }
     } else if (period === 'month') {
         // Past 30 full days (excluding today) - show growth trend
@@ -169,26 +174,52 @@ function generateTrafficSources(totalVisitors: number, period: TimePeriod): Arra
 }
 
 /**
- * Fetch analytics data - using mock data for now
- * TODO: Enable GA API later
+ * Fetch analytics data
+ * @param period - Time period for analytics
+ * @param useMockData - If true, use mock data instead of real GA data (development only)
  */
-export async function fetchAnalyticsData(period: TimePeriod): Promise<AnalyticsData> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+export async function fetchAnalyticsData(period: TimePeriod, useMockData: boolean = false): Promise<AnalyticsData> {
+    // If useMockData is true (development toggle), use mock data
+    if (useMockData) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const timeSeries = generateTimeSeries(period);
-    const totalVisitors = timeSeries.reduce((sum, item) => sum + item.visitors, 0);
-    const deviceBreakdown = generateDeviceBreakdown(totalVisitors, period);
-    const trafficSources = generateTrafficSources(totalVisitors, period);
+        const timeSeries = generateTimeSeries(period);
+        const totalVisitors = timeSeries.reduce((sum, item) => sum + item.visitors, 0);
+        const deviceBreakdown = generateDeviceBreakdown(totalVisitors, period);
+        const trafficSources = generateTrafficSources(totalVisitors, period);
 
-    const data: AnalyticsData = {
-        totalVisitors,
-        totalPageViews: Math.floor(totalVisitors * 1.5),
-        uniqueVisitors: Math.floor(totalVisitors * 0.8),
-        timeSeries,
-        deviceBreakdown,
-        trafficSources,
-    };
+        const data: AnalyticsData = {
+            totalVisitors,
+            totalPageViews: Math.floor(totalVisitors * 1.5),
+            uniqueVisitors: Math.floor(totalVisitors * 0.8),
+            timeSeries,
+            deviceBreakdown,
+            trafficSources,
+        };
+
+        return data;
+    }
+
+    // Production: Only use real GA data, no fallback
+    const response = await fetch('/api/analytics', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ period }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch analytics data');
+    }
+
+    const data = await response.json();
+
+    // Check if response has error
+    if (data.error) {
+        throw new Error(data.error);
+    }
 
     return data;
 }
@@ -209,7 +240,8 @@ export function getDateRange(period: TimePeriod): { startDate: string; endDate: 
             startDate = endDate;
             break;
         case 'week':
-            // Last 7 full days including endDate
+            // Last 7 days from yesterday, including yesterday
+            // endDate is yesterday, so we need 6 days before that
             const weekAgo = new Date(end);
             weekAgo.setDate(end.getDate() - 6);
             startDate = weekAgo.toISOString().split('T')[0];

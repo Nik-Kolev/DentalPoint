@@ -104,7 +104,8 @@ export default function Reviews({ params }: { params: { locale: string } }) {
                 return weeks === 1 ? 'преди седмица' : `преди ${weeks} седмици`;
             }
             if (finalMonths < 12) {
-                return finalMonths === 1 ? 'преди месец' : `преди ${finalMonths} месеца`;
+                const displayMonths = Math.max(finalMonths, 1);
+                return displayMonths === 1 ? 'преди месец' : `преди ${displayMonths} месеца`;
             }
             if (finalYears === 1) return 'преди година';
             return `преди ${finalYears} години`;
@@ -117,7 +118,8 @@ export default function Reviews({ params }: { params: { locale: string } }) {
                 return weeks === 1 ? 'a week ago' : `${weeks} weeks ago`;
             }
             if (finalMonths < 12) {
-                return finalMonths === 1 ? 'a month ago' : `${finalMonths} months ago`;
+                const displayMonths = Math.max(finalMonths, 1);
+                return displayMonths === 1 ? 'a month ago' : `${displayMonths} months ago`;
             }
             if (finalYears === 1) return 'a year ago';
             return `${finalYears} years ago`;

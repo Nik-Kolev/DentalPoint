@@ -29,8 +29,7 @@ yarn-error.log*
 .env
 .env.production
 
-# documentation files (sensitive info)
-GA_SETUP_AND_CREDENTIALS.md
+# documentation file
 DENTALPOINT_DEPLOYMENT_GUIDE.md
 
 # vercel
