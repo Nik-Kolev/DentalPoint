@@ -15,7 +15,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <head>
                 <link rel='icon' href='/favicon.png' type='image/jpg' />
                 <link rel='apple-touch-icon' href='/favicon.png' />
-                <link rel='manifest' href='/manifest.json' />
                 <link rel='preconnect' href='https://fonts.googleapis.com' />
                 <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
                 {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
