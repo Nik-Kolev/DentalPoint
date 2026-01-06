@@ -14,21 +14,41 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
     const pathname = usePathname();
     const [isStaticCTAVisible, setIsStaticCTAVisible] = useState(false);
     const [isBackToTopVisible, setIsBackToTopVisible] = useState(false);
+    const [bottomOffset, setBottomOffset] = useState(0);
+    const [hasPassedStaticCTA, setHasPassedStaticCTA] = useState(false);
 
     // Hide on contact page
     const isContactPage = pathname?.includes('/contact');
 
     useEffect(() => {
-        // Check if back-to-top button should be visible
-        const toggleBackToTopVisibility = () => {
+        const handleScroll = () => {
+            // Check back to top visibility
             setIsBackToTopVisible(window.pageYOffset > 100);
+
+            // Check footer overlap
+            const footer = document.querySelector('footer');
+            if (footer) {
+                const footerRect = footer.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                // If footer is visible in viewport
+                if (footerRect.top < windowHeight) {
+                    // Calculate how much of the footer is visible
+                    const visibleFooterHeight = windowHeight - footerRect.top;
+                    // Add some padding (20px)
+                    setBottomOffset(visibleFooterHeight);
+                } else {
+                    setBottomOffset(0);
+                }
+            }
         };
 
-        toggleBackToTopVisibility();
-        window.addEventListener('scroll', toggleBackToTopVisibility);
+        handleScroll(); // Initial check
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleScroll);
 
         return () => {
-            window.removeEventListener('scroll', toggleBackToTopVisibility);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
         };
     }, []);
 
@@ -40,6 +60,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
 
         if (staticCTAs.length === 0) {
             setIsStaticCTAVisible(false);
+            setHasPassedStaticCTA(false);
             return;
         }
 
@@ -48,6 +69,26 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
                 // Check if any StaticCTA is visible
                 const anyVisible = entries.some((entry) => entry.isIntersecting);
                 setIsStaticCTAVisible(anyVisible);
+
+                // Check if we've passed the StaticCTA
+                const passed = entries.some((entry) => {
+                    const rect = entry.boundingClientRect;
+                    return !entry.isIntersecting && rect.top < 0;
+                });
+                if (passed) {
+                    setHasPassedStaticCTA(true);
+                } else if (anyVisible) {
+                    // Reset if it becomes visible again (user scrolled up)
+                    setHasPassedStaticCTA(false);
+                } else {
+                    // If not visible and not passed (i.e. above), ensure passed is false
+                    // We need to check if we are actually above
+                    const isAbove = entries.some((entry) => {
+                        const rect = entry.boundingClientRect;
+                        return !entry.isIntersecting && rect.top > 0;
+                    });
+                    if (isAbove) setHasPassedStaticCTA(false);
+                }
             },
             {
                 threshold: 0.1,
@@ -57,22 +98,32 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
 
         staticCTAs.forEach((cta) => observer.observe(cta));
 
-        // Also check immediately in case StaticCTA is already in view
-        const checkInitialVisibility = () => {
+        // Also check immediately
+        const checkVisibility = () => {
+            let passed = false;
+            let visible = false;
             staticCTAs.forEach((cta) => {
                 const rect = cta.getBoundingClientRect();
                 const isVisible = rect.top < window.innerHeight - 100 && rect.bottom > 0;
-                if (isVisible) {
-                    setIsStaticCTAVisible(true);
-                }
+                if (isVisible) visible = true;
+                if (!isVisible && rect.top < 0) passed = true;
             });
+            setIsStaticCTAVisible(visible);
+            setHasPassedStaticCTA(passed && !visible);
         };
 
+        // Check on scroll too for precise "passed" detection
+        const scrollCheck = () => {
+            checkVisibility();
+        };
+        window.addEventListener('scroll', scrollCheck);
+
         // Small delay to ensure DOM is ready
-        setTimeout(checkInitialVisibility, 100);
+        setTimeout(checkVisibility, 100);
 
         return () => {
             staticCTAs.forEach((cta) => observer.unobserve(cta));
+            window.removeEventListener('scroll', scrollCheck);
         };
     }, [isContactPage, pathname]);
 
@@ -80,11 +131,15 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         return null;
     }
 
+    // Hide if static CTA is visible OR if we have passed it
+    const shouldHide = isStaticCTAVisible || hasPassedStaticCTA;
+
     return (
         <div
-            className={`fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 md:hidden transition-all duration-300 ${
-                isStaticCTAVisible ? 'opacity-0 pointer-events-none translate-y-full' : 'opacity-100 pointer-events-auto translate-y-0'
+            className={`fixed left-0 right-0 z-[60] px-4 md:hidden transition-all duration-300 ${
+                shouldHide ? 'opacity-0 pointer-events-none translate-y-full' : 'opacity-100 pointer-events-auto translate-y-0'
             }`}
+            style={{ bottom: `${Math.max(16, bottomOffset + 16)}px` }}
         >
             <Link
                 href={`/${locale}/contact`}
