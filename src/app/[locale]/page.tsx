@@ -59,7 +59,7 @@ export default function Home({ params }: { params: { locale: string } }) {
 
             {/* Clinic Image Section */}
             <section className='pb-6 sm:pb-8 px-4'>
-                <div className='max-w-5xl mx-auto'>
+                <div className='max-w-6xl mx-auto'>
                     <div className='relative w-full h-[280px] sm:h-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
                             src='/Images/front/clinic.jpg'
@@ -68,8 +68,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             className='object-cover'
                             priority
                             loading='eager'
-                            quality={70}
-                            sizes='(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 1000px'
+                            quality={85}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1200px'
                             fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
