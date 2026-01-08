@@ -123,7 +123,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         name: 'Dental Point',
         description: t('metadata', 'description'),
         url: `${baseUrl}/${locale}`,
-        logo: `${baseUrl}/Images/logo/DP_Logo.png`,
+        logo: `${baseUrl}/Images/logo/cropped_logo_dp.jpg`,
         image: `${baseUrl}/og-image.jpg`,
         address: {
             '@type': 'PostalAddress',
@@ -160,27 +160,22 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
             <header className='w-full shadow-sm bg-white relative z-40'>
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
-                    {/* Logo and Clinic Name - Centered on mobile */}
-                    <div className='flex items-center space-x-2 sm:space-x-3 flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0'>
-                        <div
-                            className='relative w-12 h-12 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg border border-gray-200 shadow-sm bg-white overflow-hidden'
-                            style={{ aspectRatio: '1/1' }}
-                        >
+                    {/* Logo - Centered on mobile */}
+                    <div className='flex items-start flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0 pt-1 lg:pt-0'>
+                        <div className='relative w-24 sm:w-32 md:w-40 lg:w-44 h-auto ml-2 sm:ml-3 lg:ml-4'>
                             <Image
-                                src={getImageUrl('/Images/logo/header_logo.jpg')}
+                                src={getImageUrl('/Images/logo/cropped_logo_dp.jpg')}
                                 alt='Dental Point Logo'
-                                fill
+                                width={843}
+                                height={401}
                                 priority
                                 loading='eager'
                                 quality={85}
-                                sizes='(max-width: 640px) 48px, (max-width: 768px) 40px, 48px'
-                                className='object-cover'
+                                sizes='(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 176px'
+                                className='w-full h-auto object-contain'
                                 placeholder='blur'
-                                blurDataURL={getBlurPlaceholder('/Images/logo/header_logo.jpg')}
+                                blurDataURL={getBlurPlaceholder('/Images/logo/cropped_logo_dp.jpg')}
                             />
-                        </div>
-                        <div className='flex flex-col'>
-                            <span className={`text-2xl sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] ${playfair.className}`}>Dental Point</span>
                         </div>
                     </div>
 
