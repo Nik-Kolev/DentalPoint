@@ -10,26 +10,26 @@ const path = require('path');
 const IMAGES_DIR = path.join(__dirname, '../public/Images');
 
 const CONFIG = {
-    // Large photos (hero sections) - Optimize but keep high detail
+    // Large photos (hero sections) - Optimize for web delivery
     large: {
         maxWidth: 1920,
         maxHeight: 1440,
-        quality: 90, // Increased from 85
-        minSize: 500 * 1024, // Don't touch files smaller than 500KB
+        quality: 85, // Balanced quality/size for web
+        minSize: 200 * 1024, // Optimize files larger than 200KB
     },
-    // Faces/People - Highest quality
+    // Faces/People - High quality but web-optimized
     people: {
         maxWidth: 1600,
         maxHeight: 1600,
-        quality: 95, // Near lossless
-        minSize: 300 * 1024, // Don't touch files smaller than 300KB
+        quality: 90, // High quality for portraits
+        minSize: 200 * 1024, // Optimize files larger than 200KB
     },
     // Certificates - readability is key
     certificates: {
         maxWidth: 1600,
         maxHeight: 1600,
-        quality: 90,
-        minSize: 300 * 1024,
+        quality: 85, // Good quality, smaller files
+        minSize: 200 * 1024, // Optimize files larger than 200KB
     },
     // Logos
     logo: {
@@ -84,11 +84,12 @@ async function optimizeImage(filePath) {
         // Auto-rotate based on EXIF orientation (fixes rotated images)
         image = image.rotate();
 
-        // Only resize if significantly larger
-        if (metadata.width > config.maxWidth) {
+        // Resize if larger than max dimensions (more aggressive for server)
+        if (metadata.width > config.maxWidth || metadata.height > config.maxHeight) {
             image = image.resize(config.maxWidth, config.maxHeight, {
                 fit: 'inside',
                 withoutEnlargement: true,
+                kernel: sharp.kernel.lanczos3, // Better quality resizing
             });
         }
 
@@ -96,9 +97,24 @@ async function optimizeImage(filePath) {
         const ext = path.extname(filePath).toLowerCase();
 
         if (ext === '.png') {
-            outputBuffer = await image.png({ quality: config.quality, compressionLevel: 8 }).toBuffer();
+            outputBuffer = await image
+                .png({
+                    quality: config.quality,
+                    compressionLevel: 9,
+                    adaptiveFiltering: true,
+                    palette: true,
+                })
+                .toBuffer();
         } else {
-            outputBuffer = await image.jpeg({ quality: config.quality, mozjpeg: true }).toBuffer();
+            // Use better mozjpeg settings for smaller files without quality loss
+            outputBuffer = await image
+                .jpeg({
+                    quality: config.quality,
+                    mozjpeg: true,
+                    progressive: true,
+                    optimizeScans: true,
+                })
+                .toBuffer();
         }
 
         // Only save if we actually save space
