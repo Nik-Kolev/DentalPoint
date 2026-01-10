@@ -25,17 +25,35 @@ jobs:
                       git fetch origin main
                       git reset --hard origin/main
 
+                      # Clean previous build to avoid corruption
+                      rm -rf .next
+                      rm -rf node_modules/.cache
+
                       # Install dependencies
                       npm install || exit 1
 
-                      # Build with version timestamp
-                      export NEXT_PUBLIC_IMAGE_VERSION=$(date +%s)
+                      # Build
                       NODE_OPTIONS="--max-old-space-size=2048" NODE_ENV=production npm run build || exit 1
+
+                      # Verify build succeeded
+                      if [ ! -d ".next" ]; then
+                          echo "❌ Build failed - .next directory not found"
+                          exit 1
+                      fi
+
+                      # Check for critical build files
+                      if [ ! -f ".next/BUILD_ID" ] || [ ! -d ".next/static" ]; then
+                          echo "❌ Build incomplete - missing critical files"
+                          exit 1
+                      fi
 
                       # Restart PM2
                       pm2 restart dentalpoint || pm2 start npm --name dentalpoint -- start
 
+                      # Wait for app to be ready
+                      sleep 5
+
                       # Reload nginx
-                      systemctl reload nginx || true
+                      nginx -t && systemctl reload nginx || echo "⚠️ Nginx reload failed"
 
                       echo "✅ Deployment completed at $(date)"
