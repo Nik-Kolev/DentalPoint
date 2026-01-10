@@ -4,6 +4,10 @@ on:
     push:
         branches:
             - main
+        paths-ignore:
+            - '**.md'
+            - '.gitignore'
+            - 'LICENSE'
 
 jobs:
     deploy:
@@ -25,14 +29,21 @@ jobs:
                       git fetch origin main
                       git reset --hard origin/main
 
-                      # Clean previous build to avoid corruption
-                      rm -rf .next
-                      rm -rf node_modules/.cache
+                      # Stop PM2 to prevent conflicts during cleanup
+                      pm2 stop dentalpoint 2>/dev/null || true
+
+                      # Clean previous build to avoid corruption (fixes webpack cache errors)
+                      echo "🧹 Cleaning old build..."
+                      rm -rf .next/cache 2>/dev/null || true
+                      rm -rf .next 2>/dev/null || true
+                      rm -rf node_modules/.cache 2>/dev/null || true
+                      rm -rf .swc 2>/dev/null || true
 
                       # Install dependencies
                       npm install || exit 1
 
                       # Build
+                      echo "🔨 Building Next.js..."
                       NODE_OPTIONS="--max-old-space-size=2048" NODE_ENV=production npm run build || exit 1
 
                       # Verify build succeeded
@@ -53,7 +64,14 @@ jobs:
                       # Wait for app to be ready
                       sleep 5
 
-                      # Reload nginx
-                      nginx -t && systemctl reload nginx || echo "⚠️ Nginx reload failed"
+                      # Auto-apply Nginx config from repo
+                      if [ -f "nginx.conf.dentalpoint" ]; then
+                          echo "📝 Updating Nginx config..."
+                          cp nginx.conf.dentalpoint /etc/nginx/sites-available/dentalpoint
+                          nginx -t && systemctl reload nginx || echo "⚠️ Nginx config update failed"
+                      else
+                          echo "⚠️ nginx.conf.dentalpoint not found, skipping Nginx update"
+                          nginx -t && systemctl reload nginx || echo "⚠️ Nginx reload failed"
+                      fi
 
                       echo "✅ Deployment completed at $(date)"

@@ -8,11 +8,12 @@ echo "🔧 Fixing corrupted build..."
 # Stop PM2
 pm2 stop dentalpoint || true
 
-# Clean everything
+# Clean everything (fixes webpack cache ENOENT errors)
 echo "🧹 Cleaning old build..."
-rm -rf .next
-rm -rf node_modules/.cache
-rm -rf .swc
+rm -rf .next/cache 2>/dev/null || true
+rm -rf .next 2>/dev/null || true
+rm -rf node_modules/.cache 2>/dev/null || true
+rm -rf .swc 2>/dev/null || true
 
 # Rebuild from scratch
 echo "🔨 Rebuilding Next.js..."
