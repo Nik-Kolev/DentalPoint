@@ -1,17 +1,12 @@
-'use client';
-
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
+import ClientGallery from '@/components/ClientGallery';
 
 const StaticCTA = dynamic(() => import('@/components/StaticCTA'), {
     ssr: true,
-});
-const ImageLightbox = dynamic(() => import('@/components/ImageLightbox'), {
-    ssr: false,
 });
 
 const playfair = Playfair_Display({
@@ -28,20 +23,6 @@ const montserrat = Montserrat({
 
 export default function Home({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
-
-    const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
-    const [galleryVisible, setGalleryVisible] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!galleryVisible && window.scrollY > 200) {
-                setGalleryVisible(true);
-            }
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [galleryVisible]);
 
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
@@ -94,50 +75,9 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* Clinic Gallery Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4'>
-                        {clinicImages.map((imageName, i) => (
-                            <div
-                                key={i}
-                                className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 sm:cursor-pointer'
-                                onClick={(e) => {
-                                    if (window.innerWidth >= 640) {
-                                        setSelectedImage({
-                                            src: `/Images/front/${imageName}`,
-                                            alt: `Clinic image ${i + 1}`,
-                                            element: e.currentTarget,
-                                        });
-                                    }
-                                }}
-                            >
-                                <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
-                                    <Image
-                                        src={getImageUrl(`/Images/front/${imageName}`)}
-                                        alt={`Clinic image ${i + 1}`}
-                                        fill
-                                        quality={60}
-                                        loading='lazy'
-                                        sizes='(max-width: 768px) 100vw, 300px'
-                                        className='rounded-md object-cover'
-                                        placeholder='blur'
-                                        blurDataURL={getBlurPlaceholder(`/Images/front/${imageName}`)}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <ClientGallery locale={params.locale} />
                 </div>
             </section>
-
-            {selectedImage && (
-                <ImageLightbox
-                    isOpen={!!selectedImage}
-                    onClose={() => setSelectedImage(null)}
-                    imageSrc={selectedImage.src}
-                    alt={selectedImage.alt}
-                    triggerElement={selectedImage.element}
-                    locale={params.locale}
-                />
-            )}
         </div>
     );
 }
