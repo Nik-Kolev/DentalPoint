@@ -2,11 +2,17 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import ImageLightbox from '@/components/ImageLightbox';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
+
+const StaticCTA = dynamic(() => import('@/components/StaticCTA'), {
+    ssr: true,
+});
+const ImageLightbox = dynamic(() => import('@/components/ImageLightbox'), {
+    ssr: false,
+});
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
@@ -39,7 +45,7 @@ export default function Home({ params }: { params: { locale: string } }) {
 
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
-            {/* Main Title - Centered */}
+            {/* Main Title */}
             <div className='text-center pt-6 sm:pt-10 pb-6 sm:pb-8 px-4'>
                 <h1 className={`flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#005baa] ${playfair.className}`}>
                     <span className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium opacity-80'>{t('home', 'heroTitlePrefix')}</span>
@@ -57,7 +63,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            quality={75}
+                            loading='eager'
+                            quality={80}
                             sizes='(max-width: 768px) 100vw, 1080px'
                             fetchPriority='high'
                             placeholder='blur'
@@ -93,7 +100,6 @@ export default function Home({ params }: { params: { locale: string } }) {
                                 key={i}
                                 className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 sm:cursor-pointer'
                                 onClick={(e) => {
-                                    // Only open lightbox if screen is larger than 640px
                                     if (window.innerWidth >= 640) {
                                         setSelectedImage({
                                             src: `/Images/front/${imageName}`,
@@ -108,10 +114,9 @@ export default function Home({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(`/Images/front/${imageName}`)}
                                         alt={`Clinic image ${i + 1}`}
                                         fill
-                                        quality={i === 0 ? 75 : 70}
-                                        priority={i === 0}
-                                        loading={i === 0 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px'
+                                        quality={60}
+                                        loading='lazy'
+                                        sizes='(max-width: 768px) 100vw, 300px'
                                         className='rounded-md object-cover'
                                         placeholder='blur'
                                         blurDataURL={getBlurPlaceholder(`/Images/front/${imageName}`)}
@@ -123,7 +128,6 @@ export default function Home({ params }: { params: { locale: string } }) {
                 </div>
             </section>
 
-            {/* Lightbox - Only shown when selectedImage is set (onClick handles mobile check) */}
             {selectedImage && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
