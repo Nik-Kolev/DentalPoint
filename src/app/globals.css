@@ -7,11 +7,11 @@
 }
 
 .font-playfair {
-    font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
+    font-family: var(--font-playfair);
 }
 
 .font-montserrat {
-    font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-montserrat);
 }
 
 @media (prefers-color-scheme: dark) {

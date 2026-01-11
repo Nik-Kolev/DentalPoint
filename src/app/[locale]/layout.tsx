@@ -27,7 +27,7 @@ const StatisticsLink = dynamic(() => import('@/components/StatisticsLink'), {
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
-    display: 'swap',
+    display: 'block',
     weight: ['400', '600', '700'],
     preload: true,
     variable: '--font-playfair',
@@ -36,7 +36,7 @@ const playfair = Playfair_Display({
 const montserrat = Montserrat({
     subsets: ['latin'],
     weight: ['600', '700'],
-    display: 'swap',
+    display: 'block',
     preload: true,
     variable: '--font-montserrat',
 });
