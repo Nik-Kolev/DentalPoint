@@ -6,6 +6,14 @@
     --background-end-rgb: 255, 255, 255;
 }
 
+.font-playfair {
+    font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
+}
+
+.font-montserrat {
+    font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --foreground-rgb: 255, 255, 255;

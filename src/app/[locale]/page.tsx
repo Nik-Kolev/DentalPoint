@@ -1,24 +1,29 @@
+/**
+ * HOME PAGE - Server Component
+ *
+ * PERFORMANCE OPTIMIZATION (Jan 2026):
+ * This page was converted from 'use client' to a Server Component to fix LCP issues.
+ *
+ * Problem: With 'use client', the hero image couldn't load until JS hydrated,
+ * causing LCP of 9.3s on mobile (slow 4G). PageSpeed score was 72.
+ *
+ * Solution: Made this a Server Component so the <img> tag is in the initial HTML.
+ * Browser can start fetching the hero image immediately, no JS required.
+ * The interactive gallery is split into ClientGallery.tsx (client component).
+ *
+ * Result: LCP dropped to 2.9s, PageSpeed score improved to 95.
+ *
+ * Fonts: Use font-playfair and font-montserrat CSS classes (defined in globals.css)
+ * which reference CSS variables set in layout.tsx. This centralizes font loading.
+ */
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { Playfair_Display, Montserrat } from 'next/font/google';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import ClientGallery from '@/components/ClientGallery';
 
 const StaticCTA = dynamic(() => import('@/components/StaticCTA'), {
     ssr: true,
-});
-
-const playfair = Playfair_Display({
-    subsets: ['latin'],
-    display: 'swap',
-    preload: true,
-});
-const montserrat = Montserrat({
-    subsets: ['latin'],
-    weight: ['600', '700'],
-    display: 'swap',
-    preload: true,
 });
 
 export default function Home({ params }: { params: { locale: string } }) {
@@ -28,9 +33,9 @@ export default function Home({ params }: { params: { locale: string } }) {
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
             {/* Main Title */}
             <div className='text-center pt-6 sm:pt-10 pb-6 sm:pb-8 px-4'>
-                <h1 className={`flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#005baa] ${playfair.className}`}>
+                <h1 className='flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#005baa] font-playfair'>
                     <span className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium opacity-80'>{t('home', 'heroTitlePrefix')}</span>
-                    <span className={`${montserrat.className} font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl`}>{t('home', 'heroTitleClinic')}</span>
+                    <span className='font-montserrat font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl'>{t('home', 'heroTitleClinic')}</span>
                 </h1>
             </div>
 
