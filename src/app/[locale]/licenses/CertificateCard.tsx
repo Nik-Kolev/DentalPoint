@@ -43,7 +43,7 @@ export default function CertificateCard({ imageUrl, imagePath, onImageClick, pri
                     src={imageUrl}
                     alt='Certificate'
                     fill
-                    quality={priority ? 90 : 85}
+                    quality={priority ? 75 : 70}
                     priority={priority}
                     loading={priority ? 'eager' : 'lazy'}
                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'

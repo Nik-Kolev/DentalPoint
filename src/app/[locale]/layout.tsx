@@ -4,6 +4,7 @@ import '../globals.css';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import BackToTop from '@/components/BackToTop';
@@ -162,7 +163,11 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                 <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
                     {/* Logo - Centered on mobile */}
                     <div className='flex items-start flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0 pt-1 lg:pt-0'>
-                        <div className='relative w-24 sm:w-32 md:w-40 lg:w-44 h-auto ml-2 sm:ml-3 lg:ml-4'>
+                        <Link
+                            href={`/${locale}`}
+                            className='relative w-24 sm:w-32 md:w-40 lg:w-44 h-auto ml-2 sm:ml-3 lg:ml-4'
+                            aria-label={t('layout', 'menuHome')}
+                        >
                             <Image
                                 src={getImageUrl('/Images/logo/cropped_logo_dp.jpg')}
                                 alt='Dental Point Logo'
@@ -170,13 +175,13 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                                 height={401}
                                 priority
                                 loading='eager'
-                                quality={85}
+                                quality={80}
                                 sizes='(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 176px'
                                 className='w-full h-auto object-contain'
                                 placeholder='blur'
                                 blurDataURL={getBlurPlaceholder('/Images/logo/cropped_logo_dp.jpg')}
                             />
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Desktop Navigation */}

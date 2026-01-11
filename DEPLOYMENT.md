@@ -52,3 +52,13 @@ The Nginx configuration is now version-controlled in `nginx.conf.dentalpoint`. C
 -   `update-nginx.sh` - Manual Nginx update (auto-deployment handles this now)
 
 These scripts are kept in the repo for emergency manual fixes, but you normally won't need them since auto-deployment handles everything.
+
+## Image Optimization for Mobile Performance
+
+The project is optimized for a 1 CPU, 1GB RAM server with aggressive mobile image settings:
+
+-   **Device sizes**: Reduced to `[384, 640, 750, 828, 1080]` (removed 1200, 1920 for faster mobile loading)
+-   **Image quality**: Reduced to 70-75 for most images (from 80-90) to reduce server CPU load
+-   **Cloudflare caching**: 3 caching rules configured for `/Images/*`, `/_next/static/*`, `/_next/image/*`
+
+These settings significantly improve mobile loading times on limited server resources.
