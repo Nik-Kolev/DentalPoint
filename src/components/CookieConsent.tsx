@@ -81,9 +81,9 @@ export default function CookieConsent({ locale }: CookieConsentProps) {
             <div className='max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
                 <div className='flex-1'>
                     <h3 className='text-lg font-semibold text-gray-900 mb-2'>{t('cookies', 'title')}</h3>
-                    <p className='text-sm text-gray-600 mb-2'>{t('cookies', 'description')}</p>
-                    <p className='text-xs text-gray-500 mb-2'>{t('cookies', 'notice')}</p>
-                    <Link href={`/${locale}/privacy`} className='text-xs text-[#009fe3] hover:text-[#005baa] hover:underline transition-colors'>
+                    <p className='text-sm text-gray-700 mb-2'>{t('cookies', 'description')}</p>
+                    <p className='text-xs text-gray-600 mb-2'>{t('cookies', 'notice')}</p>
+                    <Link href={`/${locale}/privacy`} className='text-xs text-[#005baa] hover:text-[#004085] hover:underline transition-colors font-medium'>
                         {t('cookies', 'learnMore')}
                     </Link>
                 </div>
@@ -96,7 +96,7 @@ export default function CookieConsent({ locale }: CookieConsentProps) {
                     </button>
                     <button
                         onClick={handleAccept}
-                        className='px-4 py-2 text-sm font-medium text-white bg-[#009fe3] rounded-lg hover:bg-[#005baa] transition-colors'
+                        className='px-4 py-2 text-sm font-medium text-white bg-[#005baa] rounded-lg hover:bg-[#004085] transition-colors'
                     >
                         {t('cookies', 'accept')}
                     </button>
