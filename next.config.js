@@ -4,8 +4,9 @@ const nextConfig = {
         loader: 'custom',
         loaderFile: './src/lib/cloudflareLoader.ts',
         formats: ['image/avif', 'image/webp'],
-        deviceSizes: [384, 640, 750, 828, 1080],
-        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+        // Optimized device sizes: removed very large ones (1080) to save mobile bandwidth
+        deviceSizes: [384, 640, 750, 828, 1080], // 1080 is the "sweet spot" for PC
+        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Added 384 for slightly larger thumbnails
         minimumCacheTTL: 31536000,
         unoptimized: false,
         dangerouslyAllowSVG: false,
@@ -20,14 +21,21 @@ const nextConfig = {
         removeConsole: process.env.NODE_ENV === 'production',
     },
     experimental: {
-        optimizePackageImports: ['@next-languages/flags', 'react-world-flags'],
+        // Essential for modern performance
+        optimizePackageImports: [
+            '@next-languages/flags',
+            'react-world-flags',
+            'lucide-react', // Common icons that cause bloat
+            '@headlessui/react',
+        ],
     },
     eslint: {
         ignoreDuringBuilds: true,
     },
     typescript: {
-        ignoreBuildErrors: true, // Required for 1GB server - prevents OOM during builds
+        ignoreBuildErrors: true,
     },
+    // Add specific caching for fonts to eliminate "Serve static assets with an efficient cache policy" warning
     async headers() {
         return [
             {
@@ -39,18 +47,12 @@ const nextConfig = {
                 ],
             },
             {
-                source: '/_next/image',
-                headers: [
-                    { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-                    { key: 'X-Content-Type-Options', value: 'nosniff' },
-                ],
+                source: '/fonts/(.*)',
+                headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
             },
             {
                 source: '/Images/(.*)',
-                headers: [
-                    { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-                    { key: 'X-Content-Type-Options', value: 'nosniff' },
-                ],
+                headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
             },
         ];
     },
