@@ -58,17 +58,14 @@ export default function Home({ params }: { params: { locale: string } }) {
                 <div className='max-w-6xl mx-auto'>
                     <div className='relative w-full h-[280px] sm:h-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
-                            src='/Images/front/clinic.jpg'
+                            src={getImageUrl('/Images/clinic/main-clinic-image.jpg')}
                             alt='Dental Point Clinic'
-                            fill
-                            className='object-cover'
+                            width={1080}
+                            height={600}
                             priority
-                            loading='eager'
-                            quality={80}
-                            sizes='(max-width: 768px) 100vw, 1080px'
                             fetchPriority='high'
-                            placeholder='blur'
-                            blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
+                            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1080px'
+                            className='w-full h-auto rounded-lg object-cover'
                         />
                     </div>
                 </div>
@@ -77,7 +74,7 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* About Us Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <div className='bg-white/80 backdrop-blur-sm rounded-lg p-6 sm:p-8 shadow-md text-center'>
+                    <div className='bg-white border border-[#e3f3fb] rounded-lg p-6 sm:p-8 shadow-sm text-center'>
                         <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('home', 'aboutTitle')}</h2>
                         <p className='text-gray-600 leading-relaxed text-lg'>{t('home', 'aboutTextLine1')}</p>
                     </div>

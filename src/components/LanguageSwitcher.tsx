@@ -2,16 +2,23 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import Flag from 'react-world-flags';
+import { useCallback } from 'react';
 
 export default function LanguageSwitcher({ locale }: { locale: string }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const switchLanguage = (newLocale: string) => {
-        localStorage.setItem('preferredLang', newLocale);
-        const newPath = pathname.replace(/^\/(en|bg)/, `/${newLocale}`);
-        router.push(newPath);
-    };
+    const switchLanguage = useCallback(
+        (newLocale: string) => {
+            // Only proceed if the language is actually different
+            if (newLocale === locale) return;
+
+            localStorage.setItem('preferredLang', newLocale);
+            const newPath = pathname.replace(/^\/(en|bg)/, `/${newLocale}`);
+            router.push(newPath);
+        },
+        [locale, pathname, router]
+    );
 
     return (
         <div className='flex items-center space-x-3'>
