@@ -47,7 +47,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     alt={doctor.name}
                                     fill
                                     priority={index === 0}
-                                    quality={90}
+                                    quality={75}
                                     sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px'
                                     className='object-cover transition-transform duration-500 group-hover:scale-105'
                                     placeholder='blur'

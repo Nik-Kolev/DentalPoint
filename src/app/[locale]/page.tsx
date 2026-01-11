@@ -68,8 +68,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             className='object-cover'
                             priority
                             loading='eager'
-                            quality={80}
-                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1200px'
+                            quality={75}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1080px'
                             fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
@@ -114,7 +114,7 @@ export default function Home({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(`/Images/front/${imageName}`)}
                                         alt={`Clinic image ${i + 1}`}
                                         fill
-                                        quality={i === 0 ? 80 : 85}
+                                        quality={i === 0 ? 75 : 70}
                                         priority={i === 0}
                                         loading={i === 0 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 33vw, 400px'

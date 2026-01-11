@@ -116,7 +116,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(item.before)}
                                         alt={`Before - Gallery item ${i + 1}`}
                                         fill
-                                        quality={i < 2 ? 90 : 85}
+                                        quality={i < 2 ? 75 : 70}
                                         priority={i < 2}
                                         loading={i < 2 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
@@ -142,7 +142,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                         src={getImageUrl(item.after)}
                                         alt={`After - Gallery item ${i + 1}`}
                                         fill
-                                        quality={i < 2 ? 90 : 85}
+                                        quality={i < 2 ? 75 : 70}
                                         priority={i < 2}
                                         loading={i < 2 ? 'eager' : 'lazy'}
                                         sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
