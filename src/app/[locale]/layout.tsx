@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
             address: false,
             telephone: false,
         },
-        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38'),
+        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg'),
         alternates: {
             canonical: `/${locale}`,
             languages: {
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
         openGraph: {
             title: t('metadata', 'ogTitle'),
             description: t('metadata', 'ogDescription'),
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38'}/${locale}`,
+            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg'}/${locale}`,
             siteName: 'Dental Point',
             images: [
                 {
@@ -113,7 +113,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         reviews: t('layout', 'menuReviews'),
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://209.38.210.38';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg';
     const isBulgarian = locale === 'bg';
 
     // Structured Data (JSON-LD) for SEO
