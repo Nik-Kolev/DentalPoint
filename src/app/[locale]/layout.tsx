@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display } from 'next/font/google';
+import { Playfair_Display, Montserrat } from 'next/font/google';
 import dynamic from 'next/dynamic';
 import '../globals.css';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -25,13 +25,20 @@ const StatisticsLink = dynamic(() => import('@/components/StatisticsLink'), {
     ssr: false,
 });
 
-// STEP 2: Font Optimization
-// Only loading essential weights reduces the font file size by ~60%
 const playfair = Playfair_Display({
     subsets: ['latin'],
     display: 'swap',
     weight: ['400', '600', '700'],
     preload: true,
+    variable: '--font-playfair',
+});
+
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    weight: ['600', '700'],
+    display: 'swap',
+    preload: true,
+    variable: '--font-montserrat',
 });
 
 export async function generateViewport({ params }: { params: { locale: string } }): Promise<Viewport> {
@@ -167,8 +174,8 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
     };
 
     return (
-        <html lang={locale}>
-            <body className={playfair.className}>
+        <html lang={locale} className={`${playfair.variable} ${montserrat.variable}`}>
+            <body className='font-playfair'>
                 <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
                 <header className='w-full shadow-sm bg-white relative z-40'>
                     <nav className='mx-auto flex items-center justify-between h-16 md:h-20 lg:h-24 px-4 sm:px-6 lg:px-8 relative'>
