@@ -60,5 +60,28 @@ The project is optimized for a 1 CPU, 1GB RAM server with aggressive mobile imag
 -   **Device sizes**: Reduced to `[384, 640, 750, 828, 1080]` (removed 1200, 1920 for faster mobile loading)
 -   **Image quality**: Reduced to 70-75 for most images (from 80-90) to reduce server CPU load
 -   **Cloudflare caching**: 3 caching rules configured for `/Images/*`, `/_next/static/*`, `/_next/image/*`
+-   **Sharp library**: Installed and enabled for faster image processing
+-   **Nginx proxy buffering**: Disabled for `/_next/image` to reduce first-byte delay on mobile
+
+### Recommended Server-Level Optimizations
+
+**Add Swap Space (Required for 1GB RAM):**
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+# Make permanent by adding to /etc/fstab:
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+**Cloudflare Image Resizing (Best Solution - FREE!):**
+
+-   A Cloudflare loader is available at `src/lib/cloudflareLoader.ts`
+-   This offloads all image optimization to Cloudflare's edge network
+-   Uses Cloudflare's FREE Image Resizing service (no paid subscription needed!)
+-   No usage limits - works on all Cloudflare plans
+-   To enable: Update `next.config.js` to use custom loader (see cloudflareLoader.ts comments)
 
 These settings significantly improve mobile loading times on limited server resources.
