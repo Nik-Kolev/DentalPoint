@@ -174,7 +174,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                             maxWidth: '100%',
                             maxHeight: 'calc(90vh - 60px)',
                         }}
-                        loading='eager'
+                        loading='lazy'
                     />
                     {!imageLoaded && (
                         <div className='w-full h-full flex flex-col items-center justify-center text-gray-400'>

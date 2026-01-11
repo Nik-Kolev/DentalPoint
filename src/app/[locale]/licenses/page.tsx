@@ -172,24 +172,20 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
     // Mobile: show 3 initially, desktop: show all
     const [visibleCount, setVisibleCount] = useState(3);
-    const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
-        // Check if mobile on mount and resize
-        const checkMobile = () => {
-            const mobile = window.innerWidth < 768;
-            setIsMobile(mobile);
-
-            // On desktop, show all certificates
-            if (!mobile) {
+        // Show all certificates on desktop (>= 768px), 3 on mobile
+        const checkScreenSize = () => {
+            if (window.innerWidth >= 768) {
                 setVisibleCount(certificatesData.length);
+            } else {
+                setVisibleCount(3);
             }
-            // On mobile, initial state is already 3, no need to reset
         };
 
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
     // Show more certificates (3 at a time)
@@ -232,13 +228,14 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                             imageUrl={getImageUrl(imagePath)}
                             imagePath={imagePath}
                             priority={index < 3}
-                            onImageClick={(element) =>
+                            onImageClick={(element) => {
+                                // Only open lightbox on desktop (onClick handler in CertificateCard checks >= 640px)
                                 setSelectedImage({
                                     src: getImageUrl(imagePath),
                                     alt: 'Certificate',
                                     element,
-                                })
-                            }
+                                });
+                            }}
                         />
                     ))}
                 </div>
@@ -271,8 +268,8 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 </div>
             </div>
 
-            {/* Lightbox - rendered outside container for proper positioning - only on desktop */}
-            {selectedImage && !isMobile && (
+            {/* Lightbox - Only shown when selectedImage is set (onClick handler in CertificateCard handles mobile check) */}
+            {selectedImage && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
                     onClose={() => setSelectedImage(null)}
