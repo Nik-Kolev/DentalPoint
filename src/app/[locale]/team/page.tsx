@@ -47,8 +47,10 @@ export default function Team({ params }: { params: { locale: string } }) {
                                     alt={doctor.name}
                                     fill
                                     priority={index === 0}
+                                    loading={index === 0 ? 'eager' : 'lazy'}
+                                    fetchPriority={index === 0 ? 'high' : 'auto'}
                                     quality={75}
-                                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px'
+                                    sizes='(max-width: 768px) 420px, (max-width: 1200px) 50vw, 420px'
                                     className='object-cover transition-transform duration-500 group-hover:scale-105'
                                     placeholder='blur'
                                     blurDataURL={getBlurPlaceholder(doctor.imagePath)}
