@@ -58,14 +58,17 @@ export default function Home({ params }: { params: { locale: string } }) {
                 <div className='max-w-6xl mx-auto'>
                     <div className='relative w-full h-[280px] sm:h-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl bg-gray-100'>
                         <Image
-                            src={getImageUrl('/Images/clinic/main-clinic-image.jpg')}
+                            src={getImageUrl('/Images/front/clinic.jpg')}
                             alt='Dental Point Clinic'
-                            width={1080}
-                            height={600}
+                            fill
+                            className='object-cover'
                             priority
+                            loading='eager'
+                            quality={75}
+                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1080px'
                             fetchPriority='high'
-                            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1080px'
-                            className='w-full h-auto rounded-lg object-cover'
+                            placeholder='blur'
+                            blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
                         />
                     </div>
                 </div>
