@@ -1,94 +1,111 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+/**
+ * GALLERY PAGE - Server Component
+ * First 2 items rendered server-side for fast LCP
+ * Interactive parts (lightbox, load more) in GalleryGrid client component
+ */
+import type { Metadata } from 'next';
 import Image from 'next/image';
-import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
-import ImageLightbox from '@/components/ImageLightbox';
+import GalleryGrid from '@/components/GalleryGrid';
+import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
-interface GalleryItem {
-    before: string;
-    after: string;
-    descriptionKey?: number;
-}
+export const metadata: Metadata = {
+    title: 'Gallery',
+    description: 'View our dental work gallery showcasing before and after results.',
+};
 
-const galleryItems: GalleryItem[] = [
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 0,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 1,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 2,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 3,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 4,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 5,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 6,
-    },
-    {
-        before: '/Images/gallery/before.jpg',
-        after: '/Images/gallery/after.jpg',
-        descriptionKey: 7,
-    },
+const galleryItems = [
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 0 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 1 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 2 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 3 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 4 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 5 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 6 },
+    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 7 },
 ];
+
+// Server-rendered gallery item for LCP optimization
+function ServerGalleryItem({
+    item,
+    index,
+    beforeLabel,
+    afterLabel,
+}: {
+    item: { before: string; after: string; description?: string };
+    index: number;
+    beforeLabel: string;
+    afterLabel: string;
+}) {
+    return (
+        <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden'>
+            <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
+                <div className='relative aspect-square overflow-hidden bg-gray-100'>
+                    <Image
+                        src={getImageUrl(item.before)}
+                        alt={`Before - Gallery item ${index + 1}`}
+                        fill
+                        quality={75}
+                        priority={index === 0}
+                        loading='eager'
+                        fetchPriority={index === 0 ? 'high' : 'auto'}
+                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                        className='object-cover'
+                        placeholder='blur'
+                        blurDataURL={getBlurPlaceholder(item.before)}
+                    />
+                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
+                        {beforeLabel}
+                    </div>
+                </div>
+
+                <div className='relative aspect-square overflow-hidden bg-gray-100'>
+                    <Image
+                        src={getImageUrl(item.after)}
+                        alt={`After - Gallery item ${index + 1}`}
+                        fill
+                        quality={75}
+                        priority={index === 0}
+                        loading='eager'
+                        fetchPriority={index === 0 ? 'high' : 'auto'}
+                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                        className='object-cover'
+                        placeholder='blur'
+                        blurDataURL={getBlurPlaceholder(item.after)}
+                    />
+                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
+                        {afterLabel}
+                    </div>
+                </div>
+            </div>
+
+            {item.description && (
+                <div className='p-4'>
+                    <p className='text-base text-gray-700 text-center'>{item.description}</p>
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function Gallery({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
     const gallery = getSection(params.locale, 'gallery') as any;
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
 
-    const [visibleCount, setVisibleCount] = useState(3);
+    const beforeLabel = t('gallery', 'before');
+    const afterLabel = t('gallery', 'after');
 
-    useEffect(() => {
-        // Show all items on desktop (>= 768px), 3 on mobile
-        const checkScreenSize = () => {
-            if (window.innerWidth >= 768) {
-                setVisibleCount(galleryItems.length);
-            } else {
-                setVisibleCount(3);
-            }
-        };
+    // Build items with descriptions
+    const items = galleryItems.map((item) => ({
+        before: item.before,
+        after: item.after,
+        description: item.descriptionKey !== undefined ? gallery.items?.[item.descriptionKey]?.description : undefined,
+    }));
 
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return () => window.removeEventListener('resize', checkScreenSize);
-    }, []);
-
-    const loadMore = () => {
-        setVisibleCount((prev) => Math.min(prev + 3, galleryItems.length));
-    };
-
-    const showLess = () => {
-        setVisibleCount(3);
-    };
-
-    const visibleItems = galleryItems.slice(0, visibleCount);
-    const hasMore = visibleCount < galleryItems.length;
-    const hasExpanded = visibleCount > 3;
+    // First 2 items server-rendered for LCP, rest handled by client component
+    const serverItems = items.slice(0, 2);
+    const clientItems = items.slice(2);
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
@@ -98,111 +115,27 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     <p className='mt-4 text-xl text-gray-600'>{t('gallery', 'subtitle')}</p>
                 </div>
 
-                {/* Before/After Grid */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 pb-8 sm:pb-12'>
-                    {visibleItems.map((item, i) => (
-                        <div key={i} className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden'>
-                            <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
-                                <div
-                                    className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
-                                    style={{ aspectRatio: '1/1' }}
-                                    onClick={(e) => {
-                                        // Only open lightbox on desktop (>= 640px)
-                                        if (window.innerWidth >= 640) {
-                                            setSelectedImage({ src: item.before, alt: `Before - Gallery item ${i + 1}`, element: e.currentTarget });
-                                        }
-                                    }}
-                                >
-                                    <Image
-                                        src={getImageUrl(item.before)}
-                                        alt={`Before - Gallery item ${i + 1}`}
-                                        fill
-                                        quality={i < 2 ? 75 : 70}
-                                        priority={i < 2}
-                                        loading={i < 2 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                                        className='object-cover group-hover:opacity-90 transition-opacity'
-                                        placeholder='blur'
-                                        blurDataURL={getBlurPlaceholder(item.before)}
-                                    />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
-                                        {t('gallery', 'before')}
-                                    </div>
-                                </div>
-
-                                <div
-                                    className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
-                                    style={{ aspectRatio: '1/1' }}
-                                    onClick={(e) => {
-                                        // Only open lightbox on desktop (>= 640px)
-                                        if (window.innerWidth >= 640) {
-                                            setSelectedImage({ src: item.after, alt: `After - Gallery item ${i + 1}`, element: e.currentTarget });
-                                        }
-                                    }}
-                                >
-                                    <Image
-                                        src={getImageUrl(item.after)}
-                                        alt={`After - Gallery item ${i + 1}`}
-                                        fill
-                                        quality={i < 2 ? 75 : 70}
-                                        priority={i < 2}
-                                        loading={i < 2 ? 'eager' : 'lazy'}
-                                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                                        className='object-cover group-hover:opacity-90 transition-opacity'
-                                        placeholder='blur'
-                                        blurDataURL={getBlurPlaceholder(item.after)}
-                                    />
-                                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
-                                        {t('gallery', 'after')}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {item.descriptionKey !== undefined && gallery.items?.[item.descriptionKey]?.description && (
-                                <div className='p-4 sm:p-4'>
-                                    <p className='text-base text-gray-700 text-center'>{gallery.items[item.descriptionKey].description}</p>
-                                </div>
-                            )}
-                        </div>
+                {/* Server-rendered first items for fast LCP */}
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 pb-6 sm:pb-8'>
+                    {serverItems.map((item, i) => (
+                        <ServerGalleryItem key={i} item={item} index={i} beforeLabel={beforeLabel} afterLabel={afterLabel} />
                     ))}
                 </div>
 
-                {(hasMore || hasExpanded) && (
-                    <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
-                        {hasMore && (
-                            <button
-                                onClick={loadMore}
-                                className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
-                            >
-                                {t('licenses', 'loadMore')}
-                            </button>
-                        )}
-                        {hasExpanded && (
-                            <button
-                                onClick={showLess}
-                                className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
-                            >
-                                {t('licenses', 'showLess')}
-                            </button>
-                        )}
-                    </div>
-                )}
+                {/* Client component handles rest + lightbox + load more */}
+                <GalleryGrid
+                    items={clientItems}
+                    locale={params.locale}
+                    beforeLabel={beforeLabel}
+                    afterLabel={afterLabel}
+                    loadMoreLabel={t('licenses', 'loadMore')}
+                    showLessLabel={t('licenses', 'showLess')}
+                    startIndex={2}
+                />
 
                 <div className='pt-8 sm:pt-12'>
                     <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
-
-                {/* Lightbox - Only shown when selectedImage is set (onClick handles mobile check) */}
-                {selectedImage && (
-                    <ImageLightbox
-                        isOpen={!!selectedImage}
-                        onClose={() => setSelectedImage(null)}
-                        imageSrc={selectedImage.src}
-                        alt={selectedImage.alt}
-                        triggerElement={selectedImage.element}
-                        locale={params.locale}
-                    />
-                )}
             </div>
         </div>
     );
