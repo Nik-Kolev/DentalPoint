@@ -11,28 +11,18 @@ import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 const playfair = Playfair_Display({
     subsets: ['latin'],
     display: 'swap',
-    preload: false,
+    preload: true,
 });
 const montserrat = Montserrat({
     subsets: ['latin'],
     weight: ['600', '700'],
     display: 'swap',
-    preload: false,
+    preload: true,
 });
 
 export default function Home({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
-    const [isMobile, setIsMobile] = useState(true);
-
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 640);
-        };
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
 
     const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
     const [galleryVisible, setGalleryVisible] = useState(false);
@@ -67,9 +57,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                             fill
                             className='object-cover'
                             priority
-                            loading='eager'
                             quality={75}
-                            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1080px'
+                            sizes='(max-width: 768px) 100vw, 1080px'
                             fetchPriority='high'
                             placeholder='blur'
                             blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
@@ -104,8 +93,13 @@ export default function Home({ params }: { params: { locale: string } }) {
                                 key={i}
                                 className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg transition-shadow duration-200 sm:cursor-pointer'
                                 onClick={(e) => {
-                                    if (!isMobile) {
-                                        setSelectedImage({ src: `/Images/front/${imageName}`, alt: `Clinic image ${i + 1}`, element: e.currentTarget });
+                                    // Only open lightbox if screen is larger than 640px
+                                    if (window.innerWidth >= 640) {
+                                        setSelectedImage({
+                                            src: `/Images/front/${imageName}`,
+                                            alt: `Clinic image ${i + 1}`,
+                                            element: e.currentTarget,
+                                        });
                                     }
                                 }}
                             >
@@ -129,8 +123,8 @@ export default function Home({ params }: { params: { locale: string } }) {
                 </div>
             </section>
 
-            {/* Lightbox - Only on desktop */}
-            {selectedImage && !isMobile && (
+            {/* Lightbox - Only shown when selectedImage is set (onClick handles mobile check) */}
+            {selectedImage && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
                     onClose={() => setSelectedImage(null)}

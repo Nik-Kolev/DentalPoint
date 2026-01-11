@@ -62,20 +62,20 @@ export default function Gallery({ params }: { params: { locale: string } }) {
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
 
     const [visibleCount, setVisibleCount] = useState(3);
-    const [isMobile, setIsMobile] = useState(true);
 
     useEffect(() => {
-        const checkMobile = () => {
-            const mobile = window.innerWidth < 768;
-            setIsMobile(mobile);
-            if (!mobile) {
+        // Show all items on desktop (>= 768px), 3 on mobile
+        const checkScreenSize = () => {
+            if (window.innerWidth >= 768) {
                 setVisibleCount(galleryItems.length);
+            } else {
+                setVisibleCount(3);
             }
         };
 
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
     const loadMore = () => {
@@ -107,7 +107,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
                                     style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
-                                        if (!isMobile) {
+                                        // Only open lightbox on desktop (>= 640px)
+                                        if (window.innerWidth >= 640) {
                                             setSelectedImage({ src: item.before, alt: `Before - Gallery item ${i + 1}`, element: e.currentTarget });
                                         }
                                     }}
@@ -133,7 +134,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
                                     style={{ aspectRatio: '1/1' }}
                                     onClick={(e) => {
-                                        if (!isMobile) {
+                                        // Only open lightbox on desktop (>= 640px)
+                                        if (window.innerWidth >= 640) {
                                             setSelectedImage({ src: item.after, alt: `After - Gallery item ${i + 1}`, element: e.currentTarget });
                                         }
                                     }}
@@ -190,7 +192,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
 
-                {selectedImage && !isMobile && (
+                {/* Lightbox - Only shown when selectedImage is set (onClick handles mobile check) */}
+                {selectedImage && (
                     <ImageLightbox
                         isOpen={!!selectedImage}
                         onClose={() => setSelectedImage(null)}
