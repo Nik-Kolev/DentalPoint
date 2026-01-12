@@ -1,93 +1,34 @@
 /**
  * GALLERY PAGE - Server Component
- * First 2 items rendered server-side for fast LCP
- * Interactive parts (lightbox, load more) in GalleryGrid client component
+ * Features interactive before/after slider comparisons
  */
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
-import GalleryGrid from '@/components/GalleryGrid';
-import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
+
+// Lazy load slider - it's interactive and below the fold for most items
+const BeforeAfterSlider = dynamic(() => import('@/components/BeforeAfterSlider'), {
+    ssr: true,
+});
 
 export const metadata: Metadata = {
     title: 'Gallery',
     description: 'View our dental work gallery showcasing before and after results.',
 };
 
-const galleryItems = [
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 0 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 1 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 2 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 3 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 4 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 5 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 6 },
-    { before: '/Images/gallery/before.jpg', after: '/Images/gallery/after.jpg', descriptionKey: 7 },
+// Featured cases with interactive sliders
+const featuredCases = [
+    {
+        before: '/Images/gallery/case1/case1_before.jpeg',
+        after: '/Images/gallery/case1/case1_after.jpeg',
+        titleBg: 'Възстановяване на фрактуриран зъб',
+        titleEn: 'Fractured Tooth Restoration',
+        descriptionKey: 0,
+    },
+    // Add more cases as you get images:
+    // { before: '/Images/gallery/case2/...', after: '/Images/gallery/case2/...', titleBg: '...', titleEn: '...', descriptionKey: 1 },
 ];
-
-// Server-rendered gallery item for LCP optimization
-function ServerGalleryItem({
-    item,
-    index,
-    beforeLabel,
-    afterLabel,
-}: {
-    item: { before: string; after: string; description?: string };
-    index: number;
-    beforeLabel: string;
-    afterLabel: string;
-}) {
-    return (
-        <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden'>
-            <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
-                <div className='relative aspect-square overflow-hidden bg-gray-100'>
-                    <Image
-                        src={getImageUrl(item.before)}
-                        alt={`Before - Gallery item ${index + 1}`}
-                        fill
-                        quality={75}
-                        priority={index === 0}
-                        loading='eager'
-                        fetchPriority={index === 0 ? 'high' : 'auto'}
-                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                        className='object-cover'
-                        placeholder='blur'
-                        blurDataURL={getBlurPlaceholder(item.before)}
-                    />
-                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
-                        {beforeLabel}
-                    </div>
-                </div>
-
-                <div className='relative aspect-square overflow-hidden bg-gray-100'>
-                    <Image
-                        src={getImageUrl(item.after)}
-                        alt={`After - Gallery item ${index + 1}`}
-                        fill
-                        quality={75}
-                        priority={index === 0}
-                        loading='eager'
-                        fetchPriority={index === 0 ? 'high' : 'auto'}
-                        sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                        className='object-cover'
-                        placeholder='blur'
-                        blurDataURL={getBlurPlaceholder(item.after)}
-                    />
-                    <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-base sm:text-sm font-semibold py-2 px-2 text-center'>
-                        {afterLabel}
-                    </div>
-                </div>
-            </div>
-
-            {item.description && (
-                <div className='p-4'>
-                    <p className='text-base text-gray-700 text-center'>{item.description}</p>
-                </div>
-            )}
-        </div>
-    );
-}
 
 export default function Gallery({ params }: { params: { locale: string } }) {
     const t = getTranslation(params.locale);
@@ -96,44 +37,58 @@ export default function Gallery({ params }: { params: { locale: string } }) {
     const beforeLabel = t('gallery', 'before');
     const afterLabel = t('gallery', 'after');
 
-    // Build items with descriptions
-    const items = galleryItems.map((item) => ({
-        before: item.before,
-        after: item.after,
-        description: item.descriptionKey !== undefined ? gallery.items?.[item.descriptionKey]?.description : undefined,
-    }));
-
-    // First 2 items server-rendered for LCP, rest handled by client component
-    const serverItems = items.slice(0, 2);
-    const clientItems = items.slice(2);
-
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
-            <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center pb-8 sm:pb-12'>
+            <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8'>
+                {/* Header */}
+                <div className='text-center pb-6 sm:pb-8'>
                     <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('gallery', 'title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600'>{t('gallery', 'subtitle')}</p>
+                    <p className='mt-4 text-xl text-gray-600 max-w-2xl mx-auto'>{t('gallery', 'subtitle')}</p>
                 </div>
 
-                {/* Server-rendered first items for fast LCP */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 pb-6 sm:pb-8'>
-                    {serverItems.map((item, i) => (
-                        <ServerGalleryItem key={i} item={item} index={i} beforeLabel={beforeLabel} afterLabel={afterLabel} />
+                {/* Hint for interaction - moved above */}
+                <div className='text-center pb-8 sm:pb-10'>
+                    <p className='text-sm text-gray-500 flex items-center justify-center gap-2'>
+                        <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>
+                            <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' />
+                        </svg>
+                        {params.locale === 'bg' ? 'Плъзнете за да сравните резултатите' : 'Drag the slider to compare results'}
+                    </p>
+                </div>
+
+                {/* Featured Cases - Interactive Sliders */}
+                <div className='space-y-12 sm:space-y-16'>
+                    {featuredCases.map((caseItem, index) => (
+                        <div key={index} className={`${index % 2 === 0 ? '' : 'lg:flex-row-reverse'} flex flex-col lg:flex-row gap-6 lg:gap-10 items-center`}>
+                            {/* Slider */}
+                            <div className='w-full lg:w-3/5'>
+                                <BeforeAfterSlider
+                                    beforeImage={caseItem.before}
+                                    afterImage={caseItem.after}
+                                    beforeLabel={beforeLabel}
+                                    afterLabel={afterLabel}
+                                    priority={index === 0}
+                                />
+                            </div>
+
+                            {/* Info card */}
+                            <div className='w-full lg:w-2/5'>
+                                <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[#e3f3fb] h-full'>
+                                    <h3 className='text-xl font-bold text-[#005baa] mb-4'>{params.locale === 'bg' ? caseItem.titleBg : caseItem.titleEn}</h3>
+                                    <p className='text-gray-600 leading-relaxed'>
+                                        {gallery.items?.[caseItem.descriptionKey]?.description ||
+                                            (params.locale === 'bg'
+                                                ? 'Възстановяване на естетиката и функцията на зъбите с висококачествени материали и прецизна техника.'
+                                                : 'Restoring dental aesthetics and function using high-quality materials and precise techniques.')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
 
-                {/* Client component handles rest + lightbox + load more */}
-                <GalleryGrid
-                    items={clientItems}
-                    locale={params.locale}
-                    beforeLabel={beforeLabel}
-                    afterLabel={afterLabel}
-                    loadMoreLabel={t('licenses', 'loadMore')}
-                    showLessLabel={t('licenses', 'showLess')}
-                    startIndex={2}
-                />
-
-                <div className='pt-8 sm:pt-12'>
+                {/* CTA */}
+                <div className='pt-12 sm:pt-16'>
                     <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
             </div>

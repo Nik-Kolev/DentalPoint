@@ -17,6 +17,13 @@
  */
 
 export default function cloudflareLoader({ src, width, quality }: { src: string; width: number; quality?: number }) {
+    // In development, serve images directly from Next.js (with width param to avoid warning)
+    if (process.env.NODE_ENV === 'development') {
+        // Return src with query param to satisfy Next.js loader requirements
+        const separator = src.includes('?') ? '&' : '?';
+        return `${src}${separator}w=${width}`;
+    }
+
     const params = [
         `width=${width}`,
         `quality=${quality || 75}`,
