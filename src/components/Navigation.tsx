@@ -2,9 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react'; // Removed useEffect
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import LanguageSwitcher from './LanguageSwitcher';
-import StatisticsLink from './StatisticsLink';
+
+const StatisticsLink = dynamic(() => import('./StatisticsLink'), {
+    ssr: false,
+    loading: () => null,
+});
 
 interface NavigationProps {
     locale: string;

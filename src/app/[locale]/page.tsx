@@ -20,10 +20,22 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
-import ClientGallery from '@/components/ClientGallery';
 
 const StaticCTA = dynamic(() => import('@/components/StaticCTA'), {
     ssr: true,
+});
+
+const ClientGallery = dynamic(() => import('@/components/ClientGallery'), {
+    ssr: false,
+    loading: () => (
+        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4'>
+            {[...Array(6)].map((_, i) => (
+                <div key={i} className='bg-white rounded-lg shadow-md p-2 sm:p-3'>
+                    <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-200 animate-pulse' />
+                </div>
+            ))}
+        </div>
+    ),
 });
 
 export default function Home({ params }: { params: { locale: string } }) {
