@@ -9,19 +9,21 @@ const inter = Inter({
     variable: '--font-inter',
 });
 
-// Playfair for elegant headings
+// Playfair for elegant headings - defer loading for better LCP
 const playfair = Playfair_Display({
     subsets: ['latin', 'cyrillic'],
     display: 'swap',
-    weight: ['400', '600', '700'],
+    weight: ['400', '700'],
+    preload: false,
     variable: '--font-playfair',
 });
 
-// Montserrat for bold titles like "Dental Point"
+// Montserrat for bold titles like "Dental Point" - no cyrillic needed, defer loading
 const montserrat = Montserrat({
-    subsets: ['latin', 'cyrillic'],
-    weight: ['600', '700'],
+    subsets: ['latin'],
+    weight: ['700'],
     display: 'swap',
+    preload: false,
     variable: '--font-montserrat',
 });
 
