@@ -22,12 +22,31 @@ const featuredCases = [
     {
         before: '/Images/gallery/case1/case1_before.jpeg',
         after: '/Images/gallery/case1/case1_after.jpeg',
-        titleBg: 'Възстановяване на фрактуриран зъб',
-        titleEn: 'Fractured Tooth Restoration',
+        titleBg: 'Композитно възстановяване',
+        titleEn: 'Composite Bonding',
         descriptionKey: 0,
     },
-    // Add more cases as you get images:
-    // { before: '/Images/gallery/case2/...', after: '/Images/gallery/case2/...', titleBg: '...', titleEn: '...', descriptionKey: 1 },
+    {
+        before: '/Images/gallery/case2/case2_before.jpeg',
+        after: '/Images/gallery/case2/case2_after.jpeg',
+        titleBg: 'Зъбен имплант',
+        titleEn: 'Dental Implant',
+        descriptionKey: 1,
+    },
+    {
+        before: '/Images/gallery/case3/case3_before.jpeg',
+        after: '/Images/gallery/case3/case3_after.jpeg',
+        titleBg: 'Лечение с брекети',
+        titleEn: 'Braces Treatment',
+        descriptionKey: 2,
+    },
+    {
+        before: '/Images/gallery/case4/case4_before.jpeg',
+        after: '/Images/gallery/case4/case4_after.jpeg',
+        titleBg: 'Лечение на коренов канал',
+        titleEn: 'Root Canal Treatment',
+        descriptionKey: 3,
+    },
 ];
 
 export default function Gallery({ params }: { params: { locale: string } }) {

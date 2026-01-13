@@ -56,10 +56,12 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
+        e.preventDefault();
         handleMove(e.touches[0].clientX);
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
+        e.preventDefault();
         handleMove(e.touches[0].clientX);
     };
 
@@ -68,7 +70,7 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
             {/* Slider container */}
             <div
                 ref={containerRef}
-                className='relative aspect-[4/3] rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100'
+                className='relative aspect-[4/3] rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100 touch-none'
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}

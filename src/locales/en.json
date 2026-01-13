@@ -170,28 +170,16 @@
         "after": "After",
         "items": [
             {
-                "description": "Orthodontic treatment - comprehensive smile transformation with improved alignment and aesthetics"
+                "description": "Restoration of a chipped front tooth using composite bonding for a natural and lasting result."
             },
             {
-                "description": "Orthodontic correction - enhanced dental alignment and bite improvement"
+                "description": "Dental implant placement to replace a missing tooth with a reliable and long-lasting solution."
             },
             {
-                "description": "Smile makeover - professional orthodontic treatment for optimal results"
+                "description": "Orthodontic treatment with metal braces to straighten teeth and achieve a beautiful smile."
             },
             {
-                "description": "Orthodontic intervention - improved dental harmony and facial aesthetics"
-            },
-            {
-                "description": "Comprehensive orthodontic care - achieving perfect smile alignment"
-            },
-            {
-                "description": "Orthodontic treatment - enhanced dental function and appearance"
-            },
-            {
-                "description": "Professional orthodontic correction - transforming smiles with precision"
-            },
-            {
-                "description": "Orthodontic treatment - comprehensive dental alignment and smile enhancement"
+                "description": "Root canal treatment to remove infection and preserve the natural tooth."
             }
         ]
     },
