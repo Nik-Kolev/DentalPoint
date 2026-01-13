@@ -75,7 +75,7 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
             >
-                {/* After image (background) */}
+                {/* After image (background) with After label */}
                 <div className='absolute inset-0'>
                     <Image
                         src={getImageUrl(afterImage)}
@@ -87,9 +87,13 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                         sizes='(max-width: 768px) 100vw, 50vw'
                         draggable={false}
                     />
+                    {/* After label - gets covered by before image when slider moves right */}
+                    <div className='absolute top-4 right-4 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base sm:text-lg font-bold shadow-lg'>
+                        {afterLabel}
+                    </div>
                 </div>
 
-                {/* Before image (foreground, clipped) */}
+                {/* Before image (foreground, clipped) with Before label */}
                 <div className='absolute inset-0 overflow-hidden' style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}>
                     <Image
                         src={getImageUrl(beforeImage)}
@@ -101,6 +105,10 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                         sizes='(max-width: 768px) 100vw, 50vw'
                         draggable={false}
                     />
+                    {/* Before label - gets clipped with the before image when slider moves left */}
+                    <div className='absolute top-4 left-4 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-base sm:text-lg font-bold shadow-lg'>
+                        {beforeLabel}
+                    </div>
                 </div>
 
                 {/* Slider line */}
@@ -125,14 +133,6 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                             />
                         </svg>
                     </div>
-                </div>
-
-                {/* Labels */}
-                <div className='absolute top-4 left-4 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-base sm:text-lg font-bold shadow-lg z-20'>
-                    {beforeLabel}
-                </div>
-                <div className='absolute top-4 right-4 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base sm:text-lg font-bold shadow-lg z-20'>
-                    {afterLabel}
                 </div>
             </div>
 
