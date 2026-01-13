@@ -58,7 +58,7 @@ export default function Team({ params }: { params: { locale: string } }) {
                             </div>
 
                             {/* Text Container */}
-                            <div className='w-full max-w-lg'>
+                            <div className='w-full max-w-xs md:max-w-lg'>
                                 <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-2 font-serif'>{doctor.name}</h2>
                                 <p className='text-lg sm:text-xl text-[#009fe3] font-medium mb-4'>{doctor.title}</p>
                                 <p className='text-gray-700 leading-relaxed text-lg text-justify'>{doctor.description}</p>
