@@ -9,7 +9,7 @@ const ImageLightbox = dynamic(() => import('@/components/ImageLightbox'), {
     ssr: false,
 });
 
-const clinicImages = ['IMG_3345.jpeg', 'IMG_3349.jpeg', 'IMG_3350.jpeg', 'IMG_3357.jpeg', 'IMG_3372.jpeg', 'IMG_3445.jpeg'];
+const clinicImages = ['IMG_3345.jpeg', 'IMG_3357.jpeg', 'IMG_3350.jpeg', 'IMG_3372.jpeg', 'IMG_3349.jpeg', 'IMG_3445.jpeg'];
 
 export default function ClientGallery({ locale }: { locale: string }) {
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
