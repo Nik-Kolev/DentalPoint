@@ -3,14 +3,9 @@
  * Features interactive before/after slider comparisons
  */
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
 import StaticCTA from '@/components/StaticCTA';
-
-// Lazy load slider - it's interactive and below the fold for most items
-const BeforeAfterSlider = dynamic(() => import('@/components/BeforeAfterSlider'), {
-    ssr: true,
-});
+import GalleryCases from '@/components/GalleryCases';
 
 export const metadata: Metadata = {
     title: 'Gallery',
@@ -84,6 +79,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
 
     const beforeLabel = t('gallery', 'before');
     const afterLabel = t('gallery', 'after');
+    const loadMoreLabel = t('licenses', 'loadMore');
+    const showLessLabel = t('licenses', 'showLess');
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
@@ -104,40 +101,16 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                     </p>
                 </div>
 
-                {/* Featured Cases - Interactive Sliders */}
-                <div className='space-y-12 sm:space-y-16'>
-                    {featuredCases.map((caseItem, index) => (
-                        <div key={index} className={`${index % 2 === 0 ? '' : 'lg:flex-row-reverse'} flex flex-col lg:flex-row gap-6 lg:gap-10 items-center`}>
-                            {/* Slider */}
-                            <div className='w-full lg:w-3/5'>
-                                <BeforeAfterSlider
-                                    beforeImage={caseItem.before}
-                                    afterImage={caseItem.after}
-                                    beforeLabel={beforeLabel}
-                                    afterLabel={afterLabel}
-                                    priority={index === 0}
-                                    imageStyle={caseItem.imageStyle}
-                                    beforeImageStyle={caseItem.beforeImageStyle}
-                                    afterImageStyle={caseItem.afterImageStyle}
-                                    aspectRatio={caseItem.aspectRatio}
-                                />
-                            </div>
-
-                            {/* Info card */}
-                            <div className='w-full lg:w-2/5'>
-                                <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[#e3f3fb] h-full'>
-                                    <h3 className='text-xl font-bold text-[#005baa] mb-4'>{params.locale === 'bg' ? caseItem.titleBg : caseItem.titleEn}</h3>
-                                    <p className='text-gray-600 leading-relaxed'>
-                                        {gallery.items?.[caseItem.descriptionKey]?.description ||
-                                            (params.locale === 'bg'
-                                                ? 'Възстановяване на естетиката и функцията на зъбите с висококачествени материали и прецизна техника.'
-                                                : 'Restoring dental aesthetics and function using high-quality materials and precise techniques.')}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {/* Featured Cases - Interactive Sliders with Load More */}
+                <GalleryCases
+                    cases={featuredCases}
+                    locale={params.locale}
+                    beforeLabel={beforeLabel}
+                    afterLabel={afterLabel}
+                    descriptions={gallery.items || []}
+                    loadMoreLabel={loadMoreLabel}
+                    showLessLabel={showLessLabel}
+                />
 
                 {/* CTA */}
                 <div className='pt-12 sm:pt-16'>
