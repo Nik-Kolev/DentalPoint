@@ -170,16 +170,22 @@
         "after": "After",
         "items": [
             {
-                "description": "Restoration of a chipped front tooth using composite bonding for a natural and lasting result."
+                "description": "Restoration of a fracture affecting enamel and dentin using aesthetic composite materials."
             },
             {
-                "description": "Dental implant placement to replace a missing tooth with a reliable and long-lasting solution."
+                "description": "Placement of a single titanium implant to restore a missing tooth."
             },
             {
-                "description": "Orthodontic treatment with metal braces to straighten teeth and achieve a beautiful smile."
+                "description": "Correction of open and unilateral crossbite using self-ligating braces."
             },
             {
-                "description": "Root canal treatment to remove infection and preserve the natural tooth."
+                "description": "Root canal treatment and filling with bioceramic sealer using modern techniques."
+            },
+            {
+                "description": "Correction of minor orthodontic irregularities using clear aligners."
+            },
+            {
+                "description": "Achieving fast results with at-home and/or in-office teeth whitening."
             }
         ]
     },

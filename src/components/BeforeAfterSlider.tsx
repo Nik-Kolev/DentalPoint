@@ -11,9 +11,20 @@ interface BeforeAfterSliderProps {
     afterLabel: string;
     description?: string;
     priority?: boolean;
+    imageStyle?: string;
+    aspectRatio?: string;
 }
 
-export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel, afterLabel, description, priority = false }: BeforeAfterSliderProps) {
+export default function BeforeAfterSlider({
+    beforeImage,
+    afterImage,
+    beforeLabel,
+    afterLabel,
+    description,
+    priority = false,
+    imageStyle,
+    aspectRatio,
+}: BeforeAfterSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -70,7 +81,9 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
             {/* Slider container */}
             <div
                 ref={containerRef}
-                className='relative aspect-[4/3] rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100 touch-none'
+                className={`relative ${
+                    aspectRatio || 'aspect-[4/3]'
+                } rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100 touch-none`}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -81,7 +94,7 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                         src={getImageUrl(afterImage)}
                         alt='After treatment'
                         fill
-                        className='object-cover'
+                        className={imageStyle || 'object-cover'}
                         quality={80}
                         priority={priority}
                         sizes='(max-width: 768px) 100vw, 50vw'
@@ -99,7 +112,7 @@ export default function BeforeAfterSlider({ beforeImage, afterImage, beforeLabel
                         src={getImageUrl(beforeImage)}
                         alt='Before treatment'
                         fill
-                        className='object-cover'
+                        className={imageStyle || 'object-cover'}
                         quality={80}
                         priority={priority}
                         sizes='(max-width: 768px) 100vw, 50vw'
