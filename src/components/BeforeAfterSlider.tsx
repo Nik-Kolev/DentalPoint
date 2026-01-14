@@ -12,6 +12,8 @@ interface BeforeAfterSliderProps {
     description?: string;
     priority?: boolean;
     imageStyle?: string;
+    beforeImageStyle?: string;
+    afterImageStyle?: string;
     aspectRatio?: string;
 }
 
@@ -23,6 +25,8 @@ export default function BeforeAfterSlider({
     description,
     priority = false,
     imageStyle,
+    beforeImageStyle,
+    afterImageStyle,
     aspectRatio,
 }: BeforeAfterSliderProps) {
     const [sliderPosition, setSliderPosition] = useState(50);
@@ -94,7 +98,7 @@ export default function BeforeAfterSlider({
                         src={getImageUrl(afterImage)}
                         alt='After treatment'
                         fill
-                        className={imageStyle || 'object-cover'}
+                        className={afterImageStyle || imageStyle || 'object-cover'}
                         quality={80}
                         priority={priority}
                         sizes='(max-width: 768px) 100vw, 50vw'
@@ -112,7 +116,7 @@ export default function BeforeAfterSlider({
                         src={getImageUrl(beforeImage)}
                         alt='Before treatment'
                         fill
-                        className={imageStyle || 'object-cover'}
+                        className={beforeImageStyle || imageStyle || 'object-cover'}
                         quality={80}
                         priority={priority}
                         sizes='(max-width: 768px) 100vw, 50vw'

@@ -25,6 +25,8 @@ const featuredCases: {
     titleEn: string;
     descriptionKey: number;
     imageStyle?: string;
+    beforeImageStyle?: string;
+    afterImageStyle?: string;
     aspectRatio?: string;
 }[] = [
     {
@@ -62,6 +64,7 @@ const featuredCases: {
         titleBg: 'Лечение с алайнери',
         titleEn: 'Aligner Treatment',
         descriptionKey: 4,
+        afterImageStyle: 'object-cover object-[center_5%]',
     },
     {
         before: '/Images/gallery/case6/case6_before.jpeg',
@@ -70,6 +73,8 @@ const featuredCases: {
         titleEn: 'Teeth Whitening',
         descriptionKey: 5,
         aspectRatio: 'aspect-[5/2]',
+        beforeImageStyle: 'object-cover -translate-y-[-4px]',
+        afterImageStyle: 'object-cover -translate-y-[10px] scale-[1.09]',
     },
 ];
 
@@ -112,6 +117,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     afterLabel={afterLabel}
                                     priority={index === 0}
                                     imageStyle={caseItem.imageStyle}
+                                    beforeImageStyle={caseItem.beforeImageStyle}
+                                    afterImageStyle={caseItem.afterImageStyle}
                                     aspectRatio={caseItem.aspectRatio}
                                 />
                             </div>
