@@ -18,7 +18,15 @@ export const metadata: Metadata = {
 };
 
 // Featured cases with interactive sliders
-const featuredCases = [
+const featuredCases: {
+    before: string;
+    after: string;
+    titleBg: string;
+    titleEn: string;
+    descriptionKey: number;
+    imageStyle?: string;
+    aspectRatio?: string;
+}[] = [
     {
         before: '/Images/gallery/case1/case1_before.jpeg',
         after: '/Images/gallery/case1/case1_after.jpeg',
@@ -39,13 +47,29 @@ const featuredCases = [
         titleBg: 'Лечение с брекети',
         titleEn: 'Braces Treatment',
         descriptionKey: 2,
+        aspectRatio: 'aspect-[5/2]',
     },
     {
         before: '/Images/gallery/case4/case4_before.jpeg',
         after: '/Images/gallery/case4/case4_after.jpeg',
-        titleBg: 'Лечение на коренов канал',
-        titleEn: 'Root Canal Treatment',
+        titleBg: 'Лечение на пулпит/периодонтит',
+        titleEn: 'Pulpitis/Periodontitis Treatment',
         descriptionKey: 3,
+    },
+    {
+        before: '/Images/gallery/case5/case5_before.jpeg',
+        after: '/Images/gallery/case5/case5_after.jpeg',
+        titleBg: 'Лечение с алайнери',
+        titleEn: 'Aligner Treatment',
+        descriptionKey: 4,
+    },
+    {
+        before: '/Images/gallery/case6/case6_before.jpeg',
+        after: '/Images/gallery/case6/case6_after.jpeg',
+        titleBg: 'Избелване',
+        titleEn: 'Teeth Whitening',
+        descriptionKey: 5,
+        aspectRatio: 'aspect-[5/2]',
     },
 ];
 
@@ -87,6 +111,8 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                                     beforeLabel={beforeLabel}
                                     afterLabel={afterLabel}
                                     priority={index === 0}
+                                    imageStyle={caseItem.imageStyle}
+                                    aspectRatio={caseItem.aspectRatio}
                                 />
                             </div>
 
