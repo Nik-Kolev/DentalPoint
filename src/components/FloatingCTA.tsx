@@ -136,14 +136,14 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
 
     return (
         <div
-            className={`fixed left-0 right-0 z-[60] px-4 md:hidden transition-all duration-300 ${
-                shouldHide ? 'opacity-0 pointer-events-none translate-y-full' : 'opacity-100 pointer-events-auto translate-y-0'
+            className={`fixed left-0 right-0 z-[60] px-4 md:hidden transition-all duration-300 pointer-events-none ${
+                shouldHide ? 'opacity-0 translate-y-full' : 'opacity-100 translate-y-0'
             }`}
             style={{ bottom: `${Math.max(16, bottomOffset + 16)}px` }}
         >
             <Link
                 href={`/${locale}/contact`}
-                className={`group relative flex items-center justify-center px-4 py-3 text-base font-bold text-white bg-gradient-to-r from-[#005baa] to-[#009fe3] rounded-xl shadow-2xl hover:shadow-[#009fe3]/50 transition-all duration-300 hover:scale-[1.02] transform overflow-hidden ${
+                className={`group relative flex items-center justify-center px-4 py-3 text-base font-bold text-white bg-gradient-to-r from-[#005baa] to-[#009fe3] rounded-xl shadow-2xl hover:shadow-[#009fe3]/50 transition-all duration-300 hover:scale-[1.02] transform overflow-hidden pointer-events-auto ${
                     isBackToTopVisible ? 'w-[calc(100%-4rem)]' : 'w-full'
                 }`}
             >
