@@ -208,7 +208,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                     <div className='flex flex-col items-center space-y-4'>
                         <div className='flex space-x-4 md:space-x-6'>
                             <a
-                                href='https://facebook.com/...'
+                                href='https://www.facebook.com/p/Dental-Point-%D0%B4-%D1%80-%D0%AF%D0%B2%D0%BE%D1%80-%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2-61553440213240/'
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 aria-label='Facebook'
@@ -219,7 +219,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                                 </svg>
                             </a>
                             <a
-                                href='https://instagram.com/...'
+                                href='https://www.instagram.com/dentalpoint_drivanov/'
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 aria-label='Instagram'
