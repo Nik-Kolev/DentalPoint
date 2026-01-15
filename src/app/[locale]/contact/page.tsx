@@ -62,11 +62,11 @@ export default function Contact({ params }: { params: { locale: string } }) {
                                 </h3>
                                 <div className='text-gray-700 ml-9 space-y-2 text-lg'>
                                     <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>Д-р Явор Иванов</span>
+                                        <span className='font-medium'>{t('team', 'person1Name')}</span>
                                         <span className='font-bold tabular-nums'>0876 346 261</span>
                                     </div>
                                     <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>Д-р Екатерина Иванова</span>
+                                        <span className='font-medium'>{t('team', 'person2Name')}</span>
                                         <span className='font-bold tabular-nums'>0878 355 494</span>
                                     </div>
                                 </div>
