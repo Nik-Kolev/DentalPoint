@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
         },
         description: t('metadata', 'description'),
         keywords: t('metadata', 'keywords').split(', '),
-        authors: [{ name: 'Dr. Yavor Ivanov and Dr. Katerina Ivanova - Dental Point' }],
+        authors: [{ name: 'Dr. Yavor Ivanov and Dr. Ekaterina Ivanova - Dental Point' }],
         creator: 'Dental Point',
         publisher: 'Dental Point',
         formatDetection: {
