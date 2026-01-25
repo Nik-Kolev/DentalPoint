@@ -85,10 +85,13 @@ async function optimizeImage(filePath) {
 
         // Special handling for certificates
         if (folder === 'certificates') {
-            // Rotate CCI_000077.jpg 90 degrees clockwise
-            if (fileName === 'CCI_000077.jpg') {
-                image = image.rotate(-90);
-            }
+            // Rotate specific certificates
+            // if (fileName === 'CCI_000077.jpg') {
+            //     image = image.rotate(90); // 90 degrees clockwise
+            // }
+            // if (fileName === 'CCI_000060.jpg') {
+            //     image = image.rotate(180); // Upside down - rotate 180
+            // }
 
             // Trim white borders/backgrounds from certificates
             image = image.trim({
