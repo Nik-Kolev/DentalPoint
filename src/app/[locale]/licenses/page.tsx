@@ -27,6 +27,10 @@ const certificatesData = [
     '/Images/certificates/CCI_000069.jpg',
     '/Images/certificates/CCI_000070.jpg',
     '/Images/certificates/CCI_000073.jpg',
+    '/Images/certificates/CCI_000074.jpg',
+    '/Images/certificates/CCI_000075.jpg',
+    '/Images/certificates/CCI_000076.jpg',
+    '/Images/certificates/CCI_000077.jpg',
 ];
 
 export default function Licenses({ params }: { params: { locale: string } }) {
