@@ -69,9 +69,11 @@ async function optimizeImage(filePath) {
     const config = CONFIG[configKey];
 
     const originalSize = fs.statSync(filePath).size;
+    const fileName = path.basename(filePath);
+    const needsProcessing = folder === 'certificates' || (config.minSize && originalSize >= config.minSize);
 
-    // Skip small files to preserve original quality
-    if (config.minSize && originalSize < config.minSize) {
+    // Skip small files to preserve original quality (except certificates which need rotation/trim)
+    if (!needsProcessing) {
         console.log(`○ ${relativePath}: Skipped (Small enough: ${(originalSize / 1024).toFixed(0)}KB)`);
         return { original: originalSize, optimized: originalSize };
     }
@@ -81,11 +83,28 @@ async function optimizeImage(filePath) {
         let image = sharp(inputBuffer);
         const metadata = await image.metadata();
 
-        // Auto-rotate based on EXIF orientation (fixes rotated images)
-        image = image.rotate();
+        // Special handling for certificates
+        if (folder === 'certificates') {
+            // Rotate CCI_000077.jpg 90 degrees clockwise
+            if (fileName === 'CCI_000077.jpg') {
+                image = image.rotate(-90);
+            }
 
-        // Resize if larger than max dimensions (more aggressive for server)
-        if (metadata.width > config.maxWidth || metadata.height > config.maxHeight) {
+            // Trim white borders/backgrounds from certificates
+            image = image.trim({
+                threshold: 10, // Trim pixels within 10 of white (255,255,255)
+                background: { r: 255, g: 255, b: 255 }
+            });
+        } else {
+            // Auto-rotate based on EXIF orientation (fixes rotated images)
+            image = image.rotate();
+        }
+
+        // Get updated metadata after rotation/trim
+        const updatedMetadata = await image.clone().metadata();
+
+        // Resize if larger than max dimensions (preserves aspect ratio with fit: 'inside')
+        if (updatedMetadata.width > config.maxWidth || updatedMetadata.height > config.maxHeight) {
             image = image.resize(config.maxWidth, config.maxHeight, {
                 fit: 'inside',
                 withoutEnlargement: true,
@@ -117,11 +136,15 @@ async function optimizeImage(filePath) {
                 .toBuffer();
         }
 
-        // Only save if we actually save space
-        if (outputBuffer.length < originalSize) {
+        // Always save certificates (rotation/trim), or save if we actually save space
+        if (folder === 'certificates' || outputBuffer.length < originalSize) {
             fs.writeFileSync(filePath, outputBuffer);
             const savings = (((originalSize - outputBuffer.length) / originalSize) * 100).toFixed(1);
-            console.log(`✓ ${relativePath}: ${(originalSize / 1024).toFixed(0)}KB → ${(outputBuffer.length / 1024).toFixed(0)}KB (-${savings}%)`);
+            if (outputBuffer.length < originalSize) {
+                console.log(`✓ ${relativePath}: ${(originalSize / 1024).toFixed(0)}KB → ${(outputBuffer.length / 1024).toFixed(0)}KB (-${savings}%)`);
+            } else {
+                console.log(`✓ ${relativePath}: ${(originalSize / 1024).toFixed(0)}KB → ${(outputBuffer.length / 1024).toFixed(0)}KB (processed)`);
+            }
             return { original: originalSize, optimized: outputBuffer.length };
         } else {
             console.log(`○ ${relativePath}: Already optimal`);

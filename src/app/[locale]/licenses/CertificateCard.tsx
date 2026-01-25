@@ -25,7 +25,7 @@ export default function CertificateCard({ imageUrl, imagePath, onImageClick, pri
         <div className='bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300'>
             <div
                 ref={imageRef}
-                className='relative bg-gray-50 flex items-center justify-center p-4 aspect-square sm:cursor-pointer group'
+                className='relative bg-white flex items-center justify-center aspect-square sm:cursor-pointer group'
                 style={{ aspectRatio: '1/1' }}
                 onClick={handleClick}
             >
