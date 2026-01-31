@@ -100,7 +100,7 @@ function StatisticsSection({ children }: { children: React.ReactNode }) {
                     }
                 });
             },
-            { threshold: 0.1, rootMargin: '50px' }
+            { threshold: 0.1, rootMargin: '50px' },
         );
 
         observer.observe(currentElement);
@@ -153,6 +153,10 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, certificates.length));
     const showLess = () => setVisibleCount(3);
 
+    useEffect(() => {
+        if (visibleCount > 3) window.dispatchEvent(new CustomEvent('content-expanded'));
+    }, [visibleCount]);
+
     const visibleCertificates = certificates.slice(0, visibleCount);
     const hasMore = visibleCount < certificates.length;
     const hasExpanded = visibleCount > 3;
@@ -193,6 +197,7 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                 <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
                     {hasMore && (
                         <button
+                            type='button'
                             onClick={loadMore}
                             className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
                         >
@@ -201,6 +206,7 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                     )}
                     {hasExpanded && (
                         <button
+                            type='button'
                             onClick={showLess}
                             className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
                         >

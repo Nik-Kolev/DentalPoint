@@ -35,6 +35,10 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, items.length));
     const showLess = () => setVisibleCount(3);
 
+    useEffect(() => {
+        if (visibleCount > 3) window.dispatchEvent(new CustomEvent('content-expanded'));
+    }, [visibleCount]);
+
     const visibleReviews = items.slice(0, visibleCount);
     const hasMore = visibleCount < items.length;
     const hasExpanded = visibleCount > 3;
@@ -152,6 +156,7 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
                 <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
                     {hasMore && (
                         <button
+                            type='button'
                             onClick={loadMore}
                             className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
                         >
@@ -160,6 +165,7 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
                     )}
                     {hasExpanded && (
                         <button
+                            type='button'
                             onClick={showLess}
                             className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
                         >
