@@ -26,17 +26,11 @@ export default function GalleryGrid({ items, locale, beforeLabel, afterLabel, lo
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
-        const checkScreenSize = () => {
-            if (window.innerWidth >= 768) {
-                setVisibleCount(items.length);
-            } else {
-                setVisibleCount(3);
-            }
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return () => window.removeEventListener('resize', checkScreenSize);
+        if (window.innerWidth >= 768) {
+            setVisibleCount(items.length);
+        } else {
+            setVisibleCount(3);
+        }
     }, [items.length]);
 
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, items.length));

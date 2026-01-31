@@ -29,17 +29,11 @@ export default function GalleryCases({ cases, locale, beforeLabel, afterLabel, d
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
-        const checkScreenSize = () => {
-            if (window.innerWidth >= 768) {
-                setVisibleCount(cases.length);
-            } else {
-                setVisibleCount(3);
-            }
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return () => window.removeEventListener('resize', checkScreenSize);
+        if (window.innerWidth >= 768) {
+            setVisibleCount(cases.length);
+        } else {
+            setVisibleCount(3);
+        }
     }, [cases.length]);
 
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, cases.length));

@@ -137,17 +137,11 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
-        const checkScreenSize = () => {
-            if (window.innerWidth >= 768) {
-                setVisibleCount(certificates.length);
-            } else {
-                setVisibleCount(3);
-            }
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return () => window.removeEventListener('resize', checkScreenSize);
+        if (window.innerWidth >= 768) {
+            setVisibleCount(certificates.length);
+        } else {
+            setVisibleCount(3);
+        }
     }, [certificates.length]);
 
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, certificates.length));
