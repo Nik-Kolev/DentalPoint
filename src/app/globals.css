@@ -30,6 +30,8 @@ body {
     /* background: #009fe3; */
     background: white;
     color: #111;
+    /* Prevent accidental pull-to-refresh / overscroll reload on mobile when scrolled (e.g. near Load more) */
+    overscroll-behavior-y: none;
 }
 
 @utility text-balance {

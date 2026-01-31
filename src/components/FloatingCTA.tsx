@@ -14,6 +14,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
     const pathname = usePathname();
     const [isStaticCTAVisible, setIsStaticCTAVisible] = useState(false);
     const [isBackToTopVisible, setIsBackToTopVisible] = useState(false);
+    const [isPageScrollable, setIsPageScrollable] = useState(false);
     const [bottomOffset, setBottomOffset] = useState(0);
     const [hasPassedStaticCTA, setHasPassedStaticCTA] = useState(false);
 
@@ -24,6 +25,8 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         const handleScroll = () => {
             // Check back to top visibility
             setIsBackToTopVisible(window.pageYOffset > 100);
+            // Page is scrollable (e.g. after "load more") — use compact CTA layout even before user scrolls
+            setIsPageScrollable(document.documentElement.scrollHeight > window.innerHeight + 100);
 
             // Check footer overlap
             const footer = document.querySelector('footer');
@@ -46,9 +49,19 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', handleScroll);
 
+        // Re-run when document height changes (e.g. "load more" adds content) so CTA position updates without scrolling
+        const body = document.body;
+        const resizeObserver = new ResizeObserver(handleScroll);
+        resizeObserver.observe(body);
+
+        const onContentExpanded = () => requestAnimationFrame(() => requestAnimationFrame(handleScroll));
+        window.addEventListener('content-expanded', onContentExpanded);
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleScroll);
+            window.removeEventListener('content-expanded', onContentExpanded);
+            resizeObserver.unobserve(body);
         };
     }, []);
 
@@ -93,7 +106,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
             {
                 threshold: 0.1,
                 rootMargin: '0px 0px -100px 0px',
-            }
+            },
         );
 
         staticCTAs.forEach((cta) => observer.observe(cta));
@@ -144,7 +157,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
             <Link
                 href={`/${locale}/contact`}
                 className={`group relative flex items-center justify-center px-4 py-3 text-base font-bold text-white bg-gradient-to-r from-[#005baa] to-[#009fe3] rounded-xl shadow-2xl hover:shadow-[#009fe3]/50 transition-all duration-300 hover:scale-[1.02] transform overflow-hidden pointer-events-auto ${
-                    isBackToTopVisible ? 'w-[calc(100%-4rem)]' : 'w-full'
+                    isBackToTopVisible || isPageScrollable ? 'w-[calc(100%-4rem)]' : 'w-full'
                 }`}
             >
                 <span className='relative z-10 flex items-center gap-2'>
