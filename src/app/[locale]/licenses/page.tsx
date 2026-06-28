@@ -33,8 +33,9 @@ const certificatesData = [
     '/Images/certificates/CCI_000074.jpg',
 ];
 
-export default function Licenses({ params }: { params: { locale: string } }) {
-    const t = getTranslation(params.locale);
+export default async function Licenses({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const t = getTranslation(locale);
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
@@ -46,7 +47,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
 
                 <LicensesGrid
                     certificates={certificatesData}
-                    locale={params.locale}
+                    locale={locale}
                     loadMoreLabel={t('licenses', 'loadMore')}
                     showLessLabel={t('licenses', 'showLess')}
                     statsLabels={{
@@ -58,7 +59,7 @@ export default function Licenses({ params }: { params: { locale: string } }) {
                 />
 
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={params.locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                    <StaticCTA locale={locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
                 </div>
             </div>
         </div>

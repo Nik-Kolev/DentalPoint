@@ -1,28 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import dynamic from 'next/dynamic';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Navigation from '@/components/Navigation';
+import StatisticsLink from '@/components/StatisticsLink';
+import DeferredWidgets from '@/components/DeferredWidgets';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
-// Optimized Dynamic Imports - defer non-critical components
-const BackToTop = dynamic(() => import('@/components/BackToTop'), {
-    ssr: false,
-    loading: () => null,
-});
-const CookieConsent = dynamic(() => import('@/components/CookieConsent'), {
-    ssr: false,
-});
-const FloatingCTA = dynamic(() => import('@/components/FloatingCTA'), {
-    ssr: false,
-});
-const StatisticsLink = dynamic(() => import('@/components/StatisticsLink'), {
-    ssr: false,
-});
-
-export async function generateViewport({ params }: { params: { locale: string } }): Promise<Viewport> {
+export async function generateViewport({ params }: { params: Promise<{ locale: string }> }): Promise<Viewport> {
     return {
         width: 'device-width',
         initialScale: 1,
@@ -33,8 +19,8 @@ export async function generateViewport({ params }: { params: { locale: string } 
     };
 }
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-    const locale = params?.locale || 'bg';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+    const { locale } = await params;
     const t = getTranslation(locale);
     const isBulgarian = locale === 'bg';
 
@@ -100,8 +86,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
     };
 }
 
-export default function LocaleLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
-    const locale = params?.locale || 'bg';
+export default async function LocaleLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     const t = getTranslation(locale);
 
     const translations = {
@@ -237,10 +223,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
                 </div>
             </footer>
 
-            {/* Deferred loading for bottom widgets */}
-            <BackToTop />
-            <FloatingCTA locale={locale} />
-            <CookieConsent locale={locale} />
+            <DeferredWidgets locale={locale} />
         </>
     );
 }

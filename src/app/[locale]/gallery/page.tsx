@@ -73,9 +73,10 @@ const featuredCases: {
     },
 ];
 
-export default function Gallery({ params }: { params: { locale: string } }) {
-    const t = getTranslation(params.locale);
-    const gallery = getSection(params.locale, 'gallery') as any;
+export default async function Gallery({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const t = getTranslation(locale);
+    const gallery = getSection(locale, 'gallery') as any;
 
     const beforeLabel = t('gallery', 'before');
     const afterLabel = t('gallery', 'after');
@@ -97,14 +98,14 @@ export default function Gallery({ params }: { params: { locale: string } }) {
                         <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>
                             <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' />
                         </svg>
-                        {params.locale === 'bg' ? 'Плъзнете за да сравните резултатите' : 'Drag the slider to compare results'}
+                        {locale === 'bg' ? 'Плъзнете за да сравните резултатите' : 'Drag the slider to compare results'}
                     </p>
                 </div>
 
                 {/* Featured Cases - Interactive Sliders with Load More */}
                 <GalleryCases
                     cases={featuredCases}
-                    locale={params.locale}
+                    locale={locale}
                     beforeLabel={beforeLabel}
                     afterLabel={afterLabel}
                     descriptions={gallery.items || []}
@@ -114,7 +115,7 @@ export default function Gallery({ params }: { params: { locale: string } }) {
 
                 {/* CTA */}
                 <div className='pt-12 sm:pt-16'>
-                    <StaticCTA locale={params.locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                    <StaticCTA locale={locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
                 </div>
             </div>
         </div>

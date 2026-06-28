@@ -9,8 +9,9 @@ export const metadata: Metadata = {
     description: 'Meet our experienced dental professionals at Dental Point. Learn about our skilled dentists and their specializations.',
 };
 
-export default function Team({ params }: { params: { locale: string } }) {
-    const t = getTranslation(params.locale);
+export default async function Team({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const t = getTranslation(locale);
 
     const doctors = [
         {
@@ -69,7 +70,7 @@ export default function Team({ params }: { params: { locale: string } }) {
 
                 {/* Call to Action */}
                 <div className='pt-16'>
-                    <StaticCTA locale={params.locale} title={t('team', 'ctaTitle')} subtitle={t('team', 'ctaSubtitle')} />
+                    <StaticCTA locale={locale} title={t('team', 'ctaTitle')} subtitle={t('team', 'ctaSubtitle')} />
                 </div>
             </div>
         </div>

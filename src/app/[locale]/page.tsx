@@ -1,45 +1,25 @@
-/**
- * HOME PAGE - Server Component
- *
- * PERFORMANCE OPTIMIZATION (Jan 2026):
- * This page was converted from 'use client' to a Server Component to fix LCP issues.
- *
- * Problem: With 'use client', the hero image couldn't load until JS hydrated,
- * causing LCP of 9.3s on mobile (slow 4G). PageSpeed score was 72.
- *
- * Solution: Made this a Server Component so the <img> tag is in the initial HTML.
- * Browser can start fetching the hero image immediately, no JS required.
- * The interactive gallery is split into ClientGallery.tsx (client component).
- *
- * Result: LCP dropped to 2.9s, PageSpeed score improved to 95.
- *
- * Fonts: Use font-playfair and font-montserrat CSS classes (defined in globals.css)
- * which reference CSS variables set in layout.tsx. This centralizes font loading.
- */
+import { Suspense } from 'react';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
+import StaticCTA from '@/components/StaticCTA';
+import ClientGallery from '@/components/ClientGallery';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
-const StaticCTA = dynamic(() => import('@/components/StaticCTA'), {
-    ssr: true,
-});
-
-const ClientGallery = dynamic(() => import('@/components/ClientGallery'), {
-    ssr: false,
-    loading: () => (
-        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4'>
+function GallerySkeleton() {
+    return (
+        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
             {[...Array(6)].map((_, i) => (
                 <div key={i} className='bg-white rounded-lg shadow-md p-2 sm:p-3'>
                     <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-200 animate-pulse' />
                 </div>
             ))}
         </div>
-    ),
-});
+    );
+}
 
-export default function Home({ params }: { params: { locale: string } }) {
-    const t = getTranslation(params.locale);
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const t = getTranslation(locale);
 
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
@@ -86,14 +66,16 @@ export default function Home({ params }: { params: { locale: string } }) {
             {/* CTA Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <StaticCTA locale={params.locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
+                    <StaticCTA locale={locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
                 </div>
             </section>
 
             {/* Clinic Gallery Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <ClientGallery locale={params.locale} />
+                    <Suspense fallback={<GallerySkeleton />}>
+                        <ClientGallery locale={locale} />
+                    </Suspense>
                 </div>
             </section>
         </div>

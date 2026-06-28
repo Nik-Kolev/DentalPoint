@@ -20,9 +20,10 @@ interface ReviewItem {
     text: string;
 }
 
-export default function Reviews({ params }: { params: { locale: string } }) {
-    const t = getTranslation(params.locale);
-    const reviews = getSection(params.locale, 'reviews') as any;
+export default async function Reviews({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const t = getTranslation(locale);
+    const reviews = getSection(locale, 'reviews') as any;
 
     // Sort reviews by date (newest first)
     const reviewItems = [...(reviews.items || [])].sort((a: ReviewItem, b: ReviewItem) => {
@@ -36,10 +37,10 @@ export default function Reviews({ params }: { params: { locale: string } }) {
                     <h1 className='text-3xl font-extrabold text-[#005baa]'>{reviews.title}</h1>
                 </div>
 
-                <ReviewsList items={reviewItems} locale={params.locale} loadMoreLabel={t('licenses', 'loadMore')} showLessLabel={t('licenses', 'showLess')} />
+                <ReviewsList items={reviewItems} locale={locale} loadMoreLabel={t('licenses', 'loadMore')} showLessLabel={t('licenses', 'showLess')} />
 
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={params.locale} title={reviews.ctaTitle} subtitle={reviews.ctaSubtitle} />
+                    <StaticCTA locale={locale} title={reviews.ctaTitle} subtitle={reviews.ctaSubtitle} />
                 </div>
             </div>
         </div>
