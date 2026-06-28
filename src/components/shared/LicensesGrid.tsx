@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import CertificateCard from '@/app/[locale]/licenses/CertificateCard';
-import ImageLightbox from '@/components/ImageLightbox';
+import ImageLightbox from '@/components/gallery/ImageLightbox';
 import { getImageUrl } from '@/lib/imageVersion';
 
 interface LicensesGridProps {
@@ -224,3 +224,4 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
         </>
     );
 }
+

@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from '@/components/shared/ProtectedRoute';
 import { fetchAnalyticsData, type AnalyticsData, type TimePeriod } from '@/lib/analytics';
 
 export default function StatisticsPage() {

@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getTranslation } from '../lib/useTranslation';
+import { getTranslation } from '@/lib/useTranslation';
 
 interface FloatingCTAProps {
     locale: string;
@@ -25,7 +25,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         const handleScroll = () => {
             // Check back to top visibility
             setIsBackToTopVisible(window.pageYOffset > 100);
-            // Page is scrollable (e.g. after "load more") — use compact CTA layout even before user scrolls
+            // Page is scrollable (e.g. after "load more") â€” use compact CTA layout even before user scrolls
             setIsPageScrollable(document.documentElement.scrollHeight > window.innerHeight + 100);
 
             // Check footer overlap
@@ -184,3 +184,4 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         </div>
     );
 }
+

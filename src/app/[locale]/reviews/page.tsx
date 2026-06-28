@@ -1,11 +1,11 @@
-/**
+﻿/**
  * REVIEWS PAGE - Server Component
  * Interactive list extracted to ReviewsList.tsx (client component)
  */
 import type { Metadata } from 'next';
 import { getSection, getTranslation } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import ReviewsList from '@/components/ReviewsList';
+import StaticCTA from '@/components/shared/StaticCTA';
+import ReviewsList from '@/components/shared/ReviewsList';
 
 export const metadata: Metadata = {
     title: 'Reviews',

@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { getTranslation } from '../lib/useTranslation';
+import { getTranslation } from '@/lib/useTranslation';
 
 interface CookieConsentProps {
     locale: string;
@@ -113,3 +113,4 @@ declare global {
         gtag: (...args: any[]) => void;
     }
 }
+

@@ -1,7 +1,7 @@
-import { Suspense } from 'react';
+﻿import { Suspense } from 'react';
 import Image from 'next/image';
-import StaticCTA from '@/components/StaticCTA';
-import ClientGallery from '@/components/ClientGallery';
+import StaticCTA from '@/components/shared/StaticCTA';
+import ClientGallery from '@/components/gallery/ClientGallery';
 import { getTranslation } from '../../lib/useTranslation';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 

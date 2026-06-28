@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { getTranslation } from '../lib/useTranslation';
+﻿import Link from 'next/link';
+import { getTranslation } from '@/lib/useTranslation';
 
 interface StaticCTAProps {
     locale: string;
@@ -23,3 +23,4 @@ export default function StaticCTA({ locale, title, subtitle }: StaticCTAProps) {
         </div>
     );
 }
+

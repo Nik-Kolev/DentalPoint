@@ -1,6 +1,6 @@
-import { Inter, Playfair_Display, Montserrat } from 'next/font/google';
+﻿import { Inter, Playfair_Display, Montserrat } from 'next/font/google';
 import './globals.css';
-import SessionProvider from '../components/SessionProvider';
+import SessionProvider from '../components/shared/SessionProvider';
 
 // Inter for body text - more readable, heavier weight
 const inter = Inter({
@@ -42,3 +42,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </html>
     );
 }
+

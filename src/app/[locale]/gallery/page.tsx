@@ -1,11 +1,11 @@
-/**
+﻿/**
  * GALLERY PAGE - Server Component
  * Features interactive before/after slider comparisons
  */
 import type { Metadata } from 'next';
 import { getTranslation, getSection } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import GalleryCases from '@/components/GalleryCases';
+import StaticCTA from '@/components/shared/StaticCTA';
+import GalleryCases from '@/components/gallery/GalleryCases';
 
 export const metadata: Metadata = {
     title: 'Gallery',

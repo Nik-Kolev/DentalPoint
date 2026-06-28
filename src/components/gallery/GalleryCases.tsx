@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
-import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import BeforeAfterSlider from '@/components/gallery/BeforeAfterSlider';
 
 interface CaseItem {
     before: string;
@@ -75,7 +75,7 @@ export default function GalleryCases({ cases, locale, beforeLabel, afterLabel, d
                                 <p className='text-gray-600 leading-relaxed'>
                                     {descriptions?.[caseItem.descriptionKey]?.description ||
                                         (locale === 'bg'
-                                            ? 'Възстановяване на естетиката и функцията на зъбите с висококачествени материали и прецизна техника.'
+                                            ? 'Ð’ÑŠÐ·ÑÑ‚Ð°Ð½Ð¾Ð²ÑÐ²Ð°Ð½Ðµ Ð½Ð° ÐµÑÑ‚ÐµÑ‚Ð¸ÐºÐ°Ñ‚Ð° Ð¸ Ñ„ÑƒÐ½ÐºÑ†Ð¸ÑÑ‚Ð° Ð½Ð° Ð·ÑŠÐ±Ð¸Ñ‚Ðµ Ñ Ð²Ð¸ÑÐ¾ÐºÐ¾ÐºÐ°Ñ‡ÐµÑÑ‚Ð²ÐµÐ½Ð¸ Ð¼Ð°Ñ‚ÐµÑ€Ð¸Ð°Ð»Ð¸ Ð¸ Ð¿Ñ€ÐµÑ†Ð¸Ð·Ð½Ð° Ñ‚ÐµÑ…Ð½Ð¸ÐºÐ°.'
                                             : 'Restoring dental aesthetics and function using high-quality materials and precise techniques.')}
                                 </p>
                             </div>
@@ -110,3 +110,4 @@ export default function GalleryCases({ cases, locale, beforeLabel, afterLabel, d
         </>
     );
 }
+

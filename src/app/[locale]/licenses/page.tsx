@@ -1,11 +1,11 @@
-/**
+﻿/**
  * LICENSES PAGE - Server Component
  * Interactive grid with lightbox and stats extracted to LicensesGrid.tsx (client component)
  */
 import type { Metadata } from 'next';
 import { getTranslation } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
-import LicensesGrid from '@/components/LicensesGrid';
+import StaticCTA from '@/components/shared/StaticCTA';
+import LicensesGrid from '@/components/shared/LicensesGrid';
 
 export const metadata: Metadata = {
     title: 'Certificates & Licenses',

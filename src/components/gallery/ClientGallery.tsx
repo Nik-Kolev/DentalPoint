@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
-const ImageLightbox = dynamic(() => import('@/components/ImageLightbox'), {
+const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), {
     ssr: false,
 });
 
@@ -61,3 +61,4 @@ export default function ClientGallery({ locale }: { locale: string }) {
         </>
     );
 }
+

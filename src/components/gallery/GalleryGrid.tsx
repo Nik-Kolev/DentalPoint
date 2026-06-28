@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
-import ImageLightbox from '@/components/ImageLightbox';
+import ImageLightbox from '@/components/gallery/ImageLightbox';
 
 interface GalleryItem {
     before: string;
@@ -146,3 +146,4 @@ export default function GalleryGrid({ items, locale, beforeLabel, afterLabel, lo
         </>
     );
 }
+

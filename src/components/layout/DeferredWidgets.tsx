@@ -2,14 +2,14 @@
 
 import dynamic from 'next/dynamic';
 
-const BackToTop = dynamic(() => import('@/components/BackToTop'), {
+const BackToTop = dynamic(() => import('@/components/shared/BackToTop'), {
     ssr: false,
     loading: () => null,
 });
-const CookieConsent = dynamic(() => import('@/components/CookieConsent'), {
+const CookieConsent = dynamic(() => import('@/components/shared/CookieConsent'), {
     ssr: false,
 });
-const FloatingCTA = dynamic(() => import('@/components/FloatingCTA'), {
+const FloatingCTA = dynamic(() => import('@/components/shared/FloatingCTA'), {
     ssr: false,
 });
 

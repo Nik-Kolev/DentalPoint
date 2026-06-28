@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getTranslation } from '../../../lib/useTranslation';
-import StaticCTA from '@/components/StaticCTA';
+import StaticCTA from '@/components/shared/StaticCTA';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
 export const metadata: Metadata = {

@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import LanguageSwitcher from './LanguageSwitcher';
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 
-const StatisticsLink = dynamic(() => import('./StatisticsLink'), {
+const StatisticsLink = dynamic(() => import('@/components/shared/StatisticsLink'), {
     ssr: false,
     loading: () => null,
 });

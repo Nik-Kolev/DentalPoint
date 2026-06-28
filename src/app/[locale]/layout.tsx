@@ -1,8 +1,8 @@
-import type { Metadata, Viewport } from 'next';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import Navigation from '@/components/Navigation';
-import StatisticsLink from '@/components/StatisticsLink';
-import DeferredWidgets from '@/components/DeferredWidgets';
+﻿import type { Metadata, Viewport } from 'next';
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
+import Navigation from '@/components/layout/Navigation';
+import StatisticsLink from '@/components/shared/StatisticsLink';
+import DeferredWidgets from '@/components/layout/DeferredWidgets';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslation } from '../../lib/useTranslation';
