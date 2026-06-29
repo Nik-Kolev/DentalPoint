@@ -75,43 +75,16 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
             setIsAnimating(false);
             setImageLoaded(false);
             setImageError(false);
-            if (triggerElement && containerRef.current) {
-                const rect = triggerElement.getBoundingClientRect();
+            if (containerRef.current) {
                 const container = containerRef.current;
-                const startX = rect.left + rect.width / 2;
-                const startY = rect.top + rect.height / 2;
-                const endX = window.innerWidth / 2;
-                const endY = window.innerHeight / 2;
-
-                container.style.willChange = 'transform, opacity';
                 container.style.transition = 'none';
-                container.style.left = `${startX}px`;
-                container.style.top = `${startY}px`;
-                container.style.transform = 'translate(-50%, -50%) scale(0.9)';
-                container.style.opacity = '0';
-
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        container.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                        container.style.left = `${endX}px`;
-                        container.style.top = `${endY}px`;
-                        container.style.transform = 'translate(-50%, -50%) scale(1)';
-                        container.style.opacity = '1';
-                        setIsAnimating(true);
-                        setTimeout(() => {
-                            container.style.willChange = 'auto';
-                        }, 400);
-                    });
-                });
-            } else if (containerRef.current) {
-                const container = containerRef.current;
                 container.style.left = `${window.innerWidth / 2}px`;
                 container.style.top = `${window.innerHeight / 2}px`;
-                container.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                container.style.transform = 'translate(-50%, -50%) scale(0.93)';
                 container.style.opacity = '0';
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
-                        container.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease';
+                        container.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease';
                         container.style.transform = 'translate(-50%, -50%) scale(1)';
                         container.style.opacity = '1';
                         setIsAnimating(true);
@@ -178,7 +151,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 ref={containerRef}
                 className='absolute w-auto h-auto bg-white rounded-lg shadow-2xl overflow-y-auto flex flex-col'
                 onClick={(e) => e.stopPropagation()}
-                style={{ maxWidth: '65vw', maxHeight: '88vh', willChange: 'transform' }}
+                style={{ maxWidth: '65vw', maxHeight: '88vh', willChange: 'transform', opacity: 0 }}
             >
                 {year && (
                     <div className='pt-4 pb-2 flex justify-center flex-shrink-0'>

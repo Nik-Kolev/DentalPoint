@@ -27,6 +27,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const [dragId, setDragId] = useState<string | null>(null);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [rotatingId, setRotatingId] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     // Snapshot taken at page load — used to restore order on revert
     const snapshotRef = useRef<DisplayItem[]>(initialItems);
@@ -70,6 +71,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     };
 
     const handleRotate = async (id: string, direction: 'left' | 'right') => {
+        setRotatingId(id);
         try {
             const res = await fetch(`/api/admin/home-gallery/${id}/rotate`, {
                 method: 'PATCH',
@@ -84,6 +86,8 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         } catch (err) {
             console.error(err);
             alert('Грешка при завъртане');
+        } finally {
+            setRotatingId(null);
         }
     };
 
@@ -200,16 +204,18 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'left'); }}
                                         title='Завърти наляво'
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
+                                        disabled={rotatingId === item.id}
+                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold disabled:opacity-60'
                                     >
-                                        ↺
+                                        <span className={rotatingId === item.id ? 'animate-spin inline-block' : 'inline-block'}>↺</span>
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'right'); }}
                                         title='Завърти надясно'
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
+                                        disabled={rotatingId === item.id}
+                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold disabled:opacity-60'
                                     >
-                                        ↻
+                                        <span className={rotatingId === item.id ? 'animate-spin inline-block' : 'inline-block'}>↻</span>
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
