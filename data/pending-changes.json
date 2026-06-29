@@ -159,5 +159,604 @@
     "page": "home",
     "action": "reorder",
     "at": "2026-06-29T16:24:31.363Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3345.jpeg",
+    "at": "2026-06-29T16:27:25.093Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T16:28:18.956Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "f9ae2192-2e49-4eb4-afd9-0323a2efc434.jpeg",
+    "at": "2026-06-29T16:28:21.511Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "f9ae2192-2e49-4eb4-afd9-0323a2efc434.jpeg",
+    "at": "2026-06-29T16:28:23.204Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "f9ae2192-2e49-4eb4-afd9-0323a2efc434.jpeg",
+    "at": "2026-06-29T16:28:24.563Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "f9ae2192-2e49-4eb4-afd9-0323a2efc434.jpeg",
+    "at": "2026-06-29T16:28:25.634Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T16:34:00.529Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T16:34:02.183Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T16:34:03.748Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:35:07.166Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:35:08.776Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:35:09.558Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:35:10.759Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:44:26.838Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:44:27.832Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:44:28.683Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:44:29.445Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:57:13.358Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:57:14.052Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:57:14.817Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T16:57:15.702Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "f9ae2192-2e49-4eb4-afd9-0323a2efc434.jpeg",
+    "at": "2026-06-29T17:02:22.011Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:02:37.660Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "8a3653a9-4d66-4312-ac45-1aa7ca5462b2.jpeg",
+    "at": "2026-06-29T17:02:53.471Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3445.jpeg",
+    "at": "2026-06-29T17:02:54.193Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:03:10.864Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:03:15.292Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3350.jpeg",
+    "at": "2026-06-29T17:16:04.045Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:16:08.526Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:21.796Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:22.867Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:23.737Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:24.459Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:26.598Z"
+  },
+  {
+    "page": "home",
+    "action": "rotate",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:16:28.307Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3349.jpeg",
+    "at": "2026-06-29T17:20:05.857Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "b0af271c-44ca-4f1f-8cf5-1b9e30ccb70b.jpeg",
+    "at": "2026-06-29T17:20:06.269Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3372.jpeg",
+    "at": "2026-06-29T17:20:07.245Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "98ba46f4-7bfd-4053-8123-61f01e2e2932.jpeg",
+    "at": "2026-06-29T17:20:08.181Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "98d55a47-856d-4de7-bd63-ff48ba98bcd2.jpeg",
+    "at": "2026-06-29T17:20:09.106Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "IMG_3357.jpeg",
+    "at": "2026-06-29T17:20:10.021Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:20:21.367Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:20:26.983Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:20:31.599Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:20:40.285Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:22:03.335Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "1c0b7509-54c9-423c-babc-267191b5ad51.jpeg",
+    "at": "2026-06-29T17:22:08.138Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:22:12.704Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:22:16.519Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "0ba4d290-63d0-4260-9b7f-1839a9fd1e90.jpeg",
+    "at": "2026-06-29T17:29:32.757Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "94543c3f-e00d-44c4-a86b-97437f53e539.jpeg",
+    "at": "2026-06-29T17:29:32.775Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "ae6ff31e-a052-4d20-bcd1-bc66b5d030d2.jpeg",
+    "at": "2026-06-29T17:29:33.038Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "6462be23-e349-44f0-bef6-cb1a70d36e44.jpeg",
+    "at": "2026-06-29T17:29:34.095Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "fb29d162-1281-41eb-9cff-3b85220d9bcd.jpeg",
+    "at": "2026-06-29T17:29:35.076Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "6c942848-3eab-4c8b-bc5b-c100085eba48.jpeg",
+    "at": "2026-06-29T17:29:36.247Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:29:41.104Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:29:47.184Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "cc0394c1-22c5-47bf-8030-070e8e05279a.jpeg",
+    "at": "2026-06-29T17:30:04.930Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "ce8e76fd-99cd-4704-b833-2bf973d5b39e.jpeg",
+    "at": "2026-06-29T17:30:05.866Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:30:25.198Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:32:30.801Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "240a03c1-5844-4957-9fc8-9b83458bc1f8.jpeg",
+    "at": "2026-06-29T17:32:35.717Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "66a3acfb-f07b-4af6-9426-ece86418ce6d.jpeg",
+    "at": "2026-06-29T17:32:36.470Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:32:40.450Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:32:46.287Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:32:52.350Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:32:58.300Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:33:08.204Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:33:11.990Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "77114e3c-3019-4014-b4ff-da272c04ceff.jpeg",
+    "at": "2026-06-29T17:44:04.472Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "8d1557f9-1edb-4356-8c3d-8938a9b68f5d.jpeg",
+    "at": "2026-06-29T17:44:04.499Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "54581376-268c-4185-b793-e33ecbd4d024.jpeg",
+    "at": "2026-06-29T17:44:04.920Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "42784035-44d9-4381-855e-7b56a9091e74.jpeg",
+    "at": "2026-06-29T17:44:05.904Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "fdce040c-774b-4956-a1b0-2b3a53443298.jpeg",
+    "at": "2026-06-29T17:44:06.793Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "12060d43-17e3-4655-bf4d-17411d8784a3.jpeg",
+    "at": "2026-06-29T17:44:07.832Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:11.055Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:19.222Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:23.057Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:27.528Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:32.030Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:35.331Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "28ad3478-798b-45fc-99a2-49553ed21e1f.jpeg",
+    "at": "2026-06-29T17:44:45.513Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:44:52.369Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:44:54.918Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "1fa99d3b-e565-4042-a67f-e879431c204f.jpeg",
+    "at": "2026-06-29T17:44:58.141Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:45:04.001Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:45:05.947Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:45:14.807Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:45:15.974Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:45:18.025Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:45:19.729Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "98b0c849-a7b1-4645-b524-3cc33b8021fd.jpeg",
+    "at": "2026-06-29T17:56:00.356Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:56:05.777Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:08.332Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "4f2f4b59-43f2-4460-b9b4-fad986c22cb3.jpeg",
+    "at": "2026-06-29T17:56:29.779Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:56:35.868Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:37.874Z"
+  },
+  {
+    "page": "home",
+    "action": "remove",
+    "detail": "d22d7fb7-dd98-42ff-8beb-57742299f785.jpeg",
+    "at": "2026-06-29T17:56:39.318Z"
+  },
+  {
+    "page": "home",
+    "action": "add",
+    "at": "2026-06-29T17:56:46.331Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:49.107Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:50.419Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:51.484Z"
+  },
+  {
+    "page": "home",
+    "action": "reorder",
+    "at": "2026-06-29T17:56:53.064Z"
+  },
+  {
+    "page": "certificates",
+    "action": "rotate",
+    "detail": "CCI_000059.jpg",
+    "at": "2026-06-29T18:31:15.945Z"
+  },
+  {
+    "page": "certificates",
+    "action": "rotate",
+    "detail": "CCI_000059.jpg",
+    "at": "2026-06-29T18:31:21.653Z"
+  },
+  {
+    "page": "certificates",
+    "action": "rotate",
+    "detail": "CCI_000059.jpg",
+    "at": "2026-06-29T18:31:23.269Z"
+  },
+  {
+    "page": "certificates",
+    "action": "rotate",
+    "detail": "CCI_000059.jpg",
+    "at": "2026-06-29T18:31:24.934Z"
+  },
+  {
+    "page": "certificates",
+    "action": "reorder",
+    "at": "2026-06-29T18:31:30.109Z"
   }
 ]

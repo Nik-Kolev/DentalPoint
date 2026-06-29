@@ -1,8 +1,14 @@
 import { readHomeGallery } from '@/lib/gallery-data';
 import { auth } from '@/auth';
-import HomeGalleryClient from './HomeGalleryClient';
+import HomeGalleryAdmin from './HomeGalleryAdmin';
+import HomeGalleryViewer from './HomeGalleryViewer';
 
 export default async function HomeGallery() {
     const [items, session] = await Promise.all([readHomeGallery(), auth()]);
-    return <HomeGalleryClient initialItems={items} isAdmin={!!session?.user} />;
+
+    if (session?.user) {
+        return <HomeGalleryAdmin initialItems={items} />;
+    }
+
+    return <HomeGalleryViewer items={items} />;
 }

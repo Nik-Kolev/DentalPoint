@@ -1,36 +1,22 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { auth } from '@/auth';
+import { readCertificates } from '@/lib/gallery-data';
 import StaticCTA from '@/components/shared/StaticCTA';
-import LicensesGrid from '@/components/shared/LicensesGrid';
+import CertificatesAdmin from '@/components/gallery/CertificatesAdmin';
+import CertificatesViewer from '@/components/gallery/CertificatesViewer';
 
 export const metadata: Metadata = {
     title: 'Certificates & Licenses',
     description: 'View our professional dental certificates and licenses.',
 };
 
-const certificatesData = [
-    '/Images/certificates/CCI_000058.jpg',
-    '/Images/certificates/CCI_000059.jpg',
-    '/Images/certificates/CCI_000060.jpg',
-    '/Images/certificates/CCI_000061.jpg',
-    '/Images/certificates/CCI_000063.jpg',
-    '/Images/certificates/CCI_000065.jpg',
-    '/Images/certificates/CCI_000064.jpg',
-    '/Images/certificates/CCI_000062.jpg',
-    '/Images/certificates/CCI_000066.jpg',
-    '/Images/certificates/CCI_000067.jpg',
-    '/Images/certificates/CCI_000068.jpg',
-    '/Images/certificates/CCI_000069.jpg',
-    '/Images/certificates/CCI_000070.jpg',
-    '/Images/certificates/CCI_000073.jpg',
-    '/Images/certificates/CCI_000077.jpg',
-    '/Images/certificates/CCI_000075.jpg',
-    '/Images/certificates/CCI_000076.jpg',
-    '/Images/certificates/CCI_000074.jpg',
-];
-
 export default async function Licenses() {
-    const t = await getTranslations('licenses');
+    const [items, session, t] = await Promise.all([
+        readCertificates(),
+        auth(),
+        getTranslations('licenses'),
+    ]);
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
@@ -40,17 +26,21 @@ export default async function Licenses() {
                     <p className='mt-4 text-xl text-gray-600'>{t('subtitle')}</p>
                 </div>
 
-                <LicensesGrid
-                    certificates={certificatesData}
-                    loadMoreLabel={t('loadMore')}
-                    showLessLabel={t('showLess')}
-                    statsLabels={{
-                        certificates: t('statsCertificates'),
-                        experience: t('statsExperience'),
-                        patients: t('statsPatients'),
-                        professionalism: t('statsProfessionalism'),
-                    }}
-                />
+                {session?.user ? (
+                    <CertificatesAdmin initialItems={items} />
+                ) : (
+                    <CertificatesViewer
+                        items={items}
+                        loadMoreLabel={t('loadMore')}
+                        showLessLabel={t('showLess')}
+                        statsLabels={{
+                            certificates: t('statsCertificates'),
+                            experience: t('statsExperience'),
+                            patients: t('statsPatients'),
+                            professionalism: t('statsProfessionalism'),
+                        }}
+                    />
+                )}
 
                 <div className='pt-8 sm:pt-12'>
                     <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />

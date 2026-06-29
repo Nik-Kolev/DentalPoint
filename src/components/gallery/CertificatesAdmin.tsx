@@ -3,30 +3,14 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import type { HomeGalleryItem } from '@/types/gallery';
+import type { Certificate } from '@/types/gallery';
+import { uploadGalleryImage, removeGalleryImage, rotateGalleryImage, reorderGallery } from '@/lib/actions/gallery';
 
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
-interface Props {
-    initialItems: HomeGalleryItem[];
-    isAdmin: boolean;
-}
+type DisplayItem = Certificate & { cacheBust?: string };
 
-type DisplayItem = HomeGalleryItem & { cacheBust?: string };
-
-function getGridCols(count: number): string {
-    if (count === 1) return 'grid-cols-1 sm:grid-cols-1 max-w-sm mx-auto';
-    if (count <= 2 || count === 4) return 'grid-cols-1 sm:grid-cols-2';
-    return 'grid-cols-1 sm:grid-cols-3';
-}
-
-function getImageSizes(count: number): string {
-    if (count === 1) return '(max-width: 640px) 100vw, 384px';
-    if (count <= 2 || count === 4) return '(max-width: 640px) 100vw, 50vw';
-    return '(max-width: 640px) 100vw, 33vw';
-}
-
-export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
+export default function CertificatesAdmin({ initialItems }: { initialItems: Certificate[] }) {
     const [items, setItems] = useState<DisplayItem[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
     const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
@@ -38,10 +22,11 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const snapshotRef = useRef<DisplayItem[]>(initialItems);
 
-    const handleImageClick = (_e: React.MouseEvent<HTMLDivElement>, item: HomeGalleryItem) => {
+    const handleImageClick = (item: DisplayItem) => {
         if (editMode) return;
         if (window.innerWidth >= 640) {
-            setLightbox({ src: item.path, alt: item.alt });
+            const src = item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path;
+            setLightbox({ src, alt: item.alt });
         }
     };
 
@@ -52,13 +37,11 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const res = await fetch('/api/admin/home-gallery', { method: 'POST', body: formData });
-            if (!res.ok) throw new Error('Upload failed');
-            const newItem: HomeGalleryItem = await res.json();
-            setItems((prev) => [...prev, newItem]);
+            const newItem = await uploadGalleryImage('certificates', formData);
+            setItems((prev) => [...prev, newItem as DisplayItem]);
         } catch (err) {
             console.error(err);
-            alert('Грешка при качване на снимката');
+            alert('Грешка при качване на сертификата');
         } finally {
             setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -68,8 +51,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const handleDelete = async (id: string) => {
         setItems((prev) => prev.filter((i) => i.id !== id));
         try {
-            const res = await fetch(`/api/admin/home-gallery/${id}`, { method: 'DELETE' });
-            if (!res.ok) throw new Error('Delete failed');
+            await removeGalleryImage('certificates', id);
         } catch (err) {
             console.error(err);
             alert('Грешка при изтриване');
@@ -80,15 +62,14 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         const key = `${id}-${direction}`;
         setRotatingKey(key);
         try {
-            const res = await fetch(`/api/admin/home-gallery/${id}/rotate`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ direction }),
-            });
-            if (!res.ok) throw new Error('Rotate failed');
+            await rotateGalleryImage('certificates', id, direction);
             const cacheBust = String(Date.now());
             setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cacheBust } : i)));
-            setLoadedIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
+            setLoadedIds((prev) => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
         } catch (err) {
             console.error(err);
             alert('Грешка при завъртане');
@@ -99,17 +80,13 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
 
     const handleRevert = async () => {
         const confirmed = window.confirm(
-            'Ще върнете реда на снимките към оригиналния. Изтритите или завъртените снимки не могат да бъдат възстановени. Продължавате?'
+            'Ще върнете реда на сертификатите към оригиналния. Изтритите или завъртените снимки не могат да бъдат възстановени. Продължавате?',
         );
         if (!confirmed) return;
         const original = snapshotRef.current;
         setItems(original);
         try {
-            await fetch('/api/admin/home-gallery/reorder', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderedIds: original.map((i) => i.id) }),
-            });
+            await reorderGallery('certificates', original.map((i) => i.id));
         } catch (err) {
             console.error(err);
         }
@@ -131,11 +108,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         setDragId(null);
         setDragOverId(null);
         try {
-            await fetch('/api/admin/home-gallery/reorder', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderedIds: withOrder.map((i) => i.id) }),
-            });
+            await reorderGallery('certificates', withOrder.map((i) => i.id));
         } catch (err) {
             console.error(err);
         }
@@ -147,30 +120,28 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
 
     return (
         <>
-            {isAdmin && (
-                <div className='flex items-center justify-end gap-3 mb-3'>
-                    {editMode && (
-                        <button
-                            onClick={handleRevert}
-                            className='px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'
-                        >
-                            ↩ Върни промените
-                        </button>
-                    )}
+            <div className='flex items-center justify-end gap-3 mb-4'>
+                {editMode && (
                     <button
-                        onClick={() => setEditMode((v) => !v)}
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                            editMode
-                                ? 'bg-[#005baa] text-white hover:bg-[#004a8f]'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                        onClick={handleRevert}
+                        className='px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'
                     >
-                        {editMode ? 'Готово' : '✏️ Редактирай'}
+                        ↩ Върни промените
                     </button>
-                </div>
-            )}
+                )}
+                <button
+                    onClick={() => setEditMode((v) => !v)}
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                        editMode
+                            ? 'bg-[#005baa] text-white hover:bg-[#004a8f]'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                >
+                    {editMode ? 'Готово' : '✏️ Редактирай'}
+                </button>
+            </div>
 
-            <div className={`grid gap-4 ${getGridCols(items.length)}`}>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
                 {items.map((item) => (
                     <div
                         key={item.id}
@@ -179,14 +150,14 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                         onDragOver={(e) => handleDragOver(e, item.id)}
                         onDrop={() => handleDrop(item.id)}
                         onDragEnd={handleDragEnd}
-                        onClick={(e) => handleImageClick(e, item)}
+                        onClick={() => handleImageClick(item)}
                         className={`relative bg-white rounded-lg shadow-md p-2 sm:p-3 transition-all duration-200
                             ${editMode ? 'cursor-grab active:cursor-grabbing' : 'hover:shadow-lg sm:cursor-pointer'}
                             ${dragOverId === item.id && dragId !== item.id ? 'ring-2 ring-[#005baa] scale-105' : ''}
                             ${dragId === item.id ? 'opacity-50' : ''}
                         `}
                     >
-                        <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
+                        <div className='relative aspect-square rounded-md overflow-hidden bg-white'>
                             {!loadedIds.has(item.id) && (
                                 <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
                             )}
@@ -195,7 +166,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                 alt={item.alt}
                                 fill
                                 unoptimized
-                                className='rounded-md object-cover'
+                                className='object-contain'
                                 onLoad={() => setLoadedIds((prev) => new Set([...prev, item.id]))}
                             />
                         </div>
@@ -203,32 +174,43 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                         {editMode && (
                             <div className='absolute inset-0 rounded-lg flex flex-col'>
                                 <div className='flex justify-center pt-1'>
-                                    <span className='text-white bg-black/40 rounded px-2 py-0.5 text-xs select-none'>⠿ Плъзни</span>
+                                    <span className='text-white bg-black/40 rounded px-2 py-0.5 text-xs select-none'>
+                                        ⠿ Плъзни
+                                    </span>
                                 </div>
                                 <div className='mt-auto flex justify-center gap-2 pb-2 px-2'>
-                                    {([
-                                        { dir: 'left' as const, icon: '↺', title: 'Завърти наляво' },
-                                        { dir: 'right' as const, icon: '↻', title: 'Завърти надясно' },
-                                    ] as const).map(({ dir, icon, title }) => {
+                                    {(
+                                        [
+                                            { dir: 'left' as const, icon: '↺', title: 'Завърти наляво' },
+                                            { dir: 'right' as const, icon: '↻', title: 'Завърти надясно' },
+                                        ] as const
+                                    ).map(({ dir, icon, title }) => {
                                         const busy = rotatingKey === `${item.id}-${dir}`;
                                         return (
                                             <button
                                                 key={dir}
-                                                onClick={(e) => { e.stopPropagation(); handleRotate(item.id, dir); }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRotate(item.id, dir);
+                                                }}
                                                 disabled={busy}
                                                 title={title}
                                                 className={`rounded-full w-9 h-9 flex items-center justify-center shadow text-sm font-bold transition-colors
                                                     ${busy ? 'bg-[#005baa] text-white cursor-not-allowed' : 'bg-white/90 hover:bg-[#005baa] hover:text-white text-gray-800'}`}
                                             >
-                                                {busy
-                                                    ? <span className='block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
-                                                    : icon
-                                                }
+                                                {busy ? (
+                                                    <span className='block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                                                ) : (
+                                                    icon
+                                                )}
                                             </button>
                                         );
                                     })}
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(item.id);
+                                        }}
                                         title='Изтрий'
                                         className='bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
                                     >
@@ -240,18 +222,21 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                     </div>
                 ))}
 
-                {editMode && items.length < 6 && (
+                {editMode && (
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className='aspect-[4/3] rounded-lg border-2 border-dashed border-[#005baa] flex flex-col items-center justify-center gap-2 text-[#005baa] hover:bg-[#e3f3fb] transition-colors disabled:opacity-50'
+                        className='aspect-square rounded-lg border-2 border-dashed border-[#005baa] flex flex-col items-center justify-center gap-2 text-[#005baa] hover:bg-[#e3f3fb] transition-colors disabled:opacity-50'
                     >
                         {uploading ? (
-                            <span className='text-sm'>Качване...</span>
+                            <>
+                                <span className='block w-6 h-6 border-2 border-[#005baa] border-t-transparent rounded-full animate-spin' />
+                                <span className='text-sm'>Качване...</span>
+                            </>
                         ) : (
                             <>
-                                <span className='text-2xl'>+</span>
-                                <span className='text-sm font-medium'>Добави снимка</span>
+                                <span className='text-3xl leading-none'>+</span>
+                                <span className='text-sm font-medium'>Добави сертификат</span>
                             </>
                         )}
                     </button>
