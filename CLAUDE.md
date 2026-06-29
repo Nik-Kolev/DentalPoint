@@ -32,17 +32,20 @@ src/
   auth.ts             # Auth.js config — exports { auth, handlers, signIn, signOut }
   components/
     gallery/          # HomeGallery (server wrapper), HomeGalleryViewer, HomeGalleryAdmin,
-                      # CertificatesViewer, CertificatesAdmin, GalleryCases (to be split in 6c),
+                      # CertificatesViewer, CertificatesAdmin,
+                      # GalleryCasesViewer, GalleryCasesAdmin,
                       # BeforeAfterSlider, ImageLightbox
     layout/           # Navigation, DeferredWidgets
     shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, etc.
     statistics/       # BarChart
   lib/
     actions/
-      gallery.ts      # 4 shared Server Actions: uploadGalleryImage, removeGalleryImage,
-                      # rotateGalleryImage, reorderGallery
+      gallery.ts      # Server Actions: uploadGalleryImage, removeGalleryImage, rotateGalleryImage,
+                      # reorderGallery (home/certs), reorderGalleryCases, addGalleryCase,
+                      # removeGalleryCase, replaceGalleryCaseImage, updateGalleryCaseText
     analytics.ts      # GA4 fetch + mock data generator
-    gallery-data.ts   # readHomeGallery, writeHomeGallery, readCertificates, writeCertificates
+    gallery-data.ts   # readHomeGallery, writeHomeGallery, readCertificates, writeCertificates,
+                      # readGalleryCases, writeGalleryCases
     blurPlaceholders.ts
     imageVersion.ts
     cloudflareLoader.ts
@@ -57,7 +60,7 @@ src/
 data/
   home-gallery.json   # Home gallery images (managed by admin)
   certificates.json   # Certificate images (managed by admin)
-  gallery-cases.json  # Before/after treatment cases (reorder managed; images are static)
+  gallery-cases.json  # Before/after treatment cases (full CRUD managed by admin)
   pending-changes.json
 scripts/
   optimize-images.js            # Compresses images in /public/Images
@@ -117,11 +120,19 @@ return <*Viewer items={items} />;
 
 Admin JS never ships to unauthenticated visitors. Only the lightweight Viewer bundle does.
 
+**Gallery cases** follow the same split but the Admin is full CRUD (add/delete/replace images/edit text+aspect ratio) rather than just reorder:
+```
+gallery/page.tsx         ← async server component: readGalleryCases() + auth()
+GalleryCasesViewer.tsx   ← 'use client', slider + load-more — receives locale as string prop
+GalleryCasesAdmin.tsx    ← 'use client', full CRUD — receives locale as string prop
+```
+`locale` must be a **string prop** (not `useLocale()`) because these components can render outside `[locale]/layout.tsx` context.
+
 ### Server Actions — gallery mutations
 All gallery mutations live in `src/lib/actions/gallery.ts` (file-level `'use server'`).
 
-- `GalleryConfig` interface + config map keyed by `Gallery = 'home' | 'certificates'`
-- 4 private implementations (`_upload`, `_remove`, `_rotate`, `_reorder`), 4 public exports
+- `GalleryConfig` interface + config map keyed by `Gallery = 'home' | 'certificates'` — 4 shared private impls
+- Gallery cases use separate named actions: `addGalleryCase`, `removeGalleryCase`, `replaceGalleryCaseImage`, `updateGalleryCaseText`, `reorderGalleryCases`
 - `assertAdmin()` is called first in every action — throws `new Error('Unauthorized')` (NOT `Response` — Server Actions throw, API routes return)
 - Client components call them directly: `await uploadGalleryImage('home', formData)` — no `fetch()`
 
@@ -132,8 +143,9 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 - `gallery-cases.json` — before/after treatment cases
 
 ### Image pipeline — admin uploads
-- Images uploaded via browser, saved raw to `public/Images/<gallery>/` with UUID filenames.
-- `sharp` reads EXIF orientation and corrects on upload — no re-encoding (avoids DCT ringing artifacts).
+- Images uploaded via browser, saved to `public/Images/<gallery>/` with UUID filenames.
+- **Home/certificates:** raw JPEG bytes passed through (no re-encode); EXIF rotation preserved for the browser. Non-JPEGs converted via `sharp` at quality 95.
+- **Gallery cases (`processGalleryImage(file, targetRatio?)`):** when a ratio is provided, applies EXIF auto-rotation first (`sharp.rotate()`), reads post-rotation pixel dimensions, then center-crops to the target ratio with `sharp.resize(w, h, { fit: 'cover', position: 'center' })`. Both before and after images are cropped to the same ratio on upload, so `object-cover` fills them identically in the slider with no zoom mismatch.
 - Manual rotation: `sharp` rotates 90°, writes back in place. Client cache-busts with `?v=<timestamp>`.
 - `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
 - The static `prebuild` scripts (`optimize-images.js`, `generate-blur-placeholders.js`) still run before every `npm run build` for non-gallery static images.
