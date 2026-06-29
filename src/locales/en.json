@@ -167,6 +167,7 @@
         "ctaSubtitle": "Book an appointment and achieve the same results",
         "before": "Before",
         "loading": "Loading...",
+        "imageError": "Image could not be loaded",
         "after": "After",
         "sliderHint": "Drag the slider to compare results",
         "items": [

@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import Image from 'next/image';
 import StaticCTA from '@/components/shared/StaticCTA';
-import ClientGallery from '@/components/gallery/ClientGallery';
+import HomeGallery from '@/components/gallery/HomeGallery';
 import { getTranslations } from 'next-intl/server';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
@@ -73,7 +73,7 @@ export default async function Home() {
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <Suspense fallback={<GallerySkeleton />}>
-                        <ClientGallery />
+                        <HomeGallery />
                     </Suspense>
                 </div>
             </section>

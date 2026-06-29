@@ -16,10 +16,13 @@ interface ImageLightboxProps {
 
 export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerElement, year, title, shortText }: ImageLightboxProps) {
     const t = useTranslations('gallery');
+    const modalRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const [isAnimating, setIsAnimating] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -39,18 +42,39 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
         };
     }, [isOpen]);
 
+    // Escape to close + Tab focus trap combined
     useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
+        if (!isOpen) return;
+        const handle = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') { onClose(); return; }
+            if (e.key === 'Tab') {
+                const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                if (!focusable || focusable.length === 0) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey) {
+                    if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+                } else {
+                    if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            }
         };
-        if (isOpen) window.addEventListener('keydown', handleEscape);
-        return () => window.removeEventListener('keydown', handleEscape);
+        window.addEventListener('keydown', handle);
+        return () => window.removeEventListener('keydown', handle);
     }, [isOpen, onClose]);
+
+    // Move focus to close button when modal opens
+    useEffect(() => {
+        if (isOpen) closeButtonRef.current?.focus();
+    }, [isOpen]);
 
     useEffect(() => {
         if (isOpen) {
             setIsAnimating(false);
             setImageLoaded(false);
+            setImageError(false);
             if (triggerElement && containerRef.current) {
                 const rect = triggerElement.getBoundingClientRect();
                 const container = containerRef.current;
@@ -85,12 +109,14 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
         } else {
             setIsAnimating(false);
             setImageLoaded(false);
+            setImageError(false);
         }
     }, [isOpen, triggerElement]);
 
     useEffect(() => {
         if (isOpen && imgRef.current && imageSrc) {
             setImageLoaded(false);
+            setImageError(false);
             let isMounted = true;
 
             const imageLoader = new Image();
@@ -101,7 +127,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 }
             };
             imageLoader.onerror = () => {
-                if (isMounted) setImageLoaded(false);
+                if (isMounted) setImageError(true);
             };
             imageLoader.src = imageSrc;
 
@@ -116,8 +142,16 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
     if (!isOpen) return null;
 
     return (
-        <div className='fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300' onClick={onClose}>
+        <div
+            ref={modalRef}
+            className='fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300'
+            onClick={onClose}
+            role='dialog'
+            aria-modal='true'
+            aria-label={alt || 'Image preview'}
+        >
             <button
+                ref={closeButtonRef}
                 className='absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition-colors z-10 bg-white rounded-full p-2 shadow-lg'
                 onClick={onClose}
                 aria-label='Close'
@@ -147,10 +181,18 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                         style={{ display: imageLoaded ? 'block' : 'none', maxWidth: '100%', maxHeight: 'calc(90vh - 60px)' }}
                         loading='lazy'
                     />
-                    {!imageLoaded && (
-                        <div className='w-full h-full flex flex-col items-center justify-center text-gray-400'>
+                    {!imageLoaded && !imageError && (
+                        <div className='w-full h-full flex flex-col items-center justify-center text-gray-400 py-12'>
                             <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#005baa] mb-4'></div>
                             <p className='text-[#005baa]'>{t('loading')}</p>
+                        </div>
+                    )}
+                    {imageError && (
+                        <div className='w-full h-full flex flex-col items-center justify-center text-gray-500 p-8 text-center py-12'>
+                            <svg className='w-12 h-12 mb-3 text-gray-300' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' />
+                            </svg>
+                            <p className='text-sm'>{t('imageError')}</p>
                         </div>
                     )}
                 </div>
