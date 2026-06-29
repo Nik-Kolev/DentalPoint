@@ -1,9 +1,5 @@
-﻿/**
- * GALLERY PAGE - Server Component
- * Features interactive before/after slider comparisons
- */
 import type { Metadata } from 'next';
-import { getTranslation, getSection } from '../../../lib/useTranslation';
+import { getTranslations, getMessages } from 'next-intl/server';
 import StaticCTA from '@/components/shared/StaticCTA';
 import GalleryCases from '@/components/gallery/GalleryCases';
 
@@ -12,7 +8,6 @@ export const metadata: Metadata = {
     description: 'View our dental work gallery showcasing before and after results.',
 };
 
-// Featured cases with interactive sliders
 const featuredCases: {
     before: string;
     after: string;
@@ -73,49 +68,44 @@ const featuredCases: {
     },
 ];
 
-export default async function Gallery({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
-    const gallery = getSection(locale, 'gallery') as any;
-
-    const beforeLabel = t('gallery', 'before');
-    const afterLabel = t('gallery', 'after');
-    const loadMoreLabel = t('licenses', 'loadMore');
-    const showLessLabel = t('licenses', 'showLess');
+export default async function Gallery() {
+    const t = await getTranslations('gallery');
+    const tLicenses = await getTranslations('licenses');
+    const messages = await getMessages();
+    const galleryMessages = messages.gallery as any;
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
             <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8'>
                 {/* Header */}
                 <div className='text-center pb-6 sm:pb-8'>
-                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('gallery', 'title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600 max-w-2xl mx-auto'>{t('gallery', 'subtitle')}</p>
+                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('title')}</h1>
+                    <p className='mt-4 text-xl text-gray-600 max-w-2xl mx-auto'>{t('subtitle')}</p>
                 </div>
 
-                {/* Hint for interaction - moved above */}
+                {/* Hint for interaction */}
                 <div className='text-center pb-8 sm:pb-10'>
                     <p className='text-sm text-gray-500 flex items-center justify-center gap-2'>
                         <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>
                             <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' />
                         </svg>
-                        {locale === 'bg' ? 'Плъзнете за да сравните резултатите' : 'Drag the slider to compare results'}
+                        {t('sliderHint')}
                     </p>
                 </div>
 
-                {/* Featured Cases - Interactive Sliders with Load More */}
+                {/* Featured Cases */}
                 <GalleryCases
                     cases={featuredCases}
-                    locale={locale}
-                    beforeLabel={beforeLabel}
-                    afterLabel={afterLabel}
-                    descriptions={gallery.items || []}
-                    loadMoreLabel={loadMoreLabel}
-                    showLessLabel={showLessLabel}
+                    beforeLabel={t('before')}
+                    afterLabel={t('after')}
+                    descriptions={galleryMessages.items || []}
+                    loadMoreLabel={tLicenses('loadMore')}
+                    showLessLabel={tLicenses('showLess')}
                 />
 
                 {/* CTA */}
                 <div className='pt-12 sm:pt-16'>
-                    <StaticCTA locale={locale} title={t('gallery', 'ctaTitle')} subtitle={t('gallery', 'ctaSubtitle')} />
+                    <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />
                 </div>
             </div>
         </div>

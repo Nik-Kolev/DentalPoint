@@ -1,9 +1,5 @@
-﻿/**
- * LICENSES PAGE - Server Component
- * Interactive grid with lightbox and stats extracted to LicensesGrid.tsx (client component)
- */
 import type { Metadata } from 'next';
-import { getTranslation } from '../../../lib/useTranslation';
+import { getTranslations } from 'next-intl/server';
 import StaticCTA from '@/components/shared/StaticCTA';
 import LicensesGrid from '@/components/shared/LicensesGrid';
 
@@ -33,33 +29,31 @@ const certificatesData = [
     '/Images/certificates/CCI_000074.jpg',
 ];
 
-export default async function Licenses({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
+export default async function Licenses() {
+    const t = await getTranslations('licenses');
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='text-center pb-8 sm:pb-12'>
-                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('licenses', 'title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600'>{t('licenses', 'subtitle')}</p>
+                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('title')}</h1>
+                    <p className='mt-4 text-xl text-gray-600'>{t('subtitle')}</p>
                 </div>
 
                 <LicensesGrid
                     certificates={certificatesData}
-                    locale={locale}
-                    loadMoreLabel={t('licenses', 'loadMore')}
-                    showLessLabel={t('licenses', 'showLess')}
+                    loadMoreLabel={t('loadMore')}
+                    showLessLabel={t('showLess')}
                     statsLabels={{
-                        certificates: t('licenses', 'statsCertificates'),
-                        experience: t('licenses', 'statsExperience'),
-                        patients: t('licenses', 'statsPatients'),
-                        professionalism: t('licenses', 'statsProfessionalism'),
+                        certificates: t('statsCertificates'),
+                        experience: t('statsExperience'),
+                        patients: t('statsPatients'),
+                        professionalism: t('statsProfessionalism'),
                     }}
                 />
 
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={locale} title={t('licenses', 'ctaTitle')} subtitle={t('licenses', 'ctaSubtitle')} />
+                    <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />
                 </div>
             </div>
         </div>

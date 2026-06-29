@@ -13,12 +13,12 @@ const FloatingCTA = dynamic(() => import('@/components/shared/FloatingCTA'), {
     ssr: false,
 });
 
-export default function DeferredWidgets({ locale }: { locale: string }) {
+export default function DeferredWidgets() {
     return (
         <>
             <BackToTop />
-            <FloatingCTA locale={locale} />
-            <CookieConsent locale={locale} />
+            <FloatingCTA />
+            <CookieConsent />
         </>
     );
 }

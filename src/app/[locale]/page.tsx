@@ -1,8 +1,8 @@
-﻿import { Suspense } from 'react';
+import { Suspense } from 'react';
 import Image from 'next/image';
 import StaticCTA from '@/components/shared/StaticCTA';
 import ClientGallery from '@/components/gallery/ClientGallery';
-import { getTranslation } from '../../lib/useTranslation';
+import { getTranslations } from 'next-intl/server';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
 function GallerySkeleton() {
@@ -17,17 +17,16 @@ function GallerySkeleton() {
     );
 }
 
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
+export default async function Home() {
+    const t = await getTranslations('home');
 
     return (
         <div className='bg-gradient-to-b from-[#e3f3fb] to-white min-h-screen'>
             {/* Main Title */}
             <div className='text-center pt-6 sm:pt-10 pb-6 sm:pb-8 px-4'>
                 <h1 className='flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-[#005baa] font-playfair'>
-                    <span className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium opacity-80'>{t('home', 'heroTitlePrefix')}</span>
-                    <span className='font-montserrat font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl'>{t('home', 'heroTitleClinic')}</span>
+                    <span className='text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium opacity-80'>{t('heroTitlePrefix')}</span>
+                    <span className='font-montserrat font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl'>{t('heroTitleClinic')}</span>
                 </h1>
             </div>
 
@@ -56,9 +55,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <div className='bg-white border border-[#e3f3fb] rounded-lg p-6 sm:p-8 shadow-sm text-center'>
-                        <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('home', 'aboutTitle')}</h2>
-                        <p className='text-gray-600 leading-relaxed text-lg text-justify indent-8'>{t('home', 'aboutTextLine1')}</p>
-                        <p className='text-gray-600 leading-relaxed text-lg text-justify indent-8 mt-4'>{t('home', 'aboutTextLine2')}</p>
+                        <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-4'>{t('aboutTitle')}</h2>
+                        <p className='text-gray-600 leading-relaxed text-lg text-justify indent-8'>{t('aboutTextLine1')}</p>
+                        <p className='text-gray-600 leading-relaxed text-lg text-justify indent-8 mt-4'>{t('aboutTextLine2')}</p>
                     </div>
                 </div>
             </section>
@@ -66,7 +65,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             {/* CTA Section */}
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
-                    <StaticCTA locale={locale} title={t('home', 'ctaTitle')} subtitle={t('home', 'ctaSubtitle')} />
+                    <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />
                 </div>
             </section>
 
@@ -74,7 +73,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <section className='pb-8 sm:pb-12 px-4'>
                 <div className='max-w-6xl mx-auto'>
                     <Suspense fallback={<GallerySkeleton />}>
-                        <ClientGallery locale={locale} />
+                        <ClientGallery />
                     </Suspense>
                 </div>
             </section>

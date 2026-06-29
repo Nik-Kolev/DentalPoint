@@ -1,9 +1,5 @@
-﻿/**
- * REVIEWS PAGE - Server Component
- * Interactive list extracted to ReviewsList.tsx (client component)
- */
 import type { Metadata } from 'next';
-import { getSection, getTranslation } from '../../../lib/useTranslation';
+import { getTranslations, getMessages } from 'next-intl/server';
 import StaticCTA from '@/components/shared/StaticCTA';
 import ReviewsList from '@/components/shared/ReviewsList';
 
@@ -20,12 +16,11 @@ interface ReviewItem {
     text: string;
 }
 
-export default async function Reviews({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
-    const reviews = getSection(locale, 'reviews') as any;
+export default async function Reviews() {
+    const t = await getTranslations('licenses');
+    const messages = await getMessages();
+    const reviews = messages.reviews as any;
 
-    // Sort reviews by date (newest first)
     const reviewItems = [...(reviews.items || [])].sort((a: ReviewItem, b: ReviewItem) => {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
     }) as ReviewItem[];
@@ -37,10 +32,10 @@ export default async function Reviews({ params }: { params: Promise<{ locale: st
                     <h1 className='text-3xl font-extrabold text-[#005baa]'>{reviews.title}</h1>
                 </div>
 
-                <ReviewsList items={reviewItems} locale={locale} loadMoreLabel={t('licenses', 'loadMore')} showLessLabel={t('licenses', 'showLess')} />
+                <ReviewsList items={reviewItems} loadMoreLabel={t('loadMore')} showLessLabel={t('showLess')} />
 
                 <div className='pt-8 sm:pt-12'>
-                    <StaticCTA locale={locale} title={reviews.ctaTitle} subtitle={reviews.ctaSubtitle} />
+                    <StaticCTA title={reviews.ctaTitle} subtitle={reviews.ctaSubtitle} />
                 </div>
             </div>
         </div>

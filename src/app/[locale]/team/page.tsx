@@ -1,6 +1,6 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import Image from 'next/image';
-import { getTranslation } from '../../../lib/useTranslation';
+import { getTranslations } from 'next-intl/server';
 import StaticCTA from '@/components/shared/StaticCTA';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
@@ -9,23 +9,22 @@ export const metadata: Metadata = {
     description: 'Meet our experienced dental professionals at Dental Point. Learn about our skilled dentists and their specializations.',
 };
 
-export default async function Team({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
+export default async function Team() {
+    const t = await getTranslations('team');
 
     const doctors = [
         {
             id: 'dr-yavor-ivanov',
-            name: t('team', 'person1Name'),
-            title: t('team', 'person1Title'),
-            description: t('team', 'person1Description'),
+            name: t('person1Name'),
+            title: t('person1Title'),
+            description: t('person1Description'),
             imagePath: '/Images/owners/dr-iavor.jpg',
         },
         {
             id: 'dr-ekaterina-ivanova',
-            name: t('team', 'person2Name'),
-            title: t('team', 'person2Title'),
-            description: t('team', 'person2Description'),
+            name: t('person2Name'),
+            title: t('person2Title'),
+            description: t('person2Description'),
             imagePath: '/Images/owners/dr-kati.jpg',
         },
     ];
@@ -34,14 +33,13 @@ export default async function Team({ params }: { params: Promise<{ locale: strin
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='text-center pb-12'>
-                    <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-[#005baa] mb-4 font-serif'>{t('team', 'title')}</h1>
-                    <p className='text-lg md:text-xl text-gray-600'>{t('team', 'subtitle')}</p>
+                    <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-[#005baa] mb-4 font-serif'>{t('title')}</h1>
+                    <p className='text-lg md:text-xl text-gray-600'>{t('subtitle')}</p>
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 max-w-6xl mx-auto'>
                     {doctors.map((doctor, index) => (
                         <div key={doctor.id} id={doctor.id} className='flex flex-col items-center text-center scroll-mt-24'>
-                            {/* Image Container */}
                             <div className='relative w-full max-w-[420px] aspect-[3/4] mb-6 rounded-2xl overflow-hidden shadow-lg bg-gray-100 group'>
                                 <Image
                                     src={getImageUrl(doctor.imagePath)}
@@ -58,7 +56,6 @@ export default async function Team({ params }: { params: Promise<{ locale: strin
                                 />
                             </div>
 
-                            {/* Text Container */}
                             <div className='w-full max-w-xs md:max-w-lg'>
                                 <h2 className='text-2xl sm:text-3xl font-bold text-[#005baa] mb-2 font-serif'>{doctor.name}</h2>
                                 <p className='text-lg sm:text-xl text-[#009fe3] font-medium mb-4'>{doctor.title}</p>
@@ -68,9 +65,8 @@ export default async function Team({ params }: { params: Promise<{ locale: strin
                     ))}
                 </div>
 
-                {/* Call to Action */}
                 <div className='pt-16'>
-                    <StaticCTA locale={locale} title={t('team', 'ctaTitle')} subtitle={t('team', 'ctaSubtitle')} />
+                    <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />
                 </div>
             </div>
         </div>

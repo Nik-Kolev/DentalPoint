@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -11,7 +11,7 @@ const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox')
 
 const clinicImages = ['IMG_3345.jpeg', 'IMG_3357.jpeg', 'IMG_3350.jpeg', 'IMG_3372.jpeg', 'IMG_3349.jpeg', 'IMG_3445.jpeg'];
 
-export default function ClientGallery({ locale }: { locale: string }) {
+export default function ClientGallery() {
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
 
     return (
@@ -55,10 +55,8 @@ export default function ClientGallery({ locale }: { locale: string }) {
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
                     triggerElement={selectedImage.element}
-                    locale={locale}
                 />
             )}
         </>
     );
 }
-

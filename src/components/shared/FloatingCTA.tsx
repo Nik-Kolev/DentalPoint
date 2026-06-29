@@ -1,16 +1,12 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getTranslation } from '@/lib/useTranslation';
+import { useTranslations } from 'next-intl';
 
-interface FloatingCTAProps {
-    locale: string;
-}
-
-export default function FloatingCTA({ locale }: FloatingCTAProps) {
-    const t = getTranslation(locale);
+export default function FloatingCTA() {
+    const t = useTranslations('layout');
     const pathname = usePathname();
     const [isStaticCTAVisible, setIsStaticCTAVisible] = useState(false);
     const [isBackToTopVisible, setIsBackToTopVisible] = useState(false);
@@ -18,38 +14,29 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
     const [bottomOffset, setBottomOffset] = useState(0);
     const [hasPassedStaticCTA, setHasPassedStaticCTA] = useState(false);
 
-    // Hide on contact page
     const isContactPage = pathname?.includes('/contact');
 
     useEffect(() => {
         const handleScroll = () => {
-            // Check back to top visibility
             setIsBackToTopVisible(window.pageYOffset > 100);
-            // Page is scrollable (e.g. after "load more") â€” use compact CTA layout even before user scrolls
             setIsPageScrollable(document.documentElement.scrollHeight > window.innerHeight + 100);
 
-            // Check footer overlap
             const footer = document.querySelector('footer');
             if (footer) {
                 const footerRect = footer.getBoundingClientRect();
                 const windowHeight = window.innerHeight;
-                // If footer is visible in viewport
                 if (footerRect.top < windowHeight) {
-                    // Calculate how much of the footer is visible
-                    const visibleFooterHeight = windowHeight - footerRect.top;
-                    // Add some padding (20px)
-                    setBottomOffset(visibleFooterHeight);
+                    setBottomOffset(windowHeight - footerRect.top);
                 } else {
                     setBottomOffset(0);
                 }
             }
         };
 
-        handleScroll(); // Initial check
+        handleScroll();
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', handleScroll);
 
-        // Re-run when document height changes (e.g. "load more" adds content) so CTA position updates without scrolling
         const body = document.body;
         const resizeObserver = new ResizeObserver(handleScroll);
         resizeObserver.observe(body);
@@ -68,7 +55,6 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
     useEffect(() => {
         if (isContactPage) return;
 
-        // Find static CTA elements
         const staticCTAs = document.querySelectorAll('[data-static-cta]');
 
         if (staticCTAs.length === 0) {
@@ -79,11 +65,9 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
 
         const observer = new IntersectionObserver(
             (entries) => {
-                // Check if any StaticCTA is visible
                 const anyVisible = entries.some((entry) => entry.isIntersecting);
                 setIsStaticCTAVisible(anyVisible);
 
-                // Check if we've passed the StaticCTA
                 const passed = entries.some((entry) => {
                     const rect = entry.boundingClientRect;
                     return !entry.isIntersecting && rect.top < 0;
@@ -91,11 +75,8 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
                 if (passed) {
                     setHasPassedStaticCTA(true);
                 } else if (anyVisible) {
-                    // Reset if it becomes visible again (user scrolled up)
                     setHasPassedStaticCTA(false);
                 } else {
-                    // If not visible and not passed (i.e. above), ensure passed is false
-                    // We need to check if we are actually above
                     const isAbove = entries.some((entry) => {
                         const rect = entry.boundingClientRect;
                         return !entry.isIntersecting && rect.top > 0;
@@ -103,15 +84,11 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
                     if (isAbove) setHasPassedStaticCTA(false);
                 }
             },
-            {
-                threshold: 0.1,
-                rootMargin: '0px 0px -100px 0px',
-            },
+            { threshold: 0.1, rootMargin: '0px 0px -100px 0px' },
         );
 
         staticCTAs.forEach((cta) => observer.observe(cta));
 
-        // Also check immediately
         const checkVisibility = () => {
             let passed = false;
             let visible = false;
@@ -125,13 +102,8 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
             setHasPassedStaticCTA(passed && !visible);
         };
 
-        // Check on scroll too for precise "passed" detection
-        const scrollCheck = () => {
-            checkVisibility();
-        };
+        const scrollCheck = () => checkVisibility();
         window.addEventListener('scroll', scrollCheck);
-
-        // Small delay to ensure DOM is ready
         setTimeout(checkVisibility, 100);
 
         return () => {
@@ -140,11 +112,8 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         };
     }, [isContactPage, pathname]);
 
-    if (isContactPage) {
-        return null;
-    }
+    if (isContactPage) return null;
 
-    // Hide if static CTA is visible OR if we have passed it
     const shouldHide = isStaticCTAVisible || hasPassedStaticCTA;
 
     return (
@@ -155,7 +124,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
             style={{ bottom: `${Math.max(16, bottomOffset + 16)}px` }}
         >
             <Link
-                href={`/${locale}/contact`}
+                href='/contact'
                 className={`group relative flex items-center justify-center px-4 py-3 text-base font-bold text-white bg-gradient-to-r from-[#005baa] to-[#009fe3] rounded-xl shadow-2xl hover:shadow-[#009fe3]/50 transition-all duration-300 hover:scale-[1.02] transform overflow-hidden pointer-events-auto ${
                     isBackToTopVisible || isPageScrollable ? 'w-[calc(100%-4rem)]' : 'w-full'
                 }`}
@@ -169,7 +138,7 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
                             d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'
                         />
                     </svg>
-                    <span className='truncate'>{t('layout', 'contactUs')}</span>
+                    <span className='truncate'>{t('contactUs')}</span>
                     <svg
                         className='w-5 h-5 flex-shrink-0 transform group-hover:translate-x-1 transition-transform duration-300'
                         fill='none'
@@ -184,4 +153,3 @@ export default function FloatingCTA({ locale }: FloatingCTAProps) {
         </div>
     );
 }
-

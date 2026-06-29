@@ -1,23 +1,21 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Flag from 'react-world-flags';
 import { useCallback } from 'react';
+import { useLocale } from 'next-intl';
 
-export default function LanguageSwitcher({ locale }: { locale: string }) {
+export default function LanguageSwitcher() {
     const router = useRouter();
-    const pathname = usePathname();
+    const locale = useLocale();
 
     const switchLanguage = useCallback(
         (newLocale: string) => {
-            // Only proceed if the language is actually different
             if (newLocale === locale) return;
-
-            localStorage.setItem('preferredLang', newLocale);
-            const newPath = pathname.replace(/^\/(en|bg)/, `/${newLocale}`);
-            router.push(newPath);
+            document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
+            router.refresh();
         },
-        [locale, pathname, router]
+        [locale, router],
     );
 
     return (

@@ -1,33 +1,31 @@
 import type { Metadata } from 'next';
-import { getTranslation } from '../../../lib/useTranslation';
+import { getTranslations } from 'next-intl/server';
 import ContactMap from './ContactMap';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-    const { locale } = await params;
-    const t = getTranslation(locale);
-
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('contact');
     return {
-        title: `${t('contact', 'title')}`,
-        description: t('contact', 'subtitle'),
+        title: t('title'),
+        description: t('subtitle'),
     };
 }
 
-export default async function Contact({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = getTranslation(locale);
+export default async function Contact() {
+    const t = await getTranslations('contact');
+    const tTeam = await getTranslations('team');
 
     return (
         <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='text-center mb-12'>
-                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('contact', 'title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600'>{t('contact', 'subtitle')}</p>
+                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('title')}</h1>
+                    <p className='mt-4 text-xl text-gray-600'>{t('subtitle')}</p>
                 </div>
 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12'>
                     {/* Contact Information */}
                     <div className='bg-white rounded-lg shadow-lg p-8'>
-                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('contact', 'infoTitle')}</h2>
+                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('infoTitle')}</h2>
 
                         <div className='space-y-8'>
                             <div>
@@ -41,11 +39,11 @@ export default async function Contact({ params }: { params: Promise<{ locale: st
                                         />
                                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
                                     </svg>
-                                    {t('contact', 'addressTitle')}
+                                    {t('addressTitle')}
                                 </h3>
                                 <div className='text-gray-700 ml-9 leading-relaxed text-lg'>
-                                    <p>{t('contact', 'addressLine1')}</p>
-                                    <p>{t('contact', 'addressLine2')}</p>
+                                    <p>{t('addressLine1')}</p>
+                                    <p>{t('addressLine2')}</p>
                                 </div>
                             </div>
 
@@ -59,15 +57,15 @@ export default async function Contact({ params }: { params: Promise<{ locale: st
                                             d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'
                                         />
                                     </svg>
-                                    {t('contact', 'phoneTitle')}
+                                    {t('phoneTitle')}
                                 </h3>
                                 <div className='text-gray-700 ml-9 space-y-2 text-lg'>
                                     <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>{t('team', 'person1Name')}</span>
+                                        <span className='font-medium'>{tTeam('person1Name')}</span>
                                         <span className='font-bold tabular-nums'>0876 346 261</span>
                                     </div>
                                     <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>{t('team', 'person2Name')}</span>
+                                        <span className='font-medium'>{tTeam('person2Name')}</span>
                                         <span className='font-bold tabular-nums'>0878 355 494</span>
                                     </div>
                                 </div>
@@ -78,19 +76,21 @@ export default async function Contact({ params }: { params: Promise<{ locale: st
                                     <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
                                     </svg>
-                                    {t('contact', 'workingHoursTitle')}
+                                    {t('workingHoursTitle')}
                                 </h3>
                                 <div className='text-gray-700 ml-9 space-y-2 text-lg'>
-                                    {[
-                                        'workingHoursMonday',
-                                        'workingHoursTuesday',
-                                        'workingHoursWednesday',
-                                        'workingHoursThursday',
-                                        'workingHoursFriday',
-                                        'workingHoursSaturday',
-                                        'workingHoursSunday',
-                                    ].map((day) => {
-                                        const text = t('contact', day);
+                                    {(
+                                        [
+                                            'workingHoursMonday',
+                                            'workingHoursTuesday',
+                                            'workingHoursWednesday',
+                                            'workingHoursThursday',
+                                            'workingHoursFriday',
+                                            'workingHoursSaturday',
+                                            'workingHoursSunday',
+                                        ] as const
+                                    ).map((day) => {
+                                        const text = t(day);
                                         const parts = text.split(':');
                                         const dayName = parts[0];
                                         const time = parts.slice(1).join(':').trim();
@@ -109,7 +109,7 @@ export default async function Contact({ params }: { params: Promise<{ locale: st
 
                     {/* Google Maps */}
                     <div className='bg-white rounded-lg shadow-lg p-8'>
-                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('contact', 'locationTitle')}</h2>
+                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('locationTitle')}</h2>
                         <ContactMap />
                         <div className='mt-8 text-center'>
                             <a
@@ -126,7 +126,7 @@ export default async function Contact({ params }: { params: Promise<{ locale: st
                                         d='M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14'
                                     />
                                 </svg>
-                                {t('contact', 'openInMaps')}
+                                {t('openInMaps')}
                             </a>
                         </div>
                     </div>

@@ -1,14 +1,14 @@
-﻿import type { Metadata, Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import Navigation from '@/components/layout/Navigation';
 import StatisticsLink from '@/components/shared/StatisticsLink';
 import DeferredWidgets from '@/components/layout/DeferredWidgets';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getTranslation } from '../../lib/useTranslation';
+import { getTranslations } from 'next-intl/server';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
-export async function generateViewport({ params }: { params: Promise<{ locale: string }> }): Promise<Viewport> {
+export async function generateViewport(): Promise<Viewport> {
     return {
         width: 'device-width',
         initialScale: 1,
@@ -21,16 +21,16 @@ export async function generateViewport({ params }: { params: Promise<{ locale: s
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
     const { locale } = await params;
-    const t = getTranslation(locale);
+    const t = await getTranslations('metadata');
     const isBulgarian = locale === 'bg';
 
     return {
         title: {
-            default: t('metadata', 'title'),
-            template: t('metadata', 'titleTemplate'),
+            default: t('title'),
+            template: t('titleTemplate'),
         },
-        description: t('metadata', 'description'),
-        keywords: t('metadata', 'keywords').split(', '),
+        description: t('description'),
+        keywords: t('keywords').split(', '),
         authors: [{ name: 'Dr. Yavor Ivanov and Dr. Ekaterina Ivanova - Dental Point' }],
         creator: 'Dental Point',
         publisher: 'Dental Point',
@@ -41,23 +41,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         },
         metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg'),
         alternates: {
-            canonical: `/${locale}`,
-            languages: {
-                bg: '/bg',
-                en: '/en',
-            },
+            canonical: '/',
         },
         openGraph: {
-            title: t('metadata', 'ogTitle'),
-            description: t('metadata', 'ogDescription'),
-            url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg'}/${locale}`,
+            title: t('ogTitle'),
+            description: t('ogDescription'),
+            url: process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg',
             siteName: 'Dental Point',
             images: [
                 {
                     url: '/og-image.jpg',
                     width: 1200,
                     height: 630,
-                    alt: t('metadata', 'ogAlt'),
+                    alt: t('ogAlt'),
                 },
             ],
             locale: isBulgarian ? 'bg_BG' : 'en_US',
@@ -88,16 +84,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function LocaleLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
     const { locale } = await params;
-    const t = getTranslation(locale);
-
-    const translations = {
-        home: t('layout', 'menuHome'),
-        contact: t('layout', 'menuContact'),
-        team: t('layout', 'menuTeam'),
-        gallery: t('layout', 'menuGallery'),
-        licenses: t('layout', 'menuLicenses'),
-        reviews: t('layout', 'menuReviews'),
-    };
+    const t = await getTranslations('layout');
+    const tMeta = await getTranslations('metadata');
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg';
     const isBulgarian = locale === 'bg';
@@ -106,8 +94,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         '@context': 'https://schema.org',
         '@type': 'DentalClinic',
         name: 'Dental Point',
-        description: t('metadata', 'description'),
-        url: `${baseUrl}/${locale}`,
+        description: tMeta('description'),
+        url: baseUrl,
         logo: `${baseUrl}/Images/logo/cropped_logo_dp.jpg`,
         image: `${baseUrl}/og-image.jpg`,
         address: {
@@ -140,6 +128,15 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         },
     };
 
+    const translations = {
+        home: t('menuHome'),
+        contact: t('menuContact'),
+        team: t('menuTeam'),
+        gallery: t('menuGallery'),
+        licenses: t('menuLicenses'),
+        reviews: t('menuReviews'),
+    };
+
     return (
         <>
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
@@ -148,9 +145,9 @@ export default async function LocaleLayout({ children, params }: { children: Rea
                     {/* Logo */}
                     <div className='flex items-start flex-shrink-0 lg:w-64 absolute left-1/2 -translate-x-1/2 lg:relative lg:left-0 lg:translate-x-0 pt-1 lg:pt-0'>
                         <Link
-                            href={`/${locale}`}
+                            href='/'
                             className='relative w-24 sm:w-32 md:w-40 lg:w-44 h-auto ml-2 sm:ml-3 lg:ml-4'
-                            aria-label={t('layout', 'menuHome')}
+                            aria-label={t('menuHome')}
                         >
                             <Image
                                 src={getImageUrl('/Images/logo/cropped_logo_dp.jpg')}
@@ -168,7 +165,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
 
                     {/* Desktop Navigation */}
                     <div className='hidden lg:flex flex-1 justify-center'>
-                        <Navigation locale={locale} translations={translations} />
+                        <Navigation translations={translations} />
                     </div>
 
                     {/* Right side */}
@@ -177,10 +174,10 @@ export default async function LocaleLayout({ children, params }: { children: Rea
                             <StatisticsLink />
                         </div>
                         <div className='hidden lg:block'>
-                            <LanguageSwitcher locale={locale} />
+                            <LanguageSwitcher />
                         </div>
                         <div className='lg:hidden'>
-                            <Navigation locale={locale} translations={translations} />
+                            <Navigation translations={translations} />
                         </div>
                     </div>
                 </nav>
@@ -223,7 +220,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
                 </div>
             </footer>
 
-            <DeferredWidgets locale={locale} />
+            <DeferredWidgets />
         </>
     );
 }

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
@@ -8,7 +8,6 @@ import { getImageUrl } from '@/lib/imageVersion';
 
 interface LicensesGridProps {
     certificates: string[];
-    locale: string;
     loadMoreLabel: string;
     showLessLabel: string;
     statsLabels: {
@@ -123,7 +122,6 @@ function StatisticsSection({ children }: { children: React.ReactNode }) {
 
 function StatisticCard({ target, suffix, label, startTime }: { target: number; suffix: string; label: string; startTime?: number | null }) {
     const { displayValue } = useCountUp(target, suffix, startTime ?? null);
-
     return (
         <div>
             <div className='text-3xl font-bold text-[#005baa] mb-2'>{displayValue}</div>
@@ -132,16 +130,13 @@ function StatisticCard({ target, suffix, label, startTime }: { target: number; s
     );
 }
 
-export default function LicensesGrid({ certificates, locale, loadMoreLabel, showLessLabel, statsLabels }: LicensesGridProps) {
+export default function LicensesGrid({ certificates, loadMoreLabel, showLessLabel, statsLabels }: LicensesGridProps) {
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
-        if (window.innerWidth >= 768) {
-            setVisibleCount(certificates.length);
-        } else {
-            setVisibleCount(3);
-        }
+        if (window.innerWidth >= 768) setVisibleCount(certificates.length);
+        else setVisibleCount(3);
     }, [certificates.length]);
 
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, certificates.length));
@@ -157,7 +152,6 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
 
     return (
         <>
-            {/* Statistics Section */}
             <div className='pb-8 sm:pb-12'>
                 <StatisticsSection>
                     <StatisticCard target={certificates.length} suffix='+' label={statsLabels.certificates} />
@@ -167,7 +161,6 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                 </StatisticsSection>
             </div>
 
-            {/* Certificates Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
                 {visibleCertificates.map((imagePath: string, index: number) => (
                     <CertificateCard
@@ -176,17 +169,12 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                         imagePath={imagePath}
                         priority={index < 3}
                         onImageClick={(element) => {
-                            setSelectedImage({
-                                src: getImageUrl(imagePath),
-                                alt: 'Certificate',
-                                element,
-                            });
+                            setSelectedImage({ src: getImageUrl(imagePath), alt: 'Certificate', element });
                         }}
                     />
                 ))}
             </div>
 
-            {/* Load More / Show Less Buttons */}
             {(hasMore || hasExpanded) && (
                 <div className='flex justify-center pb-8 sm:pb-12 md:hidden gap-4'>
                     {hasMore && (
@@ -210,7 +198,6 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                 </div>
             )}
 
-            {/* Lightbox */}
             {selectedImage && (
                 <ImageLightbox
                     isOpen={!!selectedImage}
@@ -218,10 +205,8 @@ export default function LicensesGrid({ certificates, locale, loadMoreLabel, show
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
                     triggerElement={selectedImage.element}
-                    locale={locale}
                 />
             )}
         </>
     );
 }
-

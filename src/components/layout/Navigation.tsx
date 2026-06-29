@@ -12,7 +12,6 @@ const StatisticsLink = dynamic(() => import('@/components/shared/StatisticsLink'
 });
 
 interface NavigationProps {
-    locale: string;
     translations: {
         home: string;
         contact: string;
@@ -23,15 +22,13 @@ interface NavigationProps {
     };
 }
 
-export default function Navigation({ locale, translations }: NavigationProps) {
+export default function Navigation({ translations }: NavigationProps) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const isActive = (path: string) => {
-        if (path === '') {
-            return pathname === `/${locale}` || pathname === `/${locale}/`;
-        }
-        return pathname.includes(`/${locale}/${path}`);
+        if (path === '') return pathname === '/';
+        return pathname.startsWith(`/${path}`);
     };
 
     const linkClass = (path: string) => {
@@ -49,23 +46,22 @@ export default function Navigation({ locale, translations }: NavigationProps) {
         <>
             {/* Desktop Navigation */}
             <div className='hidden lg:flex space-x-6 xl:space-x-8'>
-                <Link href={`/${locale}`} className={linkClass('')}>
+                <Link href='/' className={linkClass('')}>
                     {translations.home}
                 </Link>
-                {/* Prefetch false for secondary pages to save mobile data/CPU */}
-                <Link href={`/${locale}/contact`} className={linkClass('contact')} prefetch={false}>
+                <Link href='/contact' className={linkClass('contact')} prefetch={false}>
                     {translations.contact}
                 </Link>
-                <Link href={`/${locale}/team`} className={linkClass('team')} prefetch={false}>
+                <Link href='/team' className={linkClass('team')} prefetch={false}>
                     {translations.team}
                 </Link>
-                <Link href={`/${locale}/gallery`} className={linkClass('gallery')} prefetch={false}>
+                <Link href='/gallery' className={linkClass('gallery')} prefetch={false}>
                     {translations.gallery}
                 </Link>
-                <Link href={`/${locale}/licenses`} className={linkClass('licenses')} prefetch={false}>
+                <Link href='/licenses' className={linkClass('licenses')} prefetch={false}>
                     {translations.licenses}
                 </Link>
-                <Link href={`/${locale}/reviews`} className={linkClass('reviews')} prefetch={false}>
+                <Link href='/reviews' className={linkClass('reviews')} prefetch={false}>
                     {translations.reviews}
                 </Link>
             </div>
@@ -77,7 +73,6 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                 aria-expanded={isMobileMenuOpen}
                 aria-label='Toggle navigation menu'
             >
-                {/* Simplified Menu Icon logic to reduce re-renders */}
                 <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                     {isMobileMenuOpen ? (
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
@@ -91,22 +86,22 @@ export default function Navigation({ locale, translations }: NavigationProps) {
             {isMobileMenuOpen && (
                 <div className='lg:hidden fixed top-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
                     <div className='py-2' onClick={() => setIsMobileMenuOpen(false)}>
-                        <Link href={`/${locale}`} className={mobileLinkClass('')}>
+                        <Link href='/' className={mobileLinkClass('')}>
                             {translations.home}
                         </Link>
-                        <Link href={`/${locale}/contact`} className={mobileLinkClass('contact')} prefetch={false}>
+                        <Link href='/contact' className={mobileLinkClass('contact')} prefetch={false}>
                             {translations.contact}
                         </Link>
-                        <Link href={`/${locale}/team`} className={mobileLinkClass('team')} prefetch={false}>
+                        <Link href='/team' className={mobileLinkClass('team')} prefetch={false}>
                             {translations.team}
                         </Link>
-                        <Link href={`/${locale}/gallery`} className={mobileLinkClass('gallery')} prefetch={false}>
+                        <Link href='/gallery' className={mobileLinkClass('gallery')} prefetch={false}>
                             {translations.gallery}
                         </Link>
-                        <Link href={`/${locale}/licenses`} className={mobileLinkClass('licenses')} prefetch={false}>
+                        <Link href='/licenses' className={mobileLinkClass('licenses')} prefetch={false}>
                             {translations.licenses}
                         </Link>
-                        <Link href={`/${locale}/reviews`} className={mobileLinkClass('reviews')} prefetch={false}>
+                        <Link href='/reviews' className={mobileLinkClass('reviews')} prefetch={false}>
                             {translations.reviews}
                         </Link>
 
@@ -114,7 +109,7 @@ export default function Navigation({ locale, translations }: NavigationProps) {
                             <StatisticsLink />
                         </div>
                         <div className='border-t border-gray-200 mt-2 pt-3 pb-1 flex justify-center'>
-                            <LanguageSwitcher locale={locale} />
+                            <LanguageSwitcher />
                         </div>
                     </div>
                 </div>

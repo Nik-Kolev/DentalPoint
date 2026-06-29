@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 
 interface ReviewItem {
     name: string;
@@ -12,21 +13,18 @@ interface ReviewItem {
 
 interface ReviewsListProps {
     items: ReviewItem[];
-    locale: string;
     loadMoreLabel: string;
     showLessLabel: string;
 }
 
-export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabel }: ReviewsListProps) {
+export default function ReviewsList({ items, loadMoreLabel, showLessLabel }: ReviewsListProps) {
+    const locale = useLocale();
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
         const checkMobile = () => {
-            if (window.innerWidth >= 768) {
-                setVisibleCount(items.length);
-            }
+            if (window.innerWidth >= 768) setVisibleCount(items.length);
         };
-
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
@@ -55,7 +53,7 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
         );
     };
 
-    const getTimeAgo = (dateString: string, locale: string): string => {
+    const getTimeAgo = (dateString: string): string => {
         const reviewDate = new Date(dateString);
         const now = new Date();
         const diffMs = now.getTime() - reviewDate.getTime();
@@ -66,10 +64,7 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
         const daysDiff = now.getDate() - reviewDate.getDate();
 
         let finalMonths = monthsDiff;
-        if (reviewDate.getDate() !== 1 && daysDiff < 0) {
-            finalMonths = monthsDiff - 1;
-        }
-
+        if (reviewDate.getDate() !== 1 && daysDiff < 0) finalMonths = monthsDiff - 1;
         const finalYears = Math.floor(finalMonths / 12);
 
         if (locale === 'bg') {
@@ -136,7 +131,7 @@ export default function ReviewsList({ items, locale, loadMoreLabel, showLessLabe
                                 <div className='flex items-center gap-2 mb-3 flex-wrap'>
                                     <span className='text-sm text-gray-600'>{review.rating}/5</span>
                                     <span className='text-sm text-gray-500'>•</span>
-                                    <span className='text-sm text-gray-500'>{getTimeAgo(review.date, locale)}</span>
+                                    <span className='text-sm text-gray-500'>{getTimeAgo(review.date)}</span>
                                     {isNew(review.date) && (
                                         <>
                                             <span className='text-sm text-gray-500'>•</span>
