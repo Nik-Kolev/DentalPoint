@@ -23,13 +23,9 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Auto-rotate from EXIF, then save full quality
+    // Auto-rotate from EXIF and bake into pixels — ensures correct orientation everywhere
     const processed = await sharp(buffer).rotate().jpeg({ quality: 95 }).toBuffer();
     fs.writeFileSync(destPath, processed);
-
-    // Generate blur placeholder
-    const blurBuf = await sharp(processed).resize(10, 10, { fit: 'cover' }).jpeg({ quality: 30 }).toBuffer();
-    const blurDataURL = 'data:image/jpeg;base64,' + blurBuf.toString('base64');
 
     const items = readHomeGallery();
     const newItem: HomeGalleryItem = {
@@ -38,7 +34,6 @@ export async function POST(request: Request) {
         path: publicPath,
         alt: `clinic-interior-${items.length + 1}`,
         order: items.length,
-        blurDataURL,
     };
 
     items.push(newItem);

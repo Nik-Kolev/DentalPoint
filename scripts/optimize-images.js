@@ -140,8 +140,8 @@ async function optimizeImage(filePath) {
                 .toBuffer();
         }
 
-        // Always save certificates (rotation/trim), or save if we actually save space
-        if (folder === 'certificates' || outputBuffer.length < originalSize) {
+        // Always save certificates and front (to bake EXIF rotation into pixels), or save if smaller
+        if (folder === 'certificates' || folder === 'front' || outputBuffer.length < originalSize) {
             fs.writeFileSync(filePath, outputBuffer);
             const savings = (((originalSize - outputBuffer.length) / originalSize) * 100).toFixed(1);
             if (outputBuffer.length < originalSize) {

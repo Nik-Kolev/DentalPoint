@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 interface ImageLightboxProps {
@@ -14,13 +14,12 @@ interface ImageLightboxProps {
     shortText?: string;
 }
 
-export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerElement, year, title, shortText }: ImageLightboxProps) {
+export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, year, title, shortText }: ImageLightboxProps) {
     const t = useTranslations('gallery');
     const modalRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
-    const [isAnimating, setIsAnimating] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
 
@@ -42,7 +41,6 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
         };
     }, [isOpen]);
 
-    // Escape to close + Tab focus trap combined
     useEffect(() => {
         if (!isOpen) return;
         const handle = (e: KeyboardEvent) => {
@@ -65,65 +63,60 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
         return () => window.removeEventListener('keydown', handle);
     }, [isOpen, onClose]);
 
-    // Move focus to close button when modal opens
     useEffect(() => {
         if (isOpen) closeButtonRef.current?.focus();
     }, [isOpen]);
 
     useEffect(() => {
         if (isOpen) {
-            setIsAnimating(false);
-            setImageLoaded(false);
-            setImageError(false);
-            if (containerRef.current) {
-                const container = containerRef.current;
-                container.style.transition = 'none';
-                container.style.left = `${window.innerWidth / 2}px`;
-                container.style.top = `${window.innerHeight / 2}px`;
-                container.style.transform = 'translate(-50%, -50%) scale(0.93)';
-                container.style.opacity = '0';
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        container.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease';
-                        container.style.transform = 'translate(-50%, -50%) scale(1)';
-                        container.style.opacity = '1';
-                        setIsAnimating(true);
-                    });
-                });
-            } else {
-                setIsAnimating(true);
-            }
-        } else {
-            setIsAnimating(false);
             setImageLoaded(false);
             setImageError(false);
         }
-    }, [isOpen, triggerElement]);
+    }, [isOpen]);
+
+    // Runs synchronously before the browser paints — prevents any flash at wrong position
+    useLayoutEffect(() => {
+        if (!isOpen || !containerRef.current) return;
+        const container = containerRef.current;
+        container.style.transition = 'none';
+        container.style.left = `${window.innerWidth / 2}px`;
+        container.style.top = `${window.innerHeight / 2}px`;
+        container.style.transform = 'translate(-50%, -50%) scale(0.93)';
+        container.style.opacity = '0';
+
+        let raf2 = 0;
+        const raf1 = requestAnimationFrame(() => {
+            raf2 = requestAnimationFrame(() => {
+                container.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease';
+                container.style.transform = 'translate(-50%, -50%) scale(1)';
+                container.style.opacity = '1';
+            });
+        });
+        return () => {
+            cancelAnimationFrame(raf1);
+            cancelAnimationFrame(raf2);
+        };
+    }, [isOpen]);
 
     useEffect(() => {
-        if (isOpen && imgRef.current && imageSrc) {
-            setImageLoaded(false);
-            setImageError(false);
-            let isMounted = true;
-
-            const imageLoader = new Image();
-            imageLoader.onload = () => {
-                if (isMounted && imgRef.current) {
-                    imgRef.current.src = imageSrc;
-                    setImageLoaded(true);
-                }
-            };
-            imageLoader.onerror = () => {
-                if (isMounted) setImageError(true);
-            };
-            imageLoader.src = imageSrc;
-
-            return () => {
-                isMounted = false;
-                imageLoader.onload = null;
-                imageLoader.onerror = null;
-            };
-        }
+        if (!isOpen || !imgRef.current || !imageSrc) return;
+        let isMounted = true;
+        const imageLoader = new Image();
+        imageLoader.onload = () => {
+            if (isMounted && imgRef.current) {
+                imgRef.current.src = imageSrc;
+                setImageLoaded(true);
+            }
+        };
+        imageLoader.onerror = () => {
+            if (isMounted) setImageError(true);
+        };
+        imageLoader.src = imageSrc;
+        return () => {
+            isMounted = false;
+            imageLoader.onload = null;
+            imageLoader.onerror = null;
+        };
     }, [isOpen, imageSrc]);
 
     if (!isOpen) return null;
@@ -151,7 +144,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                 ref={containerRef}
                 className='absolute w-auto h-auto bg-white rounded-lg shadow-2xl overflow-y-auto flex flex-col'
                 onClick={(e) => e.stopPropagation()}
-                style={{ maxWidth: '65vw', maxHeight: '88vh', willChange: 'transform', opacity: 0 }}
+                style={{ maxWidth: '65vw', maxHeight: '88vh', willChange: 'transform' }}
             >
                 {year && (
                     <div className='pt-4 pb-2 flex justify-center flex-shrink-0'>

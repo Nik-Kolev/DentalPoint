@@ -5,14 +5,14 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import type { HomeGalleryItem } from '@/types/gallery';
 
-type DisplayItem = HomeGalleryItem & { cacheBust?: string };
-
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
 interface Props {
     initialItems: HomeGalleryItem[];
     isAdmin: boolean;
 }
+
+type DisplayItem = HomeGalleryItem & { cacheBust?: string };
 
 function getGridCols(count: number): string {
     if (count === 1) return 'grid-cols-1 sm:grid-cols-1 max-w-sm mx-auto';
@@ -23,19 +23,18 @@ function getGridCols(count: number): string {
 export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const [items, setItems] = useState<DisplayItem[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
-    const [lightbox, setLightbox] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
+    const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
     const [dragId, setDragId] = useState<string | null>(null);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [rotatingId, setRotatingId] = useState<string | null>(null);
+    const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
-    // Snapshot taken at page load — used to restore order on revert
     const snapshotRef = useRef<DisplayItem[]>(initialItems);
 
-    const handleImageClick = (e: React.MouseEvent<HTMLDivElement>, item: HomeGalleryItem) => {
+    const handleImageClick = (_e: React.MouseEvent<HTMLDivElement>, item: HomeGalleryItem) => {
         if (editMode) return;
         if (window.innerWidth >= 640) {
-            setLightbox({ src: item.path, alt: item.alt, element: null });
+            setLightbox({ src: item.path, alt: item.alt });
         }
     };
 
@@ -71,7 +70,6 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     };
 
     const handleRotate = async (id: string, direction: 'left' | 'right') => {
-        setRotatingId(id);
         try {
             const res = await fetch(`/api/admin/home-gallery/${id}/rotate`, {
                 method: 'PATCH',
@@ -79,15 +77,12 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                 body: JSON.stringify({ direction }),
             });
             if (!res.ok) throw new Error('Rotate failed');
-            const { blurDataURL } = await res.json();
-            // Append timestamp to bust the browser cache — same path, new pixel data
             const cacheBust = String(Date.now());
-            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, blurDataURL, cacheBust } : i)));
+            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cacheBust } : i)));
+            setLoadedIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
         } catch (err) {
             console.error(err);
             alert('Грешка при завъртане');
-        } finally {
-            setRotatingId(null);
         }
     };
 
@@ -181,6 +176,9 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                         `}
                     >
                         <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
+                            {!loadedIds.has(item.id) && (
+                                <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
+                            )}
                             <Image
                                 src={item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path}
                                 alt={item.alt}
@@ -188,34 +186,29 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                 quality={90}
                                 sizes='(max-width: 640px) 100vw, 33vw'
                                 className='rounded-md object-cover'
-                                placeholder={item.blurDataURL ? 'blur' : 'empty'}
-                                blurDataURL={item.blurDataURL || undefined}
+                                onLoad={() => setLoadedIds((prev) => new Set([...prev, item.id]))}
                             />
                         </div>
 
                         {editMode && (
                             <div className='absolute inset-0 rounded-lg flex flex-col'>
-                                {/* Top row: drag handle */}
                                 <div className='flex justify-center pt-1'>
                                     <span className='text-white bg-black/40 rounded px-2 py-0.5 text-xs select-none'>⠿ Плъзни</span>
                                 </div>
-                                {/* Bottom row: action buttons */}
                                 <div className='mt-auto flex justify-center gap-2 pb-2 px-2'>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'left'); }}
                                         title='Завърти наляво'
-                                        disabled={rotatingId === item.id}
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold disabled:opacity-60'
+                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
                                     >
-                                        <span className={rotatingId === item.id ? 'animate-spin inline-block' : 'inline-block'}>↺</span>
+                                        ↺
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'right'); }}
                                         title='Завърти надясно'
-                                        disabled={rotatingId === item.id}
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold disabled:opacity-60'
+                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
                                     >
-                                        <span className={rotatingId === item.id ? 'animate-spin inline-block' : 'inline-block'}>↻</span>
+                                        ↻
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
@@ -256,7 +249,6 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                     onClose={() => setLightbox(null)}
                     imageSrc={lightbox.src}
                     alt={lightbox.alt}
-                    triggerElement={lightbox.element}
                 />
             )}
         </>

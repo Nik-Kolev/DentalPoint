@@ -4,7 +4,7 @@ export interface HomeGalleryItem {
     path: string;
     alt: string;
     order: number;
-    blurDataURL: string;
+    blurDataURL?: string;
 }
 
 export interface GalleryCase {
@@ -18,8 +18,8 @@ export interface GalleryCase {
     afterPath: string;
     beforeAlt: string;
     afterAlt: string;
-    blurBefore: string;
-    blurAfter: string;
+    blurBefore?: string;
+    blurAfter?: string;
 }
 
 export interface Certificate {
@@ -28,7 +28,7 @@ export interface Certificate {
     path: string;
     alt: string;
     order: number;
-    blurDataURL: string;
+    blurDataURL?: string;
 }
 
 export interface PendingChange {

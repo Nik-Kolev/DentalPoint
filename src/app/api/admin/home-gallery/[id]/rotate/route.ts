@@ -24,13 +24,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const rotated = await sharp(filePath).rotate(degrees).jpeg({ quality: 95 }).toBuffer();
     fs.writeFileSync(filePath, rotated);
 
-    // Regenerate blur for the rotated image
-    const blurBuf = await sharp(rotated).resize(10, 10, { fit: 'cover' }).jpeg({ quality: 30 }).toBuffer();
-    const blurDataURL = 'data:image/jpeg;base64,' + blurBuf.toString('base64');
-
-    const updated = items.map((i) => (i.id === id ? { ...i, blurDataURL } : i));
-    writeHomeGallery(updated);
+    writeHomeGallery(items);
     appendPendingChange({ page: 'home', action: 'rotate', detail: target.filename });
 
-    return Response.json({ ok: true, blurDataURL });
+    return Response.json({ ok: true });
 }
