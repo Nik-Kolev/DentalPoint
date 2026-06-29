@@ -5,6 +5,8 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import type { HomeGalleryItem } from '@/types/gallery';
 
+type DisplayItem = HomeGalleryItem & { cacheBust?: string };
+
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
 interface Props {
@@ -19,13 +21,15 @@ function getGridCols(count: number): string {
 }
 
 export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
-    const [items, setItems] = useState(initialItems);
+    const [items, setItems] = useState<DisplayItem[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
     const [lightbox, setLightbox] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
     const [dragId, setDragId] = useState<string | null>(null);
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    // Snapshot taken at page load — used to restore order on revert
+    const snapshotRef = useRef<DisplayItem[]>(initialItems);
 
     const handleImageClick = (e: React.MouseEvent<HTMLDivElement>, item: HomeGalleryItem) => {
         if (editMode) return;
@@ -74,10 +78,30 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
             });
             if (!res.ok) throw new Error('Rotate failed');
             const { blurDataURL } = await res.json();
-            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, blurDataURL } : i)));
+            // Append timestamp to bust the browser cache — same path, new pixel data
+            const cacheBust = String(Date.now());
+            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, blurDataURL, cacheBust } : i)));
         } catch (err) {
             console.error(err);
             alert('Грешка при завъртане');
+        }
+    };
+
+    const handleRevert = async () => {
+        const confirmed = window.confirm(
+            'Ще върнете реда на снимките към оригиналния. Изтритите или завъртените снимки не могат да бъдат възстановени. Продължавате?'
+        );
+        if (!confirmed) return;
+        const original = snapshotRef.current;
+        setItems(original);
+        try {
+            await fetch('/api/admin/home-gallery/reorder', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderedIds: original.map((i) => i.id) }),
+            });
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -91,8 +115,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         const from = items.findIndex((i) => i.id === dragId);
         const to = items.findIndex((i) => i.id === targetId);
         const reordered = [...items];
-        const [moved] = reordered.splice(from, 1);
-        reordered.splice(to, 0, moved);
+        [reordered[from], reordered[to]] = [reordered[to], reordered[from]];
         const withOrder = reordered.map((item, index) => ({ ...item, order: index }));
         setItems(withOrder);
         setDragId(null);
@@ -116,6 +139,14 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         <>
             {isAdmin && (
                 <div className='flex items-center justify-end gap-3 mb-3'>
+                    {editMode && (
+                        <button
+                            onClick={handleRevert}
+                            className='px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'
+                        >
+                            ↩ Върни промените
+                        </button>
+                    )}
                     <button
                         onClick={() => setEditMode((v) => !v)}
                         className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
@@ -147,7 +178,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                     >
                         <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
                             <Image
-                                src={item.path}
+                                src={item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path}
                                 alt={item.alt}
                                 fill
                                 quality={85}
