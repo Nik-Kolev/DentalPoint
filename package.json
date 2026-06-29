@@ -20,6 +20,7 @@
         "react": "^19",
         "react-dom": "^19",
         "react-world-flags": "^1.6.0",
+        "server-only": "^0.0.1",
         "sharp": "^0.34.5"
     },
     "devDependencies": {
