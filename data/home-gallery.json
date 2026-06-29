@@ -1,50 +1,44 @@
 [
   {
-    "id": "img-2",
-    "filename": "IMG_3357.jpeg",
-    "path": "/Images/front/IMG_3357.jpeg",
-    "alt": "clinic-interior-2",
-    "order": 0,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAID/8QAHxAAAgAFBQAAAAAAAAAAAAAAAAIBAwQSIQURExVR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAf/EABYRAQEBAAAAAAAAAAAAAAAAAAEAEf/aAAwDAQACEQMRAD8A0q9Q5ptzbKq+kd5SQxdDAABst//Z"
-  },
-  {
-    "id": "img-1",
-    "filename": "IMG_3345.jpeg",
-    "path": "/Images/front/IMG_3345.jpeg",
-    "alt": "clinic-interior-1",
-    "order": 1,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAQIDBP/EACEQAAEDBAEFAAAAAAAAAAAAAAEAAhIDBBEhQSIzgZGh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAv/EABURAQEAAAAAAAAAAAAAAAAAAAEA/9oADAMBAAIRAxEAPwA3MbgVGw6gZN0G+D9SCo/AzL0qHuuPMVqaBEa4RWQX/9k="
-  },
-  {
-    "id": "img-3",
-    "filename": "IMG_3350.jpeg",
-    "path": "/Images/front/IMG_3350.jpeg",
-    "alt": "clinic-interior-3",
-    "order": 2,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAID/8QAHBAAAgIDAQEAAAAAAAAAAAAAAQIDEQASIQQT/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAATH/2gAMAwEAAhEDEQA/ANI/d6DDJtKrnegVrnLxYWVhe7i+1ifhCgAWKNRd0FA7lZJmP//Z"
-  },
-  {
-    "id": "img-4",
-    "filename": "IMG_3372.jpeg",
-    "path": "/Images/front/IMG_3372.jpeg",
-    "alt": "clinic-interior-4",
-    "order": 3,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAKAAgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQF/8QAGxAAAgIDAQAAAAAAAAAAAAAAAQIAEQMEIXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/ALA+yqqXzs1dqomZsu4yEBmA9iCE/9k="
-  },
-  {
-    "id": "img-5",
-    "filename": "IMG_3349.jpeg",
-    "path": "/Images/front/IMG_3349.jpeg",
-    "alt": "clinic-interior-5",
-    "order": 4,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAID/8QAGxAAAgIDAQAAAAAAAAAAAAAAAAMBAhESFEH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABYRAQEBAAAAAAAAAAAAAAAAAAEAAv/aAAwDAQACEQMRAD8ArosrZVIljJMuZvtJyAT1pJhf/9k="
-  },
-  {
-    "id": "img-6",
-    "filename": "IMG_3445.jpeg",
-    "path": "/Images/front/IMG_3445.jpeg",
+    "id": "4c704975-872c-440a-b0b3-c40647e943d6",
+    "filename": "b0364bda-90ca-4e29-b7cd-dcf6f6c9ba53.jpeg",
+    "path": "/Images/front/b0364bda-90ca-4e29-b7cd-dcf6f6c9ba53.jpeg",
     "alt": "clinic-interior-6",
-    "order": 5,
-    "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAKAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAbEAACAgMBAAAAAAAAAAAAAAABAgADBBFBIf/EABQBAQAAAAAAAAAAAAAAAAAAAAP/xAAYEQEBAAMAAAAAAAAAAAAAAAABABESIf/aAAwDAQACEQMRAD8AqHJW13KWNYCd6PIkhGK3Loke8MQk27IOL//Z"
+    "order": 0
+  },
+  {
+    "id": "c426c452-99cf-4d2d-a392-b430a040c9fd",
+    "filename": "e348ed5b-3718-4d2d-a0ea-620599aaf86d.jpeg",
+    "path": "/Images/front/e348ed5b-3718-4d2d-a0ea-620599aaf86d.jpeg",
+    "alt": "clinic-interior-6",
+    "order": 1
+  },
+  {
+    "id": "ea007ccd-5463-4aeb-a0bf-b089f28d6de0",
+    "filename": "0568f438-8462-49c9-9206-be3465add540.jpeg",
+    "path": "/Images/front/0568f438-8462-49c9-9206-be3465add540.jpeg",
+    "alt": "clinic-interior-3",
+    "order": 2
+  },
+  {
+    "id": "2bc681fd-cf2e-4ce3-a3d6-285cd94a530a",
+    "filename": "9bba8472-a9fa-4c50-a9a0-2cfe4c008c44.jpeg",
+    "path": "/Images/front/9bba8472-a9fa-4c50-a9a0-2cfe4c008c44.jpeg",
+    "alt": "clinic-interior-5",
+    "order": 3
+  },
+  {
+    "id": "c0fdd8ad-2a6f-4096-a7ed-d93eda4b820e",
+    "filename": "da0f47a1-b4cf-43b2-bab1-383c1cd18017.jpeg",
+    "path": "/Images/front/da0f47a1-b4cf-43b2-bab1-383c1cd18017.jpeg",
+    "alt": "clinic-interior-4",
+    "order": 4
+  },
+  {
+    "id": "6c1bf500-787e-4978-8028-fa16c431bfde",
+    "filename": "823c67e9-2026-470c-92c7-5e5d4041fcbf.jpeg",
+    "path": "/Images/front/823c67e9-2026-470c-92c7-5e5d4041fcbf.jpeg",
+    "alt": "clinic-interior-6",
+    "order": 5
   }
 ]

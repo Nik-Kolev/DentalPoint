@@ -20,6 +20,12 @@ function getGridCols(count: number): string {
     return 'grid-cols-1 sm:grid-cols-3';
 }
 
+function getImageSizes(count: number): string {
+    if (count === 1) return '(max-width: 640px) 100vw, 384px';
+    if (count <= 2 || count === 4) return '(max-width: 640px) 100vw, 50vw';
+    return '(max-width: 640px) 100vw, 33vw';
+}
+
 export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const [items, setItems] = useState<DisplayItem[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
@@ -28,6 +34,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
+    const [rotatingKey, setRotatingKey] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const snapshotRef = useRef<DisplayItem[]>(initialItems);
 
@@ -70,6 +77,8 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     };
 
     const handleRotate = async (id: string, direction: 'left' | 'right') => {
+        const key = `${id}-${direction}`;
+        setRotatingKey(key);
         try {
             const res = await fetch(`/api/admin/home-gallery/${id}/rotate`, {
                 method: 'PATCH',
@@ -83,6 +92,8 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
         } catch (err) {
             console.error(err);
             alert('Грешка при завъртане');
+        } finally {
+            setRotatingKey(null);
         }
     };
 
@@ -183,8 +194,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                 src={item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path}
                                 alt={item.alt}
                                 fill
-                                quality={90}
-                                sizes='(max-width: 640px) 100vw, 33vw'
+                                unoptimized
                                 className='rounded-md object-cover'
                                 onLoad={() => setLoadedIds((prev) => new Set([...prev, item.id]))}
                             />
@@ -196,20 +206,27 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                     <span className='text-white bg-black/40 rounded px-2 py-0.5 text-xs select-none'>⠿ Плъзни</span>
                                 </div>
                                 <div className='mt-auto flex justify-center gap-2 pb-2 px-2'>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'left'); }}
-                                        title='Завърти наляво'
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
-                                    >
-                                        ↺
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); handleRotate(item.id, 'right'); }}
-                                        title='Завърти надясно'
-                                        className='bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
-                                    >
-                                        ↻
-                                    </button>
+                                    {([
+                                        { dir: 'left' as const, icon: '↺', title: 'Завърти наляво' },
+                                        { dir: 'right' as const, icon: '↻', title: 'Завърти надясно' },
+                                    ] as const).map(({ dir, icon, title }) => {
+                                        const busy = rotatingKey === `${item.id}-${dir}`;
+                                        return (
+                                            <button
+                                                key={dir}
+                                                onClick={(e) => { e.stopPropagation(); handleRotate(item.id, dir); }}
+                                                disabled={busy}
+                                                title={title}
+                                                className={`rounded-full w-9 h-9 flex items-center justify-center shadow text-sm font-bold transition-colors
+                                                    ${busy ? 'bg-[#005baa] text-white cursor-not-allowed' : 'bg-white/90 hover:bg-[#005baa] hover:text-white text-gray-800'}`}
+                                            >
+                                                {busy
+                                                    ? <span className='block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                                                    : icon
+                                                }
+                                            </button>
+                                        );
+                                    })}
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
                                         title='Изтрий'

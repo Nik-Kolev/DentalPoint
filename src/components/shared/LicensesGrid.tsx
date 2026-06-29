@@ -131,7 +131,7 @@ function StatisticCard({ target, suffix, label, startTime }: { target: number; s
 }
 
 export default function LicensesGrid({ certificates, loadMoreLabel, showLessLabel, statsLabels }: LicensesGridProps) {
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
+    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
@@ -168,8 +168,8 @@ export default function LicensesGrid({ certificates, loadMoreLabel, showLessLabe
                         imageUrl={getImageUrl(imagePath)}
                         imagePath={imagePath}
                         priority={index < 3}
-                        onImageClick={(element) => {
-                            setSelectedImage({ src: getImageUrl(imagePath), alt: 'Certificate', element });
+                        onImageClick={() => {
+                            setSelectedImage({ src: getImageUrl(imagePath), alt: 'Certificate' });
                         }}
                     />
                 ))}
@@ -204,7 +204,6 @@ export default function LicensesGrid({ certificates, loadMoreLabel, showLessLabe
                     onClose={() => setSelectedImage(null)}
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
-                    triggerElement={selectedImage.element}
                 />
             )}
         </>

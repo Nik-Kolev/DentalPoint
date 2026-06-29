@@ -7,6 +7,7 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'Images', 'front');
+const JPEG_EXTS = new Set(['.jpg', '.jpeg']);
 
 export async function POST(request: Request) {
     const deny = await requireAdmin();
@@ -17,15 +18,29 @@ export async function POST(request: Request) {
     if (!file) return Response.json({ error: 'No file provided' }, { status: 400 });
 
     const ext = path.extname(file.name).toLowerCase() || '.jpeg';
-    const filename = randomUUID() + ext;
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    let finalBuffer: Buffer;
+    let saveExt: string;
+
+    if (JPEG_EXTS.has(ext)) {
+        // Save the original JPEG bytes untouched — no re-encoding, no quality loss.
+        // EXIF orientation is respected automatically by browsers (image-orientation: from-image)
+        // and by Cloudflare Image Resizing in production.
+        finalBuffer = buffer;
+        saveExt = ext;
+    } else {
+        // Non-JPEG (PNG, HEIC, WebP, etc.) — browsers can't render HEIC, so convert to JPEG.
+        // Quality 100 minimises loss on this one-time conversion.
+        finalBuffer = await sharp(buffer).rotate().jpeg({ quality: 100 }).toBuffer();
+        saveExt = '.jpeg';
+    }
+
+    const filename = randomUUID() + saveExt;
     const destPath = path.join(UPLOAD_DIR, filename);
     const publicPath = `/Images/front/${filename}`;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    // Auto-rotate from EXIF and bake into pixels — ensures correct orientation everywhere
-    const processed = await sharp(buffer).rotate().jpeg({ quality: 95 }).toBuffer();
-    fs.writeFileSync(destPath, processed);
+    fs.writeFileSync(destPath, finalBuffer);
 
     const items = readHomeGallery();
     const newItem: HomeGalleryItem = {

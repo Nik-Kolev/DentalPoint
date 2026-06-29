@@ -21,7 +21,7 @@ interface GalleryGridProps {
 }
 
 export default function GalleryGrid({ items, beforeLabel, afterLabel, loadMoreLabel, showLessLabel, startIndex = 0 }: GalleryGridProps) {
-    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
+    const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
@@ -51,9 +51,9 @@ export default function GalleryGrid({ items, beforeLabel, afterLabel, loadMoreLa
                         <div className='flex flex-col sm:grid sm:grid-cols-2 gap-0 sm:gap-1'>
                             <div
                                 className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
-                                onClick={(e) => {
+                                onClick={() => {
                                     if (window.innerWidth >= 640) {
-                                        setSelectedImage({ src: item.before, alt: `Before - Gallery item ${startIndex + i + 1}`, element: e.currentTarget });
+                                        setSelectedImage({ src: item.before, alt: `Before - Gallery item ${startIndex + i + 1}` });
                                     }
                                 }}
                             >
@@ -77,9 +77,9 @@ export default function GalleryGrid({ items, beforeLabel, afterLabel, loadMoreLa
 
                             <div
                                 className='relative aspect-square sm:cursor-pointer group overflow-hidden bg-gray-100'
-                                onClick={(e) => {
+                                onClick={() => {
                                     if (window.innerWidth >= 640) {
-                                        setSelectedImage({ src: item.after, alt: `After - Gallery item ${startIndex + i + 1}`, element: e.currentTarget });
+                                        setSelectedImage({ src: item.after, alt: `After - Gallery item ${startIndex + i + 1}` });
                                     }
                                 }}
                             >
@@ -138,7 +138,6 @@ export default function GalleryGrid({ items, beforeLabel, afterLabel, loadMoreLa
                     onClose={() => setSelectedImage(null)}
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
-                    triggerElement={selectedImage.element}
                 />
             )}
         </>

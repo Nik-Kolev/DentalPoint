@@ -21,7 +21,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const filePath = path.join(process.cwd(), 'public', target.path);
     const degrees = direction === 'right' ? 90 : 270;
 
-    const rotated = await sharp(filePath).rotate(degrees).jpeg({ quality: 95 }).toBuffer();
+    const rotated = await sharp(filePath).rotate(degrees).jpeg({ quality: 100 }).toBuffer();
     fs.writeFileSync(filePath, rotated);
 
     writeHomeGallery(items);
