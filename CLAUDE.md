@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # DentalPoint — CLAUDE.md
 
 ## Session start

@@ -1,13 +1,24 @@
-﻿'use client';
+'use client';
 
 import { useSession, signOut } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/shared/ProtectedRoute';
+import BarChart from '@/components/statistics/BarChart';
 import { fetchAnalyticsData, type AnalyticsData, type TimePeriod } from '@/lib/analytics';
+
+const columnWidths: Record<TimePeriod, string> = {
+    day: 'w-24 sm:w-32',
+    week: 'w-24 sm:w-32',
+    month: 'w-20 sm:w-24',
+    year: 'w-20 sm:w-28',
+    alltime: 'w-20 sm:w-28',
+};
 
 export default function StatisticsPage() {
     const { data: session } = useSession();
+    const t = useTranslations('statistics');
     const router = useRouter();
     const [timePeriod, setTimePeriod] = useState<TimePeriod>('week');
     const [data, setData] = useState<AnalyticsData | null>(null);
@@ -16,107 +27,25 @@ export default function StatisticsPage() {
     const [useMockData, setUseMockData] = useState(false);
     const isDevelopment = process.env.NODE_ENV === 'development';
 
-    // Translation helpers
-    const translateDevice = (device: string): string => {
-        const translations: Record<string, string> = {
-            Mobile: 'Мобилно',
-            Desktop: 'Настолно',
-            Tablet: 'Таблет',
-        };
-        return translations[device] || device;
-    };
+    const translateDevice = (device: string): string =>
+        (t.raw('device') as Record<string, string>)[device] ?? device;
 
-    const translateSource = (source: string): string => {
-        const translations: Record<string, string> = {
-            Direct: 'Директно',
-            Google: 'Google',
-            Facebook: 'Facebook',
-            Instagram: 'Instagram',
-            Others: 'Други',
-        };
-        return translations[source] || source;
-    };
+    const translateSource = (source: string): string =>
+        (t.raw('source') as Record<string, string>)[source] ?? source;
 
     const translateTimeLabel = (label: string, period?: TimePeriod): string => {
-        // Days of week (full names)
-        const dayTranslations: Record<string, string> = {
-            Mon: 'Понеделник',
-            Tue: 'Вторник',
-            Wed: 'Сряда',
-            Thu: 'Четвъртък',
-            Fri: 'Петък',
-            Sat: 'Събота',
-            Sun: 'Неделя',
-            Пон: 'Понеделник',
-            Вто: 'Вторник',
-            Сря: 'Сряда',
-            Чет: 'Четвъртък',
-            Пет: 'Петък',
-            Съб: 'Събота',
-            Нед: 'Неделя',
-            Понеделник: 'Понеделник',
-            Вторник: 'Вторник',
-            Сряда: 'Сряда',
-            Четвъртък: 'Четвъртък',
-            Петък: 'Петък',
-            Събота: 'Събота',
-            Неделя: 'Неделя',
-        };
-        if (dayTranslations[label]) return dayTranslations[label];
+        const days = t.raw('days') as Record<string, string>;
+        if (days[label]) return days[label];
 
-        // Date format for monthly view (e.g., "01.12")
-        if (/^\d{2}\.\d{2}$/.test(label)) {
-            return label;
-        }
+        if (/^\d{2}\.\d{2}$/.test(label)) return label;
 
-        // Months - full names for year period, abbreviated otherwise
-        const monthTranslationsAbbr: Record<string, string> = {
-            Jan: 'Яну',
-            Feb: 'Фев',
-            Mar: 'Мар',
-            Apr: 'Апр',
-            May: 'Май',
-            Jun: 'Юни',
-            Jul: 'Юли',
-            Aug: 'Авг',
-            Sep: 'Сеп',
-            Oct: 'Окт',
-            Nov: 'Ное',
-            Dec: 'Дек',
-        };
-        const monthTranslationsFull: Record<string, string> = {
-            Jan: 'Януари',
-            Feb: 'Февруари',
-            Mar: 'Март',
-            Apr: 'Април',
-            May: 'Май',
-            Jun: 'Юни',
-            Jul: 'Юли',
-            Aug: 'Август',
-            Sep: 'Септември',
-            Oct: 'Октомври',
-            Nov: 'Ноември',
-            Dec: 'Декември',
-            Яну: 'Януари',
-            Фев: 'Февруари',
-            Мар: 'Март',
-            Апр: 'Април',
-            Май: 'Май',
-            Юни: 'Юни',
-            Юли: 'Юли',
-            Авг: 'Август',
-            Сеп: 'Септември',
-            Окт: 'Октомври',
-            Ное: 'Ноември',
-            Дек: 'Декември',
-        };
-        if (period === 'year' && monthTranslationsFull[label]) return monthTranslationsFull[label];
-        if (monthTranslationsAbbr[label]) return monthTranslationsAbbr[label];
+        const monthsFull = t.raw('monthsFull') as Record<string, string>;
+        if (period === 'year' && monthsFull[label]) return monthsFull[label];
 
-        // Years (for alltime view) - return as is
-        if (/^\d{4}$/.test(label)) {
-            return label;
-        }
+        const monthsShort = t.raw('monthsShort') as Record<string, string>;
+        if (monthsShort[label]) return monthsShort[label];
+
+        if (/^\d{4}$/.test(label)) return label;
 
         return label;
     };
@@ -129,7 +58,7 @@ export default function StatisticsPage() {
                 const analyticsData = await fetchAnalyticsData(timePeriod, useMockData);
                 setData(analyticsData);
             } catch (err: any) {
-                setError(err.message || 'Неуспешно зареждане на данни за аналитика');
+                setError(err.message || t('loadError'));
             } finally {
                 setLoading(false);
             }
@@ -144,19 +73,6 @@ export default function StatisticsPage() {
         router.refresh();
     };
 
-    const handleReturnToWebsite = () => {
-        router.push('/');
-    };
-
-    // Calculate optimal label spacing for time series
-    const getLabelSpacing = (dataLength: number, period: TimePeriod): number => {
-        if (period === 'week') return 1; // Show all 7 days
-        if (period === 'month') return 1; // Show all 30 days
-        if (period === 'year') return 1; // Show all 12 months
-        if (period === 'alltime') return 1; // Show all years
-        return 1;
-    };
-
     return (
         <ProtectedRoute>
             <div className='min-h-screen bg-gray-50 py-4 px-2 sm:py-6 sm:px-4 overflow-x-hidden'>
@@ -164,21 +80,19 @@ export default function StatisticsPage() {
                     {/* Header */}
                     <div className='bg-white rounded-lg shadow-lg p-4 sm:p-5 mb-4 sm:mb-6'>
                         <div className='flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 mb-3 sm:mb-4'>
-                            <div>
-                                <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>Табло за статистика</h1>
-                            </div>
+                            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>{t('title')}</h1>
                             <div className='flex gap-2 sm:gap-3 justify-center md:justify-start'>
                                 <button
-                                    onClick={handleReturnToWebsite}
+                                    onClick={() => router.push('/')}
                                     className='bg-gray-200 text-gray-700 font-semibold py-2 px-4 sm:px-6 rounded-lg hover:bg-gray-300 transition-colors duration-200 shadow-sm text-sm sm:text-base'
                                 >
-                                    Назад към сайта
+                                    {t('backToSite')}
                                 </button>
                                 <button
                                     onClick={handleSignOut}
                                     className='bg-[#005baa] text-white font-semibold py-2 px-4 sm:px-6 rounded-lg hover:bg-[#004a8f] transition-colors duration-200 shadow-sm text-sm sm:text-base'
                                 >
-                                    Изход
+                                    {t('signOut')}
                                 </button>
                             </div>
                         </div>
@@ -195,13 +109,7 @@ export default function StatisticsPage() {
                                             timePeriod === period ? 'bg-[#005baa] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                         } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
-                                        {period === 'week'
-                                            ? 'Последни 7 дни'
-                                            : period === 'month'
-                                            ? 'Последни 30 дни'
-                                            : period === 'year'
-                                            ? 'Последна година'
-                                            : 'Целия период'}
+                                        {t(`period.${period}` as 'period.week')}
                                     </button>
                                 ))}
                                 {isDevelopment && (
@@ -212,7 +120,7 @@ export default function StatisticsPage() {
                                             useMockData ? 'bg-orange-500 text-white' : 'bg-green-500 text-white'
                                         } ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}`}
                                     >
-                                        {useMockData ? 'Тестови данни (кликни за реални)' : 'Реални данни (кликни за тестови)'}
+                                        {useMockData ? t('mockToggleOn') : t('mockToggleOff')}
                                     </button>
                                 )}
                             </div>
@@ -220,7 +128,7 @@ export default function StatisticsPage() {
                                 <div className='flex items-center gap-2 text-base sm:text-lg text-gray-700'>
                                     <span className='text-gray-400 hidden sm:inline'>—</span>
                                     <span>
-                                        Общо посетители:{' '}
+                                        {t('totalVisitors')}:{' '}
                                         <span className='font-bold text-lg sm:text-xl text-[#005baa]'>{data.totalVisitors.toLocaleString()}</span>
                                     </span>
                                 </div>
@@ -231,7 +139,7 @@ export default function StatisticsPage() {
                     {loading && (
                         <div className='bg-white rounded-lg shadow-lg p-12 text-center'>
                             <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#005baa] mb-4'></div>
-                            <p className='text-[#005baa]'>Зареждане на данни за аналитика...</p>
+                            <p className='text-[#005baa]'>{t('loading')}</p>
                         </div>
                     )}
 
@@ -240,130 +148,16 @@ export default function StatisticsPage() {
                             {/* Visitors Over Time - Full Width */}
                             <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 mb-4 sm:mb-6 overflow-hidden'>
                                 <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>
-                                    {timePeriod === 'week'
-                                        ? 'Посетители за последните 7 дни'
-                                        : timePeriod === 'month'
-                                        ? 'Посетители за последните 30 дни'
-                                        : timePeriod === 'year'
-                                        ? 'Посетители за последната година (по месеци)'
-                                        : 'Посетители за целия период (по години)'}
+                                    {t(`chartTitle.${timePeriod}` as 'chartTitle.week')}
                                 </h2>
                                 {data.timeSeries && data.timeSeries.length > 0 ? (
-                                    timePeriod === 'month' ? (
-                                        // 30 days - scrollable with large text and columns
-                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
-                                                {data.timeSeries?.map((item, index) => {
-                                                    const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                    const height = (item.visitors / maxVisitors) * 100;
-                                                    return (
-                                                        <div
-                                                            key={index}
-                                                            className='flex flex-col items-center h-full relative group w-20 sm:w-24 flex-shrink-0'
-                                                        >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
-                                                                {height <= 20 && (
-                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
-                                                                        {item.visitors}
-                                                                    </span>
-                                                                )}
-                                                                <div
-                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                    style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                                >
-                                                                    {height > 20 && (
-                                                                        <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                            {item.visitors}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
-                                                                {translateTimeLabel(item.label, timePeriod)}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    ) : // Other periods: week, year, alltime
-                                    // For year and alltime, make scrollable with larger columns
-                                    timePeriod === 'year' || timePeriod === 'alltime' ? (
-                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
-                                                {(data.timeSeries || []).map((item, index) => {
-                                                    const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                    const height = (item.visitors / maxVisitors) * 100;
-                                                    return (
-                                                        <div
-                                                            key={index}
-                                                            className='flex flex-col items-center h-full relative group w-20 sm:w-28 flex-shrink-0'
-                                                        >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
-                                                                {height <= 20 && (
-                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
-                                                                        {item.visitors}
-                                                                    </span>
-                                                                )}
-                                                                <div
-                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                    style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                                >
-                                                                    {height > 20 && (
-                                                                        <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                            {item.visitors}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
-                                                                {translateTimeLabel(item.label, timePeriod)}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    ) : timePeriod === 'week' ? (
-                                        // Week period - scrollable with large text and columns
-                                        <div className='h-64 sm:h-72 overflow-x-auto overflow-y-hidden pb-2'>
-                                            <div className='flex items-end justify-center gap-4 sm:gap-6 px-2 sm:px-4 h-full min-w-max pt-8'>
-                                                {(data.timeSeries || []).map((item, index) => {
-                                                    const maxVisitors = Math.max(...(data.timeSeries || []).map((d) => d.visitors), 1);
-                                                    const height = (item.visitors / maxVisitors) * 100;
-                                                    return (
-                                                        <div
-                                                            key={index}
-                                                            className='flex flex-col items-center h-full relative group w-24 sm:w-32 flex-shrink-0'
-                                                        >
-                                                            <div className='w-full flex flex-col items-center justify-end h-full overflow-visible'>
-                                                                {height <= 20 && (
-                                                                    <span className='text-[#005baa] text-xs sm:text-sm font-semibold mb-1 whitespace-nowrap'>
-                                                                        {item.visitors}
-                                                                    </span>
-                                                                )}
-                                                                <div
-                                                                    className='w-full bg-[#005baa] rounded-t-md transition-all hover:bg-[#004a8f] cursor-pointer relative overflow-hidden'
-                                                                    style={{ height: `${height}%`, minHeight: item.visitors > 0 ? '10px' : '0' }}
-                                                                >
-                                                                    {height > 20 && (
-                                                                        <span className='text-white text-xs sm:text-sm font-semibold absolute inset-0 flex items-center justify-center'>
-                                                                            {item.visitors}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                            <div className='text-sm sm:text-base text-gray-600 mt-2 text-center font-medium whitespace-nowrap'>
-                                                                {translateTimeLabel(item.label, timePeriod)}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    ) : null
+                                    <BarChart
+                                        data={data.timeSeries}
+                                        columnWidth={columnWidths[timePeriod]}
+                                        translateLabel={(label) => translateTimeLabel(label, timePeriod)}
+                                    />
                                 ) : (
-                                    <p className='text-gray-500 text-sm'>Няма налични данни за конкретния времеви период</p>
+                                    <p className='text-gray-500 text-sm'>{t('noDataForPeriod')}</p>
                                 )}
                             </div>
 
@@ -371,7 +165,7 @@ export default function StatisticsPage() {
                             <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6 items-start'>
                                 {/* Device Breakdown */}
                                 <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
-                                    <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>Посетители по устройства</h2>
+                                    <h2 className='text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3'>{t('deviceChart')}</h2>
                                     <div className='h-64 sm:h-72 flex items-end justify-center gap-2 sm:gap-12 lg:gap-16 px-2 sm:px-4 pb-2 overflow-hidden'>
                                         {data.deviceBreakdown.length > 0 ? (
                                             data.deviceBreakdown.map((device, index) => {
@@ -397,7 +191,6 @@ export default function StatisticsPage() {
                                                         <div className='text-xs sm:text-base font-semibold text-[#005baa] mt-1'>
                                                             {device.count.toLocaleString()}
                                                         </div>
-                                                        {/* Tooltip for small bars */}
                                                         <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                             {translateDevice(device.device)}: {device.count.toLocaleString()} ({device.percentage}%)
                                                             <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
@@ -406,7 +199,7 @@ export default function StatisticsPage() {
                                                 );
                                             })
                                         ) : (
-                                            <p className='text-gray-500 text-sm'>Няма налични данни за устройства</p>
+                                            <p className='text-gray-500 text-sm'>{t('noDeviceData')}</p>
                                         )}
                                     </div>
                                 </div>
@@ -414,7 +207,7 @@ export default function StatisticsPage() {
                                 {/* Traffic Sources */}
                                 <div className='bg-white rounded-lg shadow-lg p-3 sm:p-4 lg:p-5 overflow-hidden'>
                                     <div className='flex items-center gap-2 mb-2 sm:mb-3'>
-                                        <h2 className='text-base sm:text-lg font-bold text-gray-900'>Източници на трафик</h2>
+                                        <h2 className='text-base sm:text-lg font-bold text-gray-900'>{t('sourceChart')}</h2>
                                         <div className='group relative z-50'>
                                             <svg
                                                 className='w-4 h-4 sm:w-5 sm:h-5 text-gray-500 hover:text-gray-700 cursor-help transition-colors'
@@ -429,18 +222,10 @@ export default function StatisticsPage() {
                                             </svg>
                                             <div className='opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 sm:w-80 p-3 sm:p-4 bg-gray-900 text-white text-xs sm:text-sm rounded-lg shadow-2xl z-[100] pointer-events-none whitespace-normal transition-opacity duration-200'>
                                                 <div className='space-y-2'>
-                                                    <div>
-                                                        <strong>Директно:</strong> Въведен адрес на сайта директно в браузъра
-                                                    </div>
-                                                    <div>
-                                                        <strong>Google:</strong> Кликнато от резултатите в Google (напр. "зъболекар варна")
-                                                    </div>
-                                                    <div>
-                                                        <strong>Facebook/Instagram:</strong> Кликнато от публикации или реклами в социалните мрежи
-                                                    </div>
-                                                    <div>
-                                                        <strong>Други:</strong> Всички други източници на трафик
-                                                    </div>
+                                                    <div><strong>Директно:</strong> {t('sourceTooltip.direct')}</div>
+                                                    <div><strong>Google:</strong> {t('sourceTooltip.google')}</div>
+                                                    <div><strong>Facebook/Instagram:</strong> {t('sourceTooltip.social')}</div>
+                                                    <div><strong>Други:</strong> {t('sourceTooltip.others')}</div>
                                                 </div>
                                                 <div className='absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
                                             </div>
@@ -471,7 +256,6 @@ export default function StatisticsPage() {
                                                         <div className='text-xs sm:text-base font-semibold text-[#005baa] mt-1'>
                                                             {source.count.toLocaleString()}
                                                         </div>
-                                                        {/* Tooltip for small bars */}
                                                         <div className='invisible group-hover:visible absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-50 whitespace-nowrap pointer-events-none'>
                                                             {translateSource(source.source)}: {source.count.toLocaleString()} ({source.percentage}%)
                                                             <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
@@ -480,7 +264,7 @@ export default function StatisticsPage() {
                                                 );
                                             })
                                         ) : (
-                                            <p className='text-gray-500 text-sm'>Няма налични данни за източници на трафик</p>
+                                            <p className='text-gray-500 text-sm'>{t('noSourceData')}</p>
                                         )}
                                     </div>
                                 </div>
