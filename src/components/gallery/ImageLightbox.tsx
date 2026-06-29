@@ -103,6 +103,20 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                         }, 400);
                     });
                 });
+            } else if (containerRef.current) {
+                const container = containerRef.current;
+                container.style.left = `${window.innerWidth / 2}px`;
+                container.style.top = `${window.innerHeight / 2}px`;
+                container.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                container.style.opacity = '0';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        container.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease';
+                        container.style.transform = 'translate(-50%, -50%) scale(1)';
+                        container.style.opacity = '1';
+                        setIsAnimating(true);
+                    });
+                });
             } else {
                 setIsAnimating(true);
             }
@@ -178,7 +192,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt, triggerE
                         src={imageSrc}
                         alt={alt || 'Image'}
                         className='w-auto h-auto object-contain'
-                        style={{ display: imageLoaded ? 'block' : 'none', maxWidth: '100%', maxHeight: 'calc(90vh - 60px)' }}
+                        style={{ display: imageLoaded ? 'block' : 'none', maxWidth: '100%', maxHeight: 'calc(90vh - 60px)', imageOrientation: 'from-image' }}
                         loading='lazy'
                     />
                     {!imageLoaded && !imageError && (

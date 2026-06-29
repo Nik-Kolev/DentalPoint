@@ -34,7 +34,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
     const handleImageClick = (e: React.MouseEvent<HTMLDivElement>, item: HomeGalleryItem) => {
         if (editMode) return;
         if (window.innerWidth >= 640) {
-            setLightbox({ src: item.path, alt: item.alt, element: e.currentTarget });
+            setLightbox({ src: item.path, alt: item.alt, element: null });
         }
     };
 
@@ -181,7 +181,7 @@ export default function HomeGalleryClient({ initialItems, isAdmin }: Props) {
                                 src={item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path}
                                 alt={item.alt}
                                 fill
-                                quality={85}
+                                quality={90}
                                 sizes='(max-width: 640px) 100vw, 33vw'
                                 className='rounded-md object-cover'
                                 placeholder={item.blurDataURL ? 'blur' : 'empty'}

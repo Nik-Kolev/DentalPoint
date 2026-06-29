@@ -14,7 +14,7 @@ const CONFIG = {
     large: {
         maxWidth: 1920,
         maxHeight: 1440,
-        quality: 85, // Balanced quality/size for web
+        quality: 95,
         minSize: 200 * 1024, // Optimize files larger than 200KB
     },
     // Faces/People - High quality but web-optimized
@@ -70,7 +70,8 @@ async function optimizeImage(filePath) {
 
     const originalSize = fs.statSync(filePath).size;
     const fileName = path.basename(filePath);
-    const needsProcessing = folder === 'certificates' || (config.minSize && originalSize >= config.minSize);
+    // front folder always processed to bake EXIF rotation into pixels (prevents lightbox orientation bugs)
+    const needsProcessing = folder === 'certificates' || folder === 'front' || (config.minSize && originalSize >= config.minSize);
 
     // Skip small files to preserve original quality (except certificates which need rotation/trim)
     if (!needsProcessing) {
