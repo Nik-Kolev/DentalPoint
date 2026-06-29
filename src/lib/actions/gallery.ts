@@ -6,9 +6,11 @@ import {
     writeHomeGallery,
     readCertificates,
     writeCertificates,
+    readGalleryCases,
+    writeGalleryCases,
     appendPendingChange,
 } from '@/lib/gallery-data';
-import type { PendingChange } from '@/types/gallery';
+import type { GalleryCase, PendingChange } from '@/types/gallery';
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
@@ -158,4 +160,17 @@ export async function rotateGalleryImage(gallery: Gallery, id: string, direction
 export async function reorderGallery(gallery: Gallery, orderedIds: string[]) {
     await assertAdmin();
     return _reorder(orderedIds, configs[gallery]);
+}
+
+export async function reorderGalleryCases(orderedIds: string[]) {
+    await assertAdmin();
+    const cases = readGalleryCases();
+    const reordered = orderedIds
+        .map((id, index) => {
+            const c = cases.find((item) => item.id === id);
+            return c ? { ...c, order: index } : null;
+        })
+        .filter(Boolean) as GalleryCase[];
+    writeGalleryCases(reordered);
+    appendPendingChange({ page: 'gallery', action: 'reorder' });
 }

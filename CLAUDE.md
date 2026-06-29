@@ -11,15 +11,15 @@
 ---
 
 ## What this is
-Production dental clinic website for **Dental Point**, Varna, Bulgaria. Live at `https://dentalpoint.bg`. No backend server — all server-side logic lives in Next.js API routes.
+Production dental clinic website for **Dental Point**, Varna, Bulgaria. Live at `https://dentalpoint.bg`. No backend server — all server-side logic lives in Next.js Server Actions and API routes.
 
 ## Stack
-- **Next.js 14** (App Router, TypeScript)
+- **Next.js 16** (App Router, TypeScript)
 - **Tailwind CSS v4**
-- **next-auth v4** — Google OAuth, protects `/statistics/` and `/admin/`
-- **next-intl v4** — installed but NOT used for routing; see i18n note below
+- **Auth.js (next-auth v5)** — Google OAuth, protects `/statistics/` and `/admin/`
+- **next-intl v4** — wired for routing since Phase 3; `localePrefix: 'never'`, cookie-based locale switching
 - **googleapis** — GA4 data for the analytics dashboard
-- **sharp** — image optimization at build time
+- **sharp** — image rotation and processing for admin uploads
 
 ## Project structure
 ```
@@ -29,18 +29,36 @@ src/
     statistics/       # Protected analytics dashboard (Bulgarian only)
     auth/             # sign-in, error pages
     api/analytics/    # GA4 API route
-  components/         # Shared UI components
+  auth.ts             # Auth.js config — exports { auth, handlers, signIn, signOut }
+  components/
+    gallery/          # HomeGallery (server wrapper), HomeGalleryViewer, HomeGalleryAdmin,
+                      # CertificatesViewer, CertificatesAdmin, GalleryCases (to be split in 6c),
+                      # BeforeAfterSlider, ImageLightbox
+    layout/           # Navigation, DeferredWidgets
+    shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, etc.
+    statistics/       # BarChart
   lib/
-    useTranslation.ts # Custom i18n helper — see i18n note
+    actions/
+      gallery.ts      # 4 shared Server Actions: uploadGalleryImage, removeGalleryImage,
+                      # rotateGalleryImage, reorderGallery
     analytics.ts      # GA4 fetch + mock data generator
-    auth.ts / auth-config.ts
+    gallery-data.ts   # readHomeGallery, writeHomeGallery, readCertificates, writeCertificates
     blurPlaceholders.ts
     imageVersion.ts
     cloudflareLoader.ts
+  i18n/
+    routing.ts        # defineRouting — localePrefix: 'never', locales: ['bg','en']
+    request.ts        # getRequestConfig — lazy JSON loading from src/locales/
   locales/
     bg.json           # Bulgarian strings (default locale)
     en.json           # English strings
-  middleware.ts       # Protects /statistics/ and /admin/
+  proxy.ts            # Middleware — next-intl + next-auth auth check
+                      # (Next.js 16 uses proxy.ts, not middleware.ts)
+data/
+  home-gallery.json   # Home gallery images (managed by admin)
+  certificates.json   # Certificate images (managed by admin)
+  gallery-cases.json  # Before/after treatment cases (reorder managed; images are static)
+  pending-changes.json
 scripts/
   optimize-images.js            # Compresses images in /public/Images
   generate-blur-placeholders.js # Bakes base64 blur data URLs into blurPlaceholders.ts
@@ -65,34 +83,71 @@ npm run process-images   # Both optimize + generate-blur
 
 ## Conventions & gotchas
 
-### i18n — custom helper, NOT next-intl routing
-Despite `next-intl` being installed, all translation is done via a hand-rolled system.
-- Every page receives `params.locale` (`'bg'` | `'en'`) from the `[locale]` segment.
-- Call `getTranslation(locale)` from `src/lib/useTranslation.ts` to get a `t(section, key)` function.
+### i18n — next-intl v4, wired since Phase 3
+- `createNextIntlPlugin` wraps `next.config.js`; `NextIntlClientProvider` in root layout.
+- Locale comes from the `[locale]` URL segment (`'bg'` | `'en'`), but the prefix never shows in URLs (`localePrefix: 'never'`).
+- Server: `getTranslations('namespace')` → returns typed `t(key)` function.
+- Client: `useTranslations('namespace')` → same API.
+- `LanguageSwitcher` sets `NEXT_LOCALE` cookie + calls `router.refresh()` — no URL change.
+- To add a string: add to `src/locales/bg.json` AND `en.json` under the same namespace/key.
 - Bulgarian is the default locale and the fallback for missing English keys.
-- **Do NOT add `NextIntlClientProvider` or any next-intl routing setup** — it is not wired in.
-- To add a string: add it to both `src/locales/bg.json` and `en.json` under the same section/key.
+- **Never call `useLocale()` from a client component that might render outside `[locale]/layout.tsx`** — `NextIntlClientProvider` lives there; components used in `statistics/` or standalone contexts won't have it.
 
 ### LCP-critical server component rule
 The home page (`src/app/[locale]/page.tsx`) must stay a **server component**.
 - Hero image renders in the initial HTML → browser fetches it immediately, no JS wait.
 - LCP was 9.3s (mobile) before this was fixed; it is now 2.9s.
-- **Never add `'use client'` to this file.** Interactive parts live in `ClientGallery.tsx`.
+- **Never add `'use client'` to this file.** Interactive gallery parts live in `HomeGalleryViewer.tsx` (visitor) and `HomeGalleryAdmin.tsx` (admin).
 
-### Image pipeline
-- `prebuild` runs `optimize-images.js` then `generate-blur-placeholders.js` automatically before every build.
-- Blur data URLs are baked into `src/lib/blurPlaceholders.ts` at build time — not dynamic.
-- If you add new images to `/public/Images/`, run `npm run process-images` to regenerate.
-- Use `getImageUrl(path)` and `getBlurPlaceholder(path)` from `@/lib/imageVersion` on every `<Image>`.
+### Admin gallery pattern — Viewer/Admin split
+Every gallery has three files: a server wrapper, a Viewer, and an Admin.
+
+```
+HomeGallery.tsx          ← async server component: reads data + checks auth()
+HomeGalleryViewer.tsx    ← 'use client', lightbox only — ships to all visitors
+HomeGalleryAdmin.tsx     ← 'use client', full edit controls — only rendered when session?.user
+```
+
+The server wrapper always follows this pattern:
+```tsx
+const [items, session] = await Promise.all([readData(), auth()]);
+if (session?.user) return <*Admin initialItems={items} />;
+return <*Viewer items={items} />;
+```
+
+Admin JS never ships to unauthenticated visitors. Only the lightweight Viewer bundle does.
+
+### Server Actions — gallery mutations
+All gallery mutations live in `src/lib/actions/gallery.ts` (file-level `'use server'`).
+
+- `GalleryConfig` interface + config map keyed by `Gallery = 'home' | 'certificates'`
+- 4 private implementations (`_upload`, `_remove`, `_rotate`, `_reorder`), 4 public exports
+- `assertAdmin()` is called first in every action — throws `new Error('Unauthorized')` (NOT `Response` — Server Actions throw, API routes return)
+- Client components call them directly: `await uploadGalleryImage('home', formData)` — no `fetch()`
+
+### Gallery data
+Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-data.ts`.
+- `home-gallery.json` — home page clinic photos
+- `certificates.json` — license certificates
+- `gallery-cases.json` — before/after treatment cases
+
+### Image pipeline — admin uploads
+- Images uploaded via browser, saved raw to `public/Images/<gallery>/` with UUID filenames.
+- `sharp` reads EXIF orientation and corrects on upload — no re-encoding (avoids DCT ringing artifacts).
+- Manual rotation: `sharp` rotates 90°, writes back in place. Client cache-busts with `?v=<timestamp>`.
+- `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
+- The static `prebuild` scripts (`optimize-images.js`, `generate-blur-placeholders.js`) still run before every `npm run build` for non-gallery static images.
 
 ### Analytics (GA4)
 - In production, real GA4 data comes from `POST /api/analytics` (uses `googleapis`).
 - In dev, the statistics page has a toggle button (`useMockData` state) that switches to generated mock data.
-- The statistics dashboard (`/statistics/`) is Bulgarian-only — all UI strings are hardcoded in Bulgarian.
+- The statistics dashboard (`/statistics/`) is Bulgarian-only — all UI strings are in `bg.json` statistics namespace.
 
 ### Auth
-- Google OAuth via next-auth. Config: `src/lib/auth-config.ts` and `src/lib/auth.ts`.
-- Protected routes: `/statistics/*` and `/admin/*` (enforced in `middleware.ts`).
+- Google OAuth via Auth.js (next-auth v5). Config: `src/auth.ts` — single entry point.
+- **Import: `import { auth } from '@/auth'` — NOT `@/lib/auth`** (old path, doesn't export `auth`).
+- Protected routes: `/statistics/*` and `/admin/*` (enforced in `src/proxy.ts`).
+- In server components and Server Actions: call `await auth()` to get the session.
 
 ### Brand
 - Primary blue: `#005baa` | Accent blue: `#009fe3`

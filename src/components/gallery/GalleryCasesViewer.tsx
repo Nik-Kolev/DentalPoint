@@ -2,31 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import BeforeAfterSlider from '@/components/gallery/BeforeAfterSlider';
-import { useLocale } from 'next-intl';
+import type { GalleryCase } from '@/types/gallery';
 
-interface CaseItem {
-    before: string;
-    after: string;
-    titleBg: string;
-    titleEn: string;
-    descriptionKey: number;
-    imageStyle?: string;
-    beforeImageStyle?: string;
-    afterImageStyle?: string;
-    aspectRatio?: string;
-}
-
-interface GalleryCasesProps {
-    cases: CaseItem[];
+interface Props {
+    cases: GalleryCase[];
+    locale: string;
     beforeLabel: string;
     afterLabel: string;
-    descriptions: { description: string }[];
     loadMoreLabel: string;
     showLessLabel: string;
 }
 
-export default function GalleryCases({ cases, beforeLabel, afterLabel, descriptions, loadMoreLabel, showLessLabel }: GalleryCasesProps) {
-    const locale = useLocale();
+export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLabel, loadMoreLabel, showLessLabel }: Props) {
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
@@ -51,29 +38,32 @@ export default function GalleryCases({ cases, beforeLabel, afterLabel, descripti
     return (
         <>
             <div className='space-y-12 sm:space-y-16'>
-                {visibleCases.map((caseItem, index) => (
-                    <div key={index} className={`${index % 2 === 0 ? '' : 'lg:flex-row-reverse'} flex flex-col lg:flex-row gap-6 lg:gap-10 items-center`}>
+                {visibleCases.map((c, index) => (
+                    <div
+                        key={c.id}
+                        className={`flex flex-col lg:flex-row gap-6 lg:gap-10 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+                    >
                         <div className='w-full lg:w-3/5'>
                             <BeforeAfterSlider
-                                beforeImage={caseItem.before}
-                                afterImage={caseItem.after}
+                                beforeImage={c.beforePath}
+                                afterImage={c.afterPath}
                                 beforeLabel={beforeLabel}
                                 afterLabel={afterLabel}
                                 priority={index === 0}
-                                imageStyle={caseItem.imageStyle}
-                                beforeImageStyle={caseItem.beforeImageStyle}
-                                afterImageStyle={caseItem.afterImageStyle}
-                                aspectRatio={caseItem.aspectRatio}
+                                imageStyle={c.imageStyle}
+                                beforeImageStyle={c.beforeImageStyle}
+                                afterImageStyle={c.afterImageStyle}
+                                aspectRatio={c.aspectRatio}
                             />
                         </div>
 
                         <div className='w-full lg:w-2/5'>
                             <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[#e3f3fb] h-full'>
                                 <h3 className='text-xl font-bold text-[#005baa] mb-4'>
-                                    {locale === 'bg' ? caseItem.titleBg : caseItem.titleEn}
+                                    {locale === 'bg' ? c.captionBg : c.captionEn}
                                 </h3>
                                 <p className='text-gray-600 leading-relaxed'>
-                                    {descriptions?.[caseItem.descriptionKey]?.description || ''}
+                                    {locale === 'bg' ? c.descriptionBg : c.descriptionEn}
                                 </p>
                             </div>
                         </div>

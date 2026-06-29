@@ -20,6 +20,10 @@ export interface GalleryCase {
     afterAlt: string;
     blurBefore?: string;
     blurAfter?: string;
+    imageStyle?: string;
+    beforeImageStyle?: string;
+    afterImageStyle?: string;
+    aspectRatio?: string;
 }
 
 export interface Certificate {
