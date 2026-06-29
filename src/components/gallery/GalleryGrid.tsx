@@ -13,15 +13,14 @@ interface GalleryItem {
 
 interface GalleryGridProps {
     items: GalleryItem[];
-    locale: string;
     beforeLabel: string;
     afterLabel: string;
     loadMoreLabel: string;
     showLessLabel: string;
-    startIndex?: number; // For proper alt text numbering when some items are server-rendered
+    startIndex?: number;
 }
 
-export default function GalleryGrid({ items, locale, beforeLabel, afterLabel, loadMoreLabel, showLessLabel, startIndex = 0 }: GalleryGridProps) {
+export default function GalleryGrid({ items, beforeLabel, afterLabel, loadMoreLabel, showLessLabel, startIndex = 0 }: GalleryGridProps) {
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string; element: HTMLElement | null } | null>(null);
     const [visibleCount, setVisibleCount] = useState(3);
 
@@ -140,7 +139,6 @@ export default function GalleryGrid({ items, locale, beforeLabel, afterLabel, lo
                     imageSrc={selectedImage.src}
                     alt={selectedImage.alt}
                     triggerElement={selectedImage.element}
-                    locale={locale}
                 />
             )}
         </>

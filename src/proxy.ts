@@ -1,7 +1,6 @@
+import { auth } from '@/auth';
 import createMiddleware from 'next-intl/middleware';
-import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
@@ -9,17 +8,13 @@ const intlMiddleware = createMiddleware(routing);
 const protectedPaths = ['/statistics', '/admin'];
 const noIntlPaths = ['/statistics', '/admin', '/auth'];
 
-export default async function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
-    const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
+export default auth((req) => {
+    const { pathname } = req.nextUrl;
 
-    if (isProtected) {
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-        if (!token) {
-            const signInUrl = new URL('/auth/signin', request.url);
-            signInUrl.searchParams.set('callbackUrl', request.url);
-            return NextResponse.redirect(signInUrl);
-        }
+    if (protectedPaths.some((path) => pathname.startsWith(path)) && !req.auth) {
+        const signInUrl = new URL('/auth/signin', req.url);
+        signInUrl.searchParams.set('callbackUrl', req.url);
+        return NextResponse.redirect(signInUrl);
     }
 
     // Routes outside [locale] must bypass intl rewriting
@@ -27,8 +22,8 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    return intlMiddleware(request);
-}
+    return intlMiddleware(req);
+});
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon\\.ico|.*\\..*).*)'],
