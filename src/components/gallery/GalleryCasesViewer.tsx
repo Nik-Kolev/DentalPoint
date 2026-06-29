@@ -50,9 +50,6 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                                 beforeLabel={beforeLabel}
                                 afterLabel={afterLabel}
                                 priority={index === 0}
-                                imageStyle={c.imageStyle}
-                                beforeImageStyle={c.beforeImageStyle}
-                                afterImageStyle={c.afterImageStyle}
                                 aspectRatio={c.aspectRatio}
                             />
                         </div>
