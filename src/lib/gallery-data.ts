@@ -1,7 +1,7 @@
 import 'server-only';
 import fs from 'fs';
 import path from 'path';
-import type { HomeGalleryItem, GalleryCase, Certificate, PendingChange } from '@/types/gallery';
+import type { HomeGalleryItem, GalleryCase, Certificate, PendingChange, TeamMember } from '@/types/gallery';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 
@@ -36,6 +36,14 @@ export function readCertificates(): Certificate[] {
 
 export function writeCertificates(items: Certificate[]): void {
     writeJson('certificates.json', items);
+}
+
+export function readTeamMembers(): TeamMember[] {
+    return readJson<TeamMember[]>('team.json').sort((a, b) => a.order - b.order);
+}
+
+export function writeTeamMembers(members: TeamMember[]): void {
+    writeJson('team.json', members);
 }
 
 export function readPendingChanges(): PendingChange[] {

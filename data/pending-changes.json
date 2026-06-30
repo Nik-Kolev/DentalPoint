@@ -918,5 +918,11 @@
     "page": "home",
     "action": "reorder",
     "at": "2026-06-30T17:32:40.102Z"
+  },
+  {
+    "page": "gallery",
+    "action": "add",
+    "detail": "case-1",
+    "at": "2026-06-30T18:48:07.198Z"
   }
 ]

@@ -100,23 +100,11 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
     return (
         <>
             <div className='flex items-center justify-end gap-3 mb-4'>
-                {editMode && (
-                    <button
-                        onClick={handleRevert}
-                        className='px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'
-                    >
-                        ↩ Върни промените
-                    </button>
-                )}
                 <button
                     onClick={() => setEditMode((v) => !v)}
-                    className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                        editMode
-                            ? 'bg-[#005baa] text-white hover:bg-[#004a8f]'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className='flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors'
                 >
-                    {editMode ? 'Готово' : '✏️ Редактирай'}
+                    {editMode ? '✕ Изход' : '✏️ Редактирай'}
                 </button>
             </div>
 
@@ -196,6 +184,26 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
             </div>
 
             <input ref={fileInputRef} type='file' accept='image/*' className='hidden' onChange={handleUpload} />
+
+            {editMode && (
+                <div className='fixed bottom-6 inset-x-0 flex justify-center z-20 pointer-events-none'>
+                    <div className='flex items-center gap-3 bg-white rounded-full shadow-xl border border-gray-200 px-5 py-2.5 pointer-events-auto'>
+                        <button
+                            onClick={handleRevert}
+                            className='text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors'
+                        >
+                            ↩ Върни преди промените
+                        </button>
+                        <div className='w-px h-5 bg-gray-200' />
+                        <button
+                            onClick={() => setEditMode(false)}
+                            className='px-4 py-1.5 bg-[var(--dp-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--dp-primary)]/90 transition-colors'
+                        >
+                            ✓ Готово
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {lightbox && (
                 <ImageLightbox

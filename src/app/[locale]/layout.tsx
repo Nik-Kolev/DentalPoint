@@ -170,11 +170,16 @@ export default async function LocaleLayout({ children, params }: { children: Rea
 
       <footer className='bg-[var(--dp-primary)] text-white'>
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6'>
-          <div className='grid grid-cols-2 md:grid-cols-3 gap-10'>
-            {/* Col 1 — wordmark + tagline + social */}
-            <div className='col-span-2 md:col-span-1 flex flex-col gap-5 items-center text-center'>
+
+          {/* Mobile: flex-col centered. Desktop: flex-row justify-between */}
+          <div className='flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-between'>
+
+            {/* Left — wordmark + tagline + social */}
+            <div className='flex flex-col gap-5 items-center text-center md:items-start md:text-left md:max-w-[280px]'>
               <div className='font-montserrat font-bold tracking-[0.18em] text-lg leading-none'>
-                <span style={{ color: 'var(--dp-accent)' }}>DENTAL</span> <span className='text-white'>POINT</span>
+                <span style={{ color: 'var(--dp-accent)' }}>DENTAL</span>
+                {' '}
+                <span className='text-white'>POINT</span>
               </div>
               <p className='text-white/60 text-sm leading-relaxed'>{t('footerTagline')}</p>
               <div className='flex gap-4'>
@@ -203,36 +208,41 @@ export default async function LocaleLayout({ children, params }: { children: Rea
               </div>
             </div>
 
-            {/* Col 2 — Navigation */}
-            <div className='flex flex-col gap-4 items-center md:items-start pl-6'>
-              <p className='font-montserrat text-xs font-semibold uppercase tracking-[0.15em] text-white/40 self-start'>{t('footerNav')}</p>
-              <nav className='flex flex-col gap-2.5 self-start'>
-                {[
-                  { label: translations.home, href: '/' },
-                  { label: translations.team, href: '/team' },
-                  { label: translations.gallery, href: '/gallery' },
-                  { label: translations.contact, href: '/contact' },
-                  { label: translations.licenses, href: '/licenses' },
-                  { label: translations.reviews, href: '/reviews' },
-                ].map(({ label, href }) => (
-                  <Link key={href} href={href} className='font-montserrat text-sm text-white/70 hover:text-white transition-colors'>
-                    {label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+            {/* Right — nav + contact: 2-col grid on mobile, flex row on desktop */}
+            <div className='grid grid-cols-2 gap-10 w-full md:w-auto md:flex md:gap-16'>
 
-            {/* Col 3 — Contact */}
-            <div className='flex flex-col gap-4 items-center md:items-start pl-2'>
-              <p className='font-montserrat text-xs font-semibold uppercase tracking-[0.15em] text-white/40 self-start'>{t('footerContact')}</p>
-              <div className='flex flex-col gap-2 font-montserrat text-sm text-white/70'>
-                <p>ул. „Подполковник Калитин" 2</p>
-                <p>кв. Левски, Варна</p>
-                <p className='mt-1'>0876 346 261</p>
-                <p>0878 355 494</p>
-                <p className='mt-1'>Пон–Пет: 09:30–18:30</p>
-                <p>Събота–Неделя: Затворено</p>
+              {/* Navigation */}
+              <div className='flex flex-col gap-4 items-center pl-6 md:pl-0 md:items-start'>
+                <p className='font-montserrat text-xs font-semibold uppercase tracking-[0.15em] text-white/40 self-start'>{t('footerNav')}</p>
+                <nav className='flex flex-col gap-2.5 self-start'>
+                  {[
+                    { label: translations.home, href: '/' },
+                    { label: translations.team, href: '/team' },
+                    { label: translations.gallery, href: '/gallery' },
+                    { label: translations.contact, href: '/contact' },
+                    { label: translations.licenses, href: '/licenses' },
+                    { label: translations.reviews, href: '/reviews' },
+                  ].map(({ label, href }) => (
+                    <Link key={href} href={href} className='font-montserrat text-sm text-white/70 hover:text-white transition-colors'>
+                      {label}
+                    </Link>
+                  ))}
+                </nav>
               </div>
+
+              {/* Contact */}
+              <div className='flex flex-col gap-4 items-center pl-2 md:pl-0 md:items-start'>
+                <p className='font-montserrat text-xs font-semibold uppercase tracking-[0.15em] text-white/40 self-start'>{t('footerContact')}</p>
+                <div className='flex flex-col gap-2 font-montserrat text-sm text-white/70 self-start'>
+                  <p>ул. „Подполковник Калитин" 2</p>
+                  <p>кв. Левски, Варна</p>
+                  <p className='mt-1'>0876 346 261</p>
+                  <p>0878 355 494</p>
+                  <p className='mt-1'>Пон–Пет: 09:30–18:30</p>
+                  <p>Събота–Неделя: Затворено</p>
+                </div>
+              </div>
+
             </div>
           </div>
 

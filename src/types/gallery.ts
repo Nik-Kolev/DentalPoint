@@ -35,9 +35,21 @@ export interface Certificate {
     blurDataURL?: string;
 }
 
+export interface TeamMember {
+    id: string;
+    nameBg: string;
+    nameEn: string;
+    titleBg: string;
+    titleEn: string;
+    descriptionBg: string;
+    descriptionEn: string;
+    imagePath: string;
+    order: number;
+}
+
 export interface PendingChange {
     page: 'home' | 'gallery' | 'certificates';
-    action: 'add' | 'remove' | 'reorder' | 'rotate';
+    action: 'add' | 'remove' | 'reorder' | 'replace';
     detail?: string;
     at: string;
 }
