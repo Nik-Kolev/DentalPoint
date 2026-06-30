@@ -19,7 +19,10 @@
         "menuReviews": "Reviews",
         "footer": "All rights reserved.",
         "contactUs": "Contact Us",
-        "bookAppointment": "Book Appointment"
+        "bookAppointment": "Book Appointment",
+        "footerNav": "Navigation",
+        "footerContact": "Contact",
+        "footerTagline": "A dental clinic with modern equipment and personalized care for every patient."
     },
     "home": {
         "heroTitlePrefix": "Dental Office",
@@ -34,7 +37,7 @@
         "aboutTitle": "About Us",
         "aboutTextLine1": "In our clinic, we combine next-generation technology with a personalized approach to every patient. We believe family health requires special attention, so we created a calm and secure environment where you can feel truly cared for.",
         "aboutTextLine2": "For your convenience, our office is equipped with X-ray for precise on-site diagnostics. We work in partnership with NHIF, providing accessible and quality healthcare.",
-        "galleryTitle": "Gallery",
+        "galleryTitle": "Our Clinic",
         "ctaTitle": "Browse our modern clinic",
         "ctaSubtitle": "Book an appointment and experience professional care"
     },

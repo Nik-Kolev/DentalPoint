@@ -4,6 +4,18 @@
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
+
+    /* Design tokens — Deep Teal + Amber */
+    --dp-primary: #1a7a8a;
+    --dp-accent: #f4a261;
+    --dp-bg-from: #f7f4ef;
+    --dp-heading: #1a7a8a;
+    --dp-card-border: #ede8df;
+    --dp-nav-line: #f4a261;
+    --dp-cta-bg: #1a7a8a;
+    --dp-cta-btn-bg: #f4a261;
+    --dp-cta-btn-text: #ffffff;
+    --dp-footer-bar: #1a7a8a;
 }
 
 .font-inter {
@@ -51,7 +63,7 @@ body {
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: #fbbf24;
+    background-color: var(--dp-nav-line);
     transform: scaleX(0);
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: left;

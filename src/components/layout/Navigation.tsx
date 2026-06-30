@@ -32,7 +32,7 @@ export default function Navigation({ translations }: NavigationProps) {
     };
 
     const linkClass = (path: string) => {
-        const baseClass = 'nav-link font-semibold text-base lg:text-lg text-gray-600 hover:text-gray-800 transition-colors duration-200';
+        const baseClass = 'nav-link font-montserrat font-medium text-sm lg:text-[15px] tracking-wide text-gray-600 hover:text-gray-800 transition-colors duration-200';
         return `${baseClass} ${isActive(path) ? 'active' : ''}`.trim();
     };
 

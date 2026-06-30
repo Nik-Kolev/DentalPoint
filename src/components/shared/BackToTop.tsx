@@ -67,7 +67,7 @@ export default function BackToTop() {
                     scrollToTop();
                 }
             }}
-            className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 bg-[#005baa] text-white border border-white p-3 md:p-4 rounded-full shadow-lg hover:bg-[#004a8c] transition-all duration-200 hover:scale-110 z-[60] flex-shrink-0 ${
+            className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 bg-[var(--dp-primary)] text-white p-3 md:p-4 rounded-full shadow-lg border border-white/30 hover:opacity-90 transition-all duration-200 hover:scale-110 z-[60] flex-shrink-0 ${
                 isVisible ? 'opacity-100 translate-y-0 pointer-events-auto cursor-pointer' : 'opacity-0 translate-y-2 pointer-events-none cursor-default'
             }`}
             aria-label='Back to top'

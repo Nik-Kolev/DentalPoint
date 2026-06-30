@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Flag from 'react-world-flags';
 import { useCallback } from 'react';
 import { useLocale } from 'next-intl';
 
@@ -19,29 +18,29 @@ export default function LanguageSwitcher() {
     );
 
     return (
-        <div className='flex items-center space-x-3'>
+        <div className='flex items-center'>
             <button
                 onClick={() => switchLanguage('bg')}
-                className={`transition-all duration-200 hover:scale-110 border-none outline-none bg-transparent flex items-center ${
-                    locale === 'bg' ? 'shadow-lg shadow-[#005baa]/30' : 'hover:shadow-md'
+                className={`font-montserrat text-sm tracking-wider px-2 py-1 transition-colors duration-200 ${
+                    locale === 'bg'
+                        ? 'text-[var(--dp-primary)] font-semibold'
+                        : 'text-gray-400 font-medium hover:text-gray-600'
                 }`}
                 aria-label='Switch to Bulgarian'
             >
-                <div style={{ width: 40, height: 24, borderRadius: 6, overflow: 'hidden', display: 'flex' }}>
-                    <Flag code='BG' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt='Bulgarian flag' />
-                </div>
+                БГ
             </button>
-
+            <span className='text-gray-300 select-none'>|</span>
             <button
                 onClick={() => switchLanguage('en')}
-                className={`transition-all duration-200 hover:scale-110 border-none outline-none bg-transparent flex items-center ${
-                    locale === 'en' ? 'shadow-lg shadow-[#005baa]/30' : 'hover:shadow-md'
+                className={`font-montserrat text-sm tracking-wider px-2 py-1 transition-colors duration-200 ${
+                    locale === 'en'
+                        ? 'text-[var(--dp-primary)] font-semibold'
+                        : 'text-gray-400 font-medium hover:text-gray-600'
                 }`}
                 aria-label='Switch to English'
             >
-                <div style={{ width: 40, height: 24, borderRadius: 6, overflow: 'hidden', display: 'flex' }}>
-                    <Flag code='GB' style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt='British flag' />
-                </div>
+                EN
             </button>
         </div>
     );

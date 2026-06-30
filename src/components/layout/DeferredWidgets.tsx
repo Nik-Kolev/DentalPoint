@@ -12,7 +12,6 @@ const CookieConsent = dynamic(() => import('@/components/shared/CookieConsent'),
 const FloatingCTA = dynamic(() => import('@/components/shared/FloatingCTA'), {
     ssr: false,
 });
-
 export default function DeferredWidgets() {
     return (
         <>

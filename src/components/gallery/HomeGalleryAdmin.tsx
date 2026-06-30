@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import type { HomeGalleryItem } from '@/types/gallery';
-import { uploadGalleryImage, removeGalleryImage, rotateGalleryImage, reorderGallery } from '@/lib/actions/gallery';
+import { uploadGalleryImage, removeGalleryImage, reorderGallery } from '@/lib/actions/gallery';
 
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
@@ -24,7 +24,6 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
     const [dragOverId, setDragOverId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
-    const [rotatingKey, setRotatingKey] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const snapshotRef = useRef<DisplayItem[]>(initialItems);
 
@@ -64,29 +63,9 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
         }
     };
 
-    const handleRotate = async (id: string, direction: 'left' | 'right') => {
-        const key = `${id}-${direction}`;
-        setRotatingKey(key);
-        try {
-            await rotateGalleryImage('home', id, direction);
-            const cacheBust = String(Date.now());
-            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, cacheBust } : i)));
-            setLoadedIds((prev) => {
-                const next = new Set(prev);
-                next.delete(id);
-                return next;
-            });
-        } catch (err) {
-            console.error(err);
-            alert('Грешка при завъртане');
-        } finally {
-            setRotatingKey(null);
-        }
-    };
-
     const handleRevert = async () => {
         const confirmed = window.confirm(
-            'Ще върнете реда на снимките към оригиналния. Изтритите или завъртените снимки не могат да бъдат възстановени. Продължавате?',
+            'Ще върнете реда на снимките към оригиналния. Изтритите снимки не могат да бъдат възстановени. Продължавате?',
         );
         if (!confirmed) return;
         const original = snapshotRef.current;
@@ -184,34 +163,7 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
                                         ⠿ Плъзни
                                     </span>
                                 </div>
-                                <div className='mt-auto flex justify-center gap-2 pb-2 px-2'>
-                                    {(
-                                        [
-                                            { dir: 'left' as const, icon: '↺', title: 'Завърти наляво' },
-                                            { dir: 'right' as const, icon: '↻', title: 'Завърти надясно' },
-                                        ] as const
-                                    ).map(({ dir, icon, title }) => {
-                                        const busy = rotatingKey === `${item.id}-${dir}`;
-                                        return (
-                                            <button
-                                                key={dir}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleRotate(item.id, dir);
-                                                }}
-                                                disabled={busy}
-                                                title={title}
-                                                className={`rounded-full w-9 h-9 flex items-center justify-center shadow text-sm font-bold transition-colors
-                                                    ${busy ? 'bg-[#005baa] text-white cursor-not-allowed' : 'bg-white/90 hover:bg-[#005baa] hover:text-white text-gray-800'}`}
-                                            >
-                                                {busy ? (
-                                                    <span className='block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
-                                                ) : (
-                                                    icon
-                                                )}
-                                            </button>
-                                        );
-                                    })}
+                                <div className='mt-auto flex justify-center pb-2 px-2'>
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();

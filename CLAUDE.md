@@ -36,11 +36,11 @@ src/
                       # GalleryCasesViewer, GalleryCasesAdmin,
                       # BeforeAfterSlider, ImageLightbox
     layout/           # Navigation, DeferredWidgets
-    shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, etc.
+    shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, DentalPointLogo, etc.
     statistics/       # BarChart
   lib/
     actions/
-      gallery.ts      # Server Actions: uploadGalleryImage, removeGalleryImage, rotateGalleryImage,
+      gallery.ts      # Server Actions: uploadGalleryImage, removeGalleryImage,
                       # reorderGallery (home/certs), reorderGalleryCases, addGalleryCase,
                       # removeGalleryCase, replaceGalleryCaseImage, updateGalleryCaseText
     analytics.ts      # GA4 fetch + mock data generator
@@ -131,10 +131,11 @@ GalleryCasesAdmin.tsx    ← 'use client', full CRUD — receives locale as stri
 ### Server Actions — gallery mutations
 All gallery mutations live in `src/lib/actions/gallery.ts` (file-level `'use server'`).
 
-- `GalleryConfig` interface + config map keyed by `Gallery = 'home' | 'certificates'` — 4 shared private impls
+- `GalleryConfig` interface + config map keyed by `Gallery = 'home' | 'certificates'` — 3 shared private impls (`_upload`, `_remove`, `_reorder`)
 - Gallery cases use separate named actions: `addGalleryCase`, `removeGalleryCase`, `replaceGalleryCaseImage`, `updateGalleryCaseText`, `reorderGalleryCases`
 - `assertAdmin()` is called first in every action — throws `new Error('Unauthorized')` (NOT `Response` — Server Actions throw, API routes return)
 - Client components call them directly: `await uploadGalleryImage('home', formData)` — no `fetch()`
+- Body size limit for large image uploads lives under `experimental.serverActions.bodySizeLimit` in `next.config.js` — NOT top-level (Next.js 16.2.9 differs from Next.js 15 here)
 
 ### Gallery data
 Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-data.ts`.
@@ -144,9 +145,10 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 
 ### Image pipeline — admin uploads
 - Images uploaded via browser, saved to `public/Images/<gallery>/` with UUID filenames.
-- **Home/certificates:** raw JPEG bytes passed through (no re-encode); EXIF rotation preserved for the browser. Non-JPEGs converted via `sharp` at quality 95.
+- **Home/certificates:** raw JPEG bytes passed through (no re-encode); EXIF rotation is handled by the browser (no quality loss). Non-JPEGs converted via `sharp` at quality 95.
 - **Gallery cases (`processGalleryImage(file, targetRatio?)`):** when a ratio is provided, applies EXIF auto-rotation first (`sharp.rotate()`), reads post-rotation pixel dimensions, then center-crops to the target ratio with `sharp.resize(w, h, { fit: 'cover', position: 'center' })`. Both before and after images are cropped to the same ratio on upload, so `object-cover` fills them identically in the slider with no zoom mismatch.
-- Manual rotation: `sharp` rotates 90°, writes back in place. Client cache-busts with `?v=<timestamp>`.
+- **No manual rotation UI** — removed in Phase 8. Doctor uploads via Xerox scanner (not iPhone), so EXIF rotation issues don't occur and re-encoding would cause quality loss. The `sharp.rotate()` EXIF auto-correction in `processGalleryImage` is kept (it's part of upload, not a UI button).
+- **Windows sharp file lock fix:** on Windows, `sharp(filePath)` holds the file handle open; writing to the same path fails. Always read to buffer first: `const buf = fs.readFileSync(filePath); sharp(buf)...` — then write the output buffer back.
 - `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
 - The static `prebuild` scripts (`optimize-images.js`, `generate-blur-placeholders.js`) still run before every `npm run build` for non-gallery static images.
 
@@ -162,10 +164,21 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 - In server components and Server Actions: call `await auth()` to get the session.
 
 ### Brand
-- Primary blue: `#005baa` | Accent blue: `#009fe3`
-- Background gradient: `from-[#e3f3fb] to-white`
+- Design tokens live in `src/app/globals.css` as CSS custom properties, referenced everywhere via `var(--dp-*)`.
+- Primary teal: `--dp-primary: #1a7a8a` | Accent amber: `--dp-accent: #f4a261`
+- Background from: `--dp-bg-from: #f7f4ef` | Heading: `--dp-heading: #1a7a8a`
+- CTA block: `--dp-cta-bg: #1a7a8a` | CTA button: `--dp-cta-btn-bg: #f4a261`
+- Use `var(--dp-primary)` in JSX (inline styles or Tailwind arbitrary values like `text-[var(--dp-primary)]`).
 - Fonts: `font-playfair` (Playfair Display) and `font-montserrat` (Montserrat)
   — CSS variables defined in `src/app/[locale]/layout.tsx`, used as Tailwind classes.
+- Logo wordmark: `DentalPointLogo` component (`src/components/shared/DentalPointLogo.tsx`) — renders "DENTAL POINT" in Montserrat bold, primary + accent colors.
+
+### Footer layout
+Footer uses `flex justify-between` to push two groups to opposite edges:
+- **Left:** wordmark (`DentalPointLogo` variant) + tagline (`t('footerTagline')`) + social icons, constrained to `max-w-[280px]`
+- **Right:** `flex gap-16` — Navigation column + Contact column, both left-aligned inside their column
+- On mobile: stacks to `flex-col`; columns always left-aligned
+- Copyright bar: `text-white/60` (not the accent color)
 
 ### Cloudflare image loader
 - `src/lib/cloudflareLoader.ts` is ready but not active in `next.config.js`.

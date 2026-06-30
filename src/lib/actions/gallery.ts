@@ -115,19 +115,6 @@ async function _remove(id: string, config: GalleryConfig): Promise<void> {
     appendPendingChange({ page: config.page, action: 'remove', detail: target.filename });
 }
 
-async function _rotate(id: string, direction: 'left' | 'right', config: GalleryConfig): Promise<void> {
-    const items = config.read();
-    const target = items.find((i) => i.id === id);
-    if (!target) throw new Error('Not found');
-
-    const filePath = path.join(process.cwd(), 'public', target.path);
-    const degrees = direction === 'right' ? 90 : 270;
-    const rotated = await sharp(filePath).rotate(degrees).jpeg({ quality: 100 }).toBuffer();
-    fs.writeFileSync(filePath, rotated);
-
-    config.write(items);
-    appendPendingChange({ page: config.page, action: 'rotate', detail: target.filename });
-}
 
 async function _reorder(orderedIds: string[], config: GalleryConfig): Promise<void> {
     const items = config.read();
@@ -152,10 +139,6 @@ export async function removeGalleryImage(gallery: Gallery, id: string) {
     return _remove(id, configs[gallery]);
 }
 
-export async function rotateGalleryImage(gallery: Gallery, id: string, direction: 'left' | 'right') {
-    await assertAdmin();
-    return _rotate(id, direction, configs[gallery]);
-}
 
 export async function reorderGallery(gallery: Gallery, orderedIds: string[]) {
     await assertAdmin();
@@ -295,7 +278,7 @@ export async function replaceGalleryCaseImage(
     const ratio = parseAspectRatio(target.aspectRatio ?? 'aspect-[4/3]');
     const buffer = await processGalleryImage(file, ratio);
     fs.writeFileSync(filePath, buffer);
-    appendPendingChange({ page: 'gallery', action: 'rotate', detail: `${id}-${slot}` });
+    appendPendingChange({ page: 'gallery', action: 'replace', detail: `${id}-${slot}` });
 }
 
 export async function updateGalleryCaseText(

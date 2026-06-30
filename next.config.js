@@ -19,6 +19,9 @@ const nextConfig = {
     },
     experimental: {
         optimizePackageImports: ['react-world-flags'],
+        serverActions: {
+            bodySizeLimit: '10mb',
+        },
     },
     typescript: {
         ignoreBuildErrors: true,
