@@ -170,7 +170,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
 
             <footer className='bg-[var(--dp-primary)] text-white'>
                 <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6'>
-                    <div className='flex flex-col md:flex-row md:items-start md:justify-between gap-10'>
+                    <div className='flex flex-col items-center md:flex-row md:items-start md:justify-between gap-10'>
 
                         {/* Left — wordmark + tagline + social */}
                         <div className='flex flex-col gap-5 max-w-[280px]'>
