@@ -18,7 +18,6 @@ const nextConfig = {
         removeConsole: process.env.NODE_ENV === 'production',
     },
     experimental: {
-        optimizePackageImports: ['react-world-flags'],
         serverActions: {
             bodySizeLimit: '10mb',
         },
