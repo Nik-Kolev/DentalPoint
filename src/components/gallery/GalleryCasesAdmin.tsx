@@ -76,7 +76,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
 
     // Per-case image replacement — single shared file input, ref tracks which slot is pending
     const [replacingKey, setReplacingKey] = useState<string | null>(null);
-    const [cacheBust, setCacheBust] = useState<Record<string, { before: number; after: number }>>({});
     const replaceFileRef = useRef<HTMLInputElement | null>(null);
     const pendingReplaceRef = useRef<{ id: string; slot: 'before' | 'after' } | null>(null);
 
@@ -143,15 +142,12 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
         const formData = new FormData();
         formData.append('file', file);
         try {
-            await replaceGalleryCaseImage(id, slot, formData);
-            const bust = Date.now();
-            setCacheBust((prev) => ({
-                ...prev,
-                [id]: {
-                    before: slot === 'before' ? bust : (prev[id]?.before ?? 0),
-                    after: slot === 'after' ? bust : (prev[id]?.after ?? 0),
-                },
-            }));
+            const { path: newPath } = await replaceGalleryCaseImage(id, slot, formData);
+            setCases((prev) => prev.map((c) =>
+                c.id === id
+                    ? { ...c, [slot === 'before' ? 'beforePath' : 'afterPath']: newPath }
+                    : c,
+            ));
         } catch (err) {
             console.error(err);
             alert('Грешка при замяна на снимката');
@@ -221,13 +217,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
     };
 
     // ── Helpers ──────────────────────────────────────────────────────────────
-    const getSrc = (c: GalleryCase, slot: 'before' | 'after') => {
-        const base = slot === 'before' ? c.beforePath : c.afterPath;
-        const bust = cacheBust[c.id]?.[slot];
-        return bust ? `${base}?v=${bust}` : base;
-    };
-
-    const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#005baa]';
+    const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--dp-primary)]';
     const labelCls = 'block text-xs font-semibold text-gray-500 mb-1';
 
     return (
@@ -247,8 +237,8 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                 {/* Add new case — shown at top so newest appears first */}
                 {editMode && (
                     addingNew ? (
-                        <div className='rounded-2xl border-2 border-[#005baa]/30 bg-white p-6 space-y-4'>
-                            <h3 className='font-bold text-[#005baa] text-sm'>Нов случай</h3>
+                        <div className='rounded-2xl border-2 border-[var(--dp-primary)]/30 bg-white p-6 space-y-4'>
+                            <h3 className='font-bold text-[var(--dp-primary)] text-sm'>Нов случай</h3>
 
                             {/* Image upload areas */}
                             <div className='grid grid-cols-2 gap-4'>
@@ -260,7 +250,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                             <label className={labelCls}>{label}</label>
                                             <button
                                                 onClick={() => (slot === 'before' ? newBeforeRef : newAfterRef).current?.click()}
-                                                className='w-full aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 hover:border-[#005baa] transition-colors overflow-hidden relative bg-gray-50'
+                                                className='w-full aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 hover:border-[var(--dp-primary)] transition-colors overflow-hidden relative bg-gray-50'
                                             >
                                                 {preview ? (
                                                     // eslint-disable-next-line @next/next/no-img-element
@@ -312,7 +302,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                     {ASPECT_PRESETS.map((p) => (
                                         <button key={p.value} onClick={() => setNewCase((prev) => ({ ...prev, aspectRatio: p.value }))}
                                             className={`flex-1 py-2 rounded-lg text-xs font-semibold border transition-colors
-                                                ${newCase.aspectRatio === p.value ? 'bg-[#005baa] text-white border-[#005baa]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#005baa]'}`}>
+                                                ${newCase.aspectRatio === p.value ? 'bg-[var(--dp-primary)] text-white border-[var(--dp-primary)]' : 'bg-white text-gray-600 border-gray-200 hover:border-[var(--dp-primary)]'}`}>
                                             {p.label}
                                         </button>
                                     ))}
@@ -322,7 +312,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                             {/* Actions */}
                             <div className='flex gap-3'>
                                 <button onClick={handleAddCase} disabled={addingLoading}
-                                    className='flex-1 py-2.5 bg-[#005baa] text-white rounded-xl text-sm font-semibold hover:bg-[#004a8f] disabled:opacity-60 transition-colors flex items-center justify-center gap-2'>
+                                    className='flex-1 py-2.5 bg-[var(--dp-primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--dp-primary)]/90 disabled:opacity-60 transition-colors flex items-center justify-center gap-2'>
                                     {addingLoading && <span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />}
                                     {addingLoading ? 'Добавя...' : 'Добави случай'}
                                 </button>
@@ -334,7 +324,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                         </div>
                     ) : (
                         <button onClick={() => setAddingNew(true)}
-                            className='w-full py-4 rounded-2xl border-2 border-dashed border-[#005baa] text-[#005baa] font-semibold hover:bg-[#e3f3fb] transition-colors text-sm'>
+                            className='w-full py-4 rounded-2xl border-2 border-dashed border-[var(--dp-primary)] text-[var(--dp-primary)] font-semibold hover:bg-[var(--dp-primary)]/10 transition-colors text-sm'>
                             + Добави нов случай
                         </button>
                     )
@@ -356,7 +346,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 className={`relative flex flex-col lg:flex-row gap-6 lg:gap-10 items-center rounded-2xl transition-all duration-200
                                     ${!editMode && index % 2 === 1 ? 'lg:flex-row-reverse' : ''}
                                     ${editMode ? 'p-4 bg-white ring-1 ring-gray-200 shadow-sm' : ''}
-                                    ${isDragOver ? 'ring-2 ring-[#005baa] scale-[1.01]' : ''}
+                                    ${isDragOver ? 'ring-2 ring-[var(--dp-primary)] scale-[1.01]' : ''}
                                     ${isDragging ? 'opacity-50' : ''}
                                     ${editMode && !isEditing ? 'cursor-grab active:cursor-grabbing' : ''}
                                 `}
@@ -373,8 +363,8 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 <div className={`w-full lg:w-3/5 ${editMode ? 'mt-5' : ''}`}>
                                     <div className={editMode && !isEditing ? 'pointer-events-none' : ''}>
                                         <BeforeAfterSlider
-                                            beforeImage={getSrc(c, 'before')}
-                                            afterImage={getSrc(c, 'after')}
+                                            beforeImage={c.beforePath}
+                                            afterImage={c.afterPath}
                                             beforeLabel={beforeLabel}
                                             afterLabel={afterLabel}
                                             priority={index === 0}
@@ -401,7 +391,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                                         }}
                                                         disabled={busy}
                                                         className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors flex items-center justify-center gap-1
-                                                            ${busy ? 'bg-[#005baa] text-white border-[#005baa] cursor-not-allowed' : 'bg-white text-gray-600 border-gray-300 hover:border-[#005baa] hover:text-[#005baa]'}`}
+                                                            ${busy ? 'bg-[var(--dp-primary)] text-white border-[var(--dp-primary)] cursor-not-allowed' : 'bg-white text-gray-600 border-gray-300 hover:border-[var(--dp-primary)] hover:text-[var(--dp-primary)]'}`}
                                                     >
                                                         {busy ? (
                                                             <>
@@ -419,7 +409,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 {/* Info / edit panel */}
                                 <div className='w-full lg:w-2/5'>
                                     {isEditing ? (
-                                        <div className='bg-white rounded-2xl p-5 shadow-lg border border-[#005baa]/30 space-y-3' onClick={(e) => e.stopPropagation()} onDragStart={(e) => e.stopPropagation()}>
+                                        <div className='bg-white rounded-2xl p-5 shadow-lg border border-[var(--dp-primary)]/30 space-y-3' onClick={(e) => e.stopPropagation()} onDragStart={(e) => e.stopPropagation()}>
                                             <div>
                                                 <label className={labelCls}>Заглавие (Български)</label>
                                                 <input type='text' className={inputCls} value={editFields.captionBg}
@@ -447,7 +437,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                                         <button key={p.value} type='button'
                                                             onClick={() => setEditFields((f) => ({ ...f, aspectRatio: p.value }))}
                                                             className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors
-                                                                ${editFields.aspectRatio === p.value ? 'bg-[#005baa] text-white border-[#005baa]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#005baa]'}`}>
+                                                                ${editFields.aspectRatio === p.value ? 'bg-[var(--dp-primary)] text-white border-[var(--dp-primary)]' : 'bg-white text-gray-600 border-gray-200 hover:border-[var(--dp-primary)]'}`}>
                                                             {p.label}
                                                         </button>
                                                     ))}
@@ -455,7 +445,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                             </div>
                                             <div className='flex gap-2 pt-1'>
                                                 <button onClick={() => handleSaveText(c.id)} disabled={savingText}
-                                                    className='flex-1 py-2 bg-[#005baa] text-white rounded-lg text-sm font-semibold hover:bg-[#004a8f] disabled:opacity-60 transition-colors'>
+                                                    className='flex-1 py-2 bg-[var(--dp-primary)] text-white rounded-lg text-sm font-semibold hover:bg-[var(--dp-primary)]/90 disabled:opacity-60 transition-colors'>
                                                     {savingText ? 'Запазва...' : 'Запази'}
                                                 </button>
                                                 <button onClick={() => setEditingId(null)}
@@ -465,8 +455,8 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[#e3f3fb] h-full'>
-                                            <h3 className='text-xl font-bold text-[#005baa] mb-1'>{c.captionBg}</h3>
+                                        <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[var(--dp-primary)]/10 h-full'>
+                                            <h3 className='text-xl font-bold text-[var(--dp-primary)] mb-1'>{c.captionBg}</h3>
                                             <p className='text-sm text-gray-400 italic mb-3'>{c.captionEn}</p>
                                             <p className='text-gray-600 leading-relaxed text-sm'>
                                                 {locale === 'bg' ? c.descriptionBg : c.descriptionEn}
@@ -506,7 +496,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                         <div className='w-px h-5 bg-gray-200' />
                         <button
                             onClick={() => { setEditMode(false); setEditingId(null); setAddingNew(false); }}
-                            className='px-4 py-1.5 bg-[#005baa] text-white rounded-full text-sm font-semibold hover:bg-[#004a8f] transition-colors'
+                            className='px-4 py-1.5 bg-[var(--dp-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--dp-primary)]/90 transition-colors'
                         >
                             ✓ Готово
                         </button>

@@ -8,10 +8,8 @@ import { uploadGalleryImage, removeGalleryImage, reorderGallery } from '@/lib/ac
 
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
-type DisplayItem = Certificate & { cacheBust?: string };
-
 export default function CertificatesAdmin({ initialItems }: { initialItems: Certificate[] }) {
-    const [items, setItems] = useState<DisplayItem[]>(initialItems);
+    const [items, setItems] = useState<Certificate[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
     const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
     const [dragId, setDragId] = useState<string | null>(null);
@@ -19,13 +17,12 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
     const [uploading, setUploading] = useState(false);
     const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const snapshotRef = useRef<DisplayItem[]>(initialItems);
+    const snapshotRef = useRef<Certificate[]>(initialItems);
 
-    const handleImageClick = (item: DisplayItem) => {
+    const handleImageClick = (item: Certificate) => {
         if (editMode) return;
         if (window.innerWidth >= 640) {
-            const src = item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path;
-            setLightbox({ src, alt: item.alt });
+            setLightbox({ src: item.path, alt: item.alt });
         }
     };
 
@@ -120,7 +117,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                         onClick={() => handleImageClick(item)}
                         className={`relative bg-white rounded-lg shadow-md p-2 sm:p-3 transition-all duration-200
                             ${editMode ? 'cursor-grab active:cursor-grabbing' : 'hover:shadow-lg sm:cursor-pointer'}
-                            ${dragOverId === item.id && dragId !== item.id ? 'ring-2 ring-[#005baa] scale-105' : ''}
+                            ${dragOverId === item.id && dragId !== item.id ? 'ring-2 ring-[var(--dp-primary)] scale-105' : ''}
                             ${dragId === item.id ? 'opacity-50' : ''}
                         `}
                     >
@@ -129,7 +126,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                                 <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
                             )}
                             <Image
-                                src={item.cacheBust ? `${item.path}?v=${item.cacheBust}` : item.path}
+                                src={item.path}
                                 alt={item.alt}
                                 fill
                                 unoptimized
@@ -166,11 +163,11 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className='aspect-square rounded-lg border-2 border-dashed border-[#005baa] flex flex-col items-center justify-center gap-2 text-[#005baa] hover:bg-[#e3f3fb] transition-colors disabled:opacity-50'
+                        className='aspect-square rounded-lg border-2 border-dashed border-[var(--dp-primary)] flex flex-col items-center justify-center gap-2 text-[var(--dp-primary)] hover:bg-[var(--dp-primary)]/10 transition-colors disabled:opacity-50'
                     >
                         {uploading ? (
                             <>
-                                <span className='block w-6 h-6 border-2 border-[#005baa] border-t-transparent rounded-full animate-spin' />
+                                <span className='block w-6 h-6 border-2 border-[var(--dp-primary)] border-t-transparent rounded-full animate-spin' />
                                 <span className='text-sm'>Качване...</span>
                             </>
                         ) : (

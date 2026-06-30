@@ -263,7 +263,7 @@ export async function replaceGalleryCaseImage(
     id: string,
     slot: 'before' | 'after',
     formData: FormData,
-): Promise<void> {
+): Promise<{ path: string }> {
     await assertAdmin();
     const file = formData.get('file') as File | null;
     if (!file) throw new Error('No file provided');
@@ -272,13 +272,24 @@ export async function replaceGalleryCaseImage(
     const target = cases.find((c) => c.id === id);
     if (!target) throw new Error('Case not found');
 
-    const existingPath = slot === 'before' ? target.beforePath : target.afterPath;
-    const filePath = path.join(process.cwd(), 'public', existingPath);
+    const oldRelPath = slot === 'before' ? target.beforePath : target.afterPath;
+    const newFilename = `${randomUUID()}.jpg`;
+    const newRelPath = `/Images/gallery/${id}/${newFilename}`;
 
     const ratio = parseAspectRatio(target.aspectRatio ?? 'aspect-[4/3]');
     const buffer = await processGalleryImage(file, ratio);
-    fs.writeFileSync(filePath, buffer);
+    fs.writeFileSync(path.join(process.cwd(), 'public', newRelPath), buffer);
+
+    try { fs.unlinkSync(path.join(process.cwd(), 'public', oldRelPath)); } catch { /* ok */ }
+
+    const updated = cases.map((c) =>
+        c.id === id
+            ? { ...c, [slot === 'before' ? 'beforePath' : 'afterPath']: newRelPath }
+            : c,
+    );
+    writeGalleryCases(updated);
     appendPendingChange({ page: 'gallery', action: 'replace', detail: `${id}-${slot}` });
+    return { path: newRelPath };
 }
 
 export async function updateGalleryCaseText(
