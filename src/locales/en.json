@@ -65,7 +65,7 @@
         "openInMaps": "Open in Google Maps"
     },
     "team": {
-        "title": "Our Team",
+        "title": "Team",
         "subtitle": "Meet our specialists",
         "person1Name": "Dr. Yavor Ivanov",
         "person1Title": "Doctor of Dental Medicine",
@@ -195,7 +195,10 @@
         ]
     },
     "reviews": {
-        "title": "Patient Reviews",
+        "title": "Reviews",
+        "subtitle": "See what our patients say about us",
+        "loadMore": "Load more",
+        "showLess": "Show less",
         "ctaTitle": "Join our satisfied patients",
         "ctaSubtitle": "Book an appointment and experience professional care",
         "items": [

@@ -6,10 +6,10 @@ import StaticCTA from '@/components/shared/StaticCTA';
 import CertificatesAdmin from '@/components/gallery/CertificatesAdmin';
 import CertificatesViewer from '@/components/gallery/CertificatesViewer';
 
-export const metadata: Metadata = {
-    title: 'Certificates & Licenses',
-    description: 'View our professional dental certificates and licenses.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('licenses');
+    return { title: t('title') };
+}
 
 export default async function Licenses() {
     const [items, session, t] = await Promise.all([

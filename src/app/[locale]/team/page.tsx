@@ -5,11 +5,10 @@ import { readTeamMembers } from '@/lib/gallery-data';
 import TeamViewer from '@/components/team/TeamViewer';
 import TeamAdmin from '@/components/team/TeamAdmin';
 
-export const metadata: Metadata = {
-    title: 'Our Team',
-    description:
-        'Meet our experienced dental professionals at Dental Point. Learn about our skilled dentists and their specializations.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('team');
+    return { title: t('title') };
+}
 
 export default async function Team({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;

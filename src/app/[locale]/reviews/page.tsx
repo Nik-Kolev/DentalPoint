@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { getTranslations, getMessages } from 'next-intl/server';
-import StaticCTA from '@/components/shared/StaticCTA';
+import { getTranslations } from 'next-intl/server';
 import ReviewsList from '@/components/shared/ReviewsList';
 
-export const metadata: Metadata = {
-    title: 'Reviews',
-    description: 'Read reviews from our satisfied patients.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('reviews');
+    return { title: t('title') };
+}
 
 interface ReviewItem {
     name: string;
@@ -17,27 +16,35 @@ interface ReviewItem {
 }
 
 export default async function Reviews() {
-    const t = await getTranslations('licenses');
-    const messages = await getMessages();
-    const reviews = messages.reviews as any;
+    const t = await getTranslations('reviews');
 
-    const reviewItems = [...(reviews.items || [])].sort((a: ReviewItem, b: ReviewItem) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-    }) as ReviewItem[];
+    const reviewItems = (t.raw('items') as ReviewItem[]).sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
 
     return (
-        <div className='min-h-screen py-12 bg-gradient-to-b from-[#e3f3fb] to-white'>
-            <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center pb-8 sm:pb-12'>
-                    <h1 className='text-3xl font-extrabold text-[#005baa]'>{reviews.title}</h1>
-                </div>
+        <div className='min-h-screen bg-gradient-to-b from-[var(--dp-bg-from)] to-white'>
+            <section className='px-4 sm:px-8 pt-12 pb-12'>
+                <div className='max-w-3xl mx-auto'>
+                    <div className='mb-10 sm:mb-14'>
+                        <div className='flex items-center gap-3 mb-3'>
+                            <div className='w-1.5 h-12 rounded-full bg-[var(--dp-primary)]' />
+                            <h1 className='font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--dp-heading)]'>
+                                {t('title')}
+                            </h1>
+                        </div>
+                        <p className='font-montserrat text-gray-500 text-base sm:text-lg ml-5'>
+                            {t('subtitle')}
+                        </p>
+                    </div>
 
-                <ReviewsList items={reviewItems} loadMoreLabel={t('loadMore')} showLessLabel={t('showLess')} />
-
-                <div className='pt-8 sm:pt-12'>
-                    <StaticCTA title={reviews.ctaTitle} subtitle={reviews.ctaSubtitle} />
+                    <ReviewsList
+                        items={reviewItems}
+                        loadMoreLabel={t('loadMore')}
+                        showLessLabel={t('showLess')}
+                    />
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

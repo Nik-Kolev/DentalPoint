@@ -6,10 +6,10 @@ import StaticCTA from '@/components/shared/StaticCTA';
 import GalleryCasesViewer from '@/components/gallery/GalleryCasesViewer';
 import GalleryCasesAdmin from '@/components/gallery/GalleryCasesAdmin';
 
-export const metadata: Metadata = {
-    title: 'Gallery',
-    description: 'View our dental work gallery showcasing before and after results.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('gallery');
+    return { title: t('title') };
+}
 
 export default async function Gallery({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;

@@ -201,7 +201,7 @@ export default function TeamAdmin({ initialMembers, locale }: Props) {
                         </div>
 
                         {/* Bio / Edit form */}
-                        <div className='flex flex-col justify-center p-8 xl:p-12 flex-1'>
+                        <div className='flex flex-col p-8 xl:p-10 flex-1'>
                             {editMode && fields ? (
                                 <div className='flex flex-col gap-4'>
                                     {/* BG fields */}
