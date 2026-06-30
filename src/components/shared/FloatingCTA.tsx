@@ -126,7 +126,7 @@ export default function FloatingCTA() {
             <Link
                 href='/contact'
                 className={`flex items-center justify-center gap-2 px-4 py-3 text-base font-bold text-white bg-[var(--dp-accent)] rounded-xl shadow-2xl hover:opacity-90 transition-all duration-300 hover:scale-[1.02] pointer-events-auto ${
-                    isBackToTopVisible || isPageScrollable ? 'w-[calc(100%-4rem)]' : 'w-full'
+                    isBackToTopVisible ? 'w-[calc(100%-4rem)]' : 'w-full'
                 }`}
             >
                 <svg className='w-5 h-5 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
