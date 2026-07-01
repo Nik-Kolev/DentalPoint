@@ -137,19 +137,19 @@ export default function BeforeAfterSlider({
                     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
                         {/* Handle - smoothly scales near edges */}
                         <div
-                            className='w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-[#005baa] transition-transform duration-100'
+                            className='w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center border-4 border-[var(--dp-primary)] transition-transform duration-100'
                             style={{
                                 transform: `scale(${1 + Math.max(0, (15 - sliderPosition) / 15, (sliderPosition - 85) / 15) * 0.3})`,
                             }}
                         >
-                            <svg className='w-5 h-5 text-[#005baa] -mr-1' fill='currentColor' viewBox='0 0 20 20'>
+                            <svg className='w-5 h-5 text-[var(--dp-primary)] -mr-1' fill='currentColor' viewBox='0 0 20 20'>
                                 <path
                                     fillRule='evenodd'
                                     d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
                                     clipRule='evenodd'
                                 />
                             </svg>
-                            <svg className='w-5 h-5 text-[#005baa] -ml-1' fill='currentColor' viewBox='0 0 20 20'>
+                            <svg className='w-5 h-5 text-[var(--dp-primary)] -ml-1' fill='currentColor' viewBox='0 0 20 20'>
                                 <path
                                     fillRule='evenodd'
                                     d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
@@ -163,7 +163,7 @@ export default function BeforeAfterSlider({
 
             {/* Description */}
             {description && (
-                <div className='mt-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-[#e3f3fb]'>
+                <div className='mt-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-[var(--dp-primary)]/10'>
                     <p className='text-gray-700 text-center leading-relaxed'>{description}</p>
                 </div>
             )}

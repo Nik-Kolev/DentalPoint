@@ -7,6 +7,7 @@ const nextConfig = {
         formats: ['image/avif', 'image/webp'],
         deviceSizes: [384, 640, 750, 828, 1080, 1920, 2560],
         imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+        qualities: [75, 80],
         minimumCacheTTL: 31536000,
         dangerouslyAllowSVG: false,
         contentDispositionType: 'inline',

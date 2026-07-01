@@ -55,8 +55,8 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                         </div>
 
                         <div className='w-full lg:w-2/5'>
-                            <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[#e3f3fb] h-full'>
-                                <h3 className='text-xl font-bold text-[#005baa] mb-4'>
+                            <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[var(--dp-primary)]/10 h-full'>
+                                <h3 className='text-xl font-bold text-[var(--dp-primary)] mb-4'>
                                     {locale === 'bg' ? c.captionBg : c.captionEn}
                                 </h3>
                                 <p className='text-gray-600 leading-relaxed'>
@@ -74,7 +74,7 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                         <button
                             type='button'
                             onClick={loadMore}
-                            className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            className='px-6 py-2.5 bg-[var(--dp-primary)] text-white rounded-full font-semibold text-sm hover:bg-[var(--dp-primary)]/90 transition-colors shadow-md'
                         >
                             {loadMoreLabel}
                         </button>
@@ -83,7 +83,7 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                         <button
                             type='button'
                             onClick={showLess}
-                            className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            className='px-6 py-2.5 bg-gray-100 text-gray-700 rounded-full font-semibold text-sm hover:bg-gray-200 transition-colors'
                         >
                             {showLessLabel}
                         </button>

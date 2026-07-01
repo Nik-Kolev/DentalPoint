@@ -173,6 +173,8 @@
         "imageError": "Image could not be loaded",
         "after": "After",
         "sliderHint": "Drag the slider to compare results",
+        "loadMore": "Load More",
+        "showLess": "Show Less",
         "items": [
             {
                 "description": "Restoration of a fracture affecting enamel and dentin using aesthetic composite materials."
