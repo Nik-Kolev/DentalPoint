@@ -32,6 +32,8 @@ export interface Certificate {
     path: string;
     alt: string;
     order: number;
+    // Raw CSS ratio "W/H" applied via inline style, NOT a Tailwind class (unlike GalleryCase.aspectRatio)
+    aspectRatio?: string;
     blurDataURL?: string;
 }
 

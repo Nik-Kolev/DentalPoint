@@ -62,7 +62,7 @@ function StatCard({
     const value = useCountUp(target, suffix, startTime ?? null);
     return (
         <div>
-            <div className='text-3xl font-bold text-[#005baa] mb-2'>{value}</div>
+            <div className='text-3xl font-bold text-[var(--dp-primary)] mb-2'>{value}</div>
             <div className='text-gray-600'>{label}</div>
         </div>
     );
@@ -104,7 +104,10 @@ function StatsSection({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <div className='bg-white rounded-lg shadow-lg p-6 sm:p-8 mb-8 sm:mb-12' ref={ref}>
+        <div
+            className='bg-white rounded-2xl shadow-sm border border-[var(--dp-card-border)] p-6 sm:p-8 mb-8 sm:mb-12'
+            ref={ref}
+        >
             <div className='grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center'>
                 {React.Children.map(children, (child) =>
                     React.isValidElement(child)
@@ -154,16 +157,26 @@ export default function CertificatesViewer({ items, loadMoreLabel, showLessLabel
                 <StatCard target={100} suffix='%' label={statsLabels.professionalism} />
             </StatsSection>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start gap-6 sm:gap-8 pb-8 sm:pb-12'>
                 {visibleItems.map((item) => (
                     <div
                         key={item.id}
                         onClick={() => {
                             if (window.innerWidth >= 640) setLightbox({ src: item.path, alt: item.alt });
                         }}
-                        className='bg-white rounded-lg shadow-md p-2 sm:p-3 hover:shadow-lg sm:cursor-pointer transition-all duration-200'
+                        className='rounded-2xl shadow-sm hover:shadow-md p-2 sm:p-3 sm:cursor-pointer transition-all duration-200'
+                        style={{
+                            border: '2px solid transparent',
+                            backgroundImage:
+                                'linear-gradient(white, white), linear-gradient(135deg, var(--dp-primary), var(--dp-accent))',
+                            backgroundOrigin: 'border-box',
+                            backgroundClip: 'padding-box, border-box',
+                        }}
                     >
-                        <div className='relative aspect-square rounded-md overflow-hidden bg-white'>
+                        <div
+                            className='relative aspect-square rounded-md overflow-hidden bg-[var(--dp-bg-from)] shadow-[0_2px_10px_rgba(0,0,0,0.12)]'
+                            style={item.aspectRatio ? { aspectRatio: item.aspectRatio } : undefined}
+                        >
                             {!loadedIds.has(item.id) && (
                                 <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
                             )}
@@ -185,7 +198,7 @@ export default function CertificatesViewer({ items, loadMoreLabel, showLessLabel
                     {hasMore && (
                         <button
                             onClick={() => setVisibleCount((prev) => Math.min(prev + 3, items.length))}
-                            className='px-6 py-3 bg-[#005baa] text-white rounded-lg font-semibold hover:bg-[#004a8c] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            className='px-6 py-2.5 bg-[var(--dp-primary)] text-white rounded-full font-semibold text-sm hover:bg-[var(--dp-primary)]/90 transition-colors shadow-md'
                         >
                             {loadMoreLabel}
                         </button>
@@ -193,7 +206,7 @@ export default function CertificatesViewer({ items, loadMoreLabel, showLessLabel
                     {hasExpanded && (
                         <button
                             onClick={() => setVisibleCount(3)}
-                            className='px-6 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95'
+                            className='px-6 py-2.5 bg-gray-100 text-gray-700 rounded-full font-semibold text-sm hover:bg-gray-200 transition-colors'
                         >
                             {showLessLabel}
                         </button>

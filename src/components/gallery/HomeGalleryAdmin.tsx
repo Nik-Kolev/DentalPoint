@@ -40,7 +40,7 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
         formData.append('file', file);
         try {
             const newItem = await uploadGalleryImage('home', formData);
-            setItems((prev) => [...prev, newItem as DisplayItem]);
+            setItems((prev) => [...prev, newItem as HomeGalleryItem]);
         } catch (err) {
             console.error(err);
             alert('Грешка при качване на снимката');

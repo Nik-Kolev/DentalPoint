@@ -34,7 +34,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
         formData.append('file', file);
         try {
             const newItem = await uploadGalleryImage('certificates', formData);
-            setItems((prev) => [...prev, newItem as DisplayItem]);
+            setItems((prev) => [...prev, newItem as Certificate]);
         } catch (err) {
             console.error(err);
             alert('Грешка при качване на сертификата');
@@ -105,7 +105,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                 </button>
             </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-8 sm:pb-12'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start gap-6 sm:gap-8 pb-8 sm:pb-12'>
                 {items.map((item) => (
                     <div
                         key={item.id}
@@ -115,13 +115,23 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                         onDrop={() => handleDrop(item.id)}
                         onDragEnd={handleDragEnd}
                         onClick={() => handleImageClick(item)}
-                        className={`relative bg-white rounded-lg shadow-md p-2 sm:p-3 transition-all duration-200
-                            ${editMode ? 'cursor-grab active:cursor-grabbing' : 'hover:shadow-lg sm:cursor-pointer'}
+                        className={`relative rounded-2xl shadow-sm p-2 sm:p-3 transition-all duration-200
+                            ${editMode ? 'cursor-grab active:cursor-grabbing' : 'hover:shadow-md sm:cursor-pointer'}
                             ${dragOverId === item.id && dragId !== item.id ? 'ring-2 ring-[var(--dp-primary)] scale-105' : ''}
                             ${dragId === item.id ? 'opacity-50' : ''}
                         `}
+                        style={{
+                            border: '2px solid transparent',
+                            backgroundImage:
+                                'linear-gradient(white, white), linear-gradient(135deg, var(--dp-primary), var(--dp-accent))',
+                            backgroundOrigin: 'border-box',
+                            backgroundClip: 'padding-box, border-box',
+                        }}
                     >
-                        <div className='relative aspect-square rounded-md overflow-hidden bg-white'>
+                        <div
+                            className='relative aspect-square rounded-md overflow-hidden bg-[var(--dp-bg-from)] shadow-[0_2px_10px_rgba(0,0,0,0.12)]'
+                            style={item.aspectRatio ? { aspectRatio: item.aspectRatio } : undefined}
+                        >
                             {!loadedIds.has(item.id) && (
                                 <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
                             )}
@@ -163,7 +173,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className='aspect-square rounded-lg border-2 border-dashed border-[var(--dp-primary)] flex flex-col items-center justify-center gap-2 text-[var(--dp-primary)] hover:bg-[var(--dp-primary)]/10 transition-colors disabled:opacity-50'
+                        className='aspect-square rounded-2xl border-2 border-dashed border-[var(--dp-primary)] flex flex-col items-center justify-center gap-2 text-[var(--dp-primary)] hover:bg-[var(--dp-primary)]/10 transition-colors disabled:opacity-50'
                     >
                         {uploading ? (
                             <>

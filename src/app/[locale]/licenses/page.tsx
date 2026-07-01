@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
 import { readCertificates } from '@/lib/gallery-data';
-import StaticCTA from '@/components/shared/StaticCTA';
 import CertificatesAdmin from '@/components/gallery/CertificatesAdmin';
 import CertificatesViewer from '@/components/gallery/CertificatesViewer';
 
@@ -19,33 +18,36 @@ export default async function Licenses() {
     ]);
 
     return (
-        <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center pb-8 sm:pb-12'>
-                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600'>{t('subtitle')}</p>
-                </div>
+        <div className='min-h-screen bg-gradient-to-b from-[var(--dp-bg-from)] to-white'>
+            <section className='px-4 sm:px-8 pt-12 pb-12'>
+                <div className='max-w-6xl mx-auto'>
+                    <div className='mb-10 sm:mb-14'>
+                        <div className='flex items-center gap-3 mb-3'>
+                            <div className='w-1.5 h-12 rounded-full bg-[var(--dp-primary)]' />
+                            <h1 className='font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--dp-heading)]'>
+                                {t('title')}
+                            </h1>
+                        </div>
+                        <p className='font-montserrat text-gray-500 text-base sm:text-lg ml-5'>{t('subtitle')}</p>
+                    </div>
 
-                {session?.user ? (
-                    <CertificatesAdmin initialItems={items} />
-                ) : (
-                    <CertificatesViewer
-                        items={items}
-                        loadMoreLabel={t('loadMore')}
-                        showLessLabel={t('showLess')}
-                        statsLabels={{
-                            certificates: t('statsCertificates'),
-                            experience: t('statsExperience'),
-                            patients: t('statsPatients'),
-                            professionalism: t('statsProfessionalism'),
-                        }}
-                    />
-                )}
-
-                <div className='pt-8 sm:pt-12'>
-                    <StaticCTA title={t('ctaTitle')} subtitle={t('ctaSubtitle')} />
+                    {session?.user ? (
+                        <CertificatesAdmin initialItems={items} />
+                    ) : (
+                        <CertificatesViewer
+                            items={items}
+                            loadMoreLabel={t('loadMore')}
+                            showLessLabel={t('showLess')}
+                            statsLabels={{
+                                certificates: t('statsCertificates'),
+                                experience: t('statsExperience'),
+                                patients: t('statsPatients'),
+                                professionalism: t('statsProfessionalism'),
+                            }}
+                        />
+                    )}
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

@@ -23,6 +23,7 @@ interface GalleryItem {
     path: string;
     alt: string;
     order: number;
+    aspectRatio?: string;
     blurDataURL?: string;
 }
 
@@ -33,6 +34,7 @@ interface GalleryConfig {
     page: PendingChange['page'];
     read: () => GalleryItem[];
     write: (items: GalleryItem[]) => void;
+    computeAspectRatio?: boolean;
 }
 
 export type Gallery = 'home' | 'certificates';
@@ -55,6 +57,7 @@ const configs: Record<Gallery, GalleryConfig> = {
         page: 'certificates',
         read: readCertificates,
         write: writeCertificates,
+        computeAspectRatio: true,
     },
 };
 
@@ -92,6 +95,11 @@ async function _upload(formData: FormData, config: GalleryConfig): Promise<Galle
         alt: `${config.altPrefix}-${items.length + 1}`,
         order: items.length,
     };
+
+    if (config.computeAspectRatio) {
+        const { width, height } = await sharp(finalBuffer).rotate().metadata();
+        if (width && height) newItem.aspectRatio = `${width}/${height}`;
+    }
 
     config.write([...items, newItem]);
     appendPendingChange({ page: config.page, action: 'add' });

@@ -79,7 +79,7 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt }: ImageL
             >
                 <button
                     ref={closeButtonRef}
-                    className='absolute top-3 right-3 z-10 bg-white/90 text-gray-700 hover:bg-[#005baa] hover:text-white rounded-full p-2 shadow-lg transition-colors'
+                    className='absolute top-3 right-3 z-10 bg-white/90 text-gray-700 hover:bg-[var(--dp-primary)] hover:text-white rounded-full p-2 shadow-lg transition-colors'
                     onClick={onClose}
                     aria-label='Close'
                 >
@@ -89,8 +89,8 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt }: ImageL
                 </button>
 
                 {!imageLoaded && !imageError && (
-                    <div className='flex flex-col items-center gap-3 py-20 px-20 text-[#005baa]'>
-                        <div className='animate-spin rounded-full h-10 w-10 border-b-2 border-[#005baa]' />
+                    <div className='flex flex-col items-center gap-3 py-20 px-20 text-[var(--dp-primary)]'>
+                        <div className='animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--dp-primary)]' />
                         <p className='text-sm'>{t('loading')}</p>
                     </div>
                 )}
