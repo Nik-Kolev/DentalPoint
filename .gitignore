@@ -32,6 +32,10 @@ yarn-error.log*
 .env
 .env.production
 
+# contact form submissions hold patient PII with a 60-day retention policy —
+# must never persist in git history, only on the server filesystem
+data/contact-submissions.json
+
 # documentation file
 DENTALPOINT_DEPLOYMENT_GUIDE.md
 

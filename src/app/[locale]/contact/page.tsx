@@ -1,137 +1,69 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import ContactMap from './ContactMap';
+import { auth } from '@/auth';
+import { readContactSettings } from '@/lib/contact-data';
+import { isContactAway, isContactAwaySoon, formatAwayRange } from '@/lib/contactAway';
+import ContactForm from '@/components/contact/ContactForm';
+import ContactAwayNotice from '@/components/contact/ContactAwayNotice';
+import ContactAwaySoonBanner from '@/components/contact/ContactAwaySoonBanner';
+import ContactAwayAdmin from '@/components/contact/ContactAwayAdmin';
+import { DOCTORS } from '@/lib/doctors';
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('contact');
-    return {
-        title: t('title'),
-        description: t('subtitle'),
-    };
+    return { title: t('title'), description: t('subtitle') };
 }
 
-export default async function Contact() {
-    const t = await getTranslations('contact');
-    const tTeam = await getTranslations('team');
+export default async function Contact({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const [settings, session, t, tTeam] = await Promise.all([
+        readContactSettings(),
+        auth(),
+        getTranslations('contact'),
+        getTranslations('team'),
+    ]);
+
+    const away = isContactAway(settings);
+    const awaySoon = !away && isContactAwaySoon(settings);
+    // Only formatted when actually needed — formatAwayRange() calls Intl.DateTimeFormat on
+    // awayFrom/awayUntil, which throws RangeError on the empty strings every visitor has by
+    // default (away mode off), so this must never run unconditionally on every page load.
+    const dateMessage = away ? t('awayMessage', { range: formatAwayRange(settings, locale) }) : '';
+    const soonMessage = awaySoon ? t('awaySoonMessage', { range: formatAwayRange(settings, locale) }) : '';
 
     return (
-        <div className='min-h-screen py-12 bg-gradient-to-b from-[#f8fafc] to-white'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-                <div className='text-center mb-12'>
-                    <h1 className='text-4xl font-extrabold text-[#005baa] sm:text-5xl'>{t('title')}</h1>
-                    <p className='mt-4 text-xl text-gray-600'>{t('subtitle')}</p>
-                </div>
-
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12'>
-                    {/* Contact Information */}
-                    <div className='bg-white rounded-lg shadow-lg p-8'>
-                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('infoTitle')}</h2>
-
-                        <div className='space-y-8'>
-                            <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-3 flex items-center'>
-                                    <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z'
-                                        />
-                                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
-                                    </svg>
-                                    {t('addressTitle')}
-                                </h3>
-                                <div className='text-gray-700 ml-9 leading-relaxed text-lg'>
-                                    <p>{t('addressLine1')}</p>
-                                    <p>{t('addressLine2')}</p>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
-                                    <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            strokeWidth={2}
-                                            d='M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'
-                                        />
-                                    </svg>
-                                    {t('phoneTitle')}
-                                </h3>
-                                <div className='text-gray-700 ml-9 space-y-2 text-lg'>
-                                    <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>{tTeam('person1Name')}</span>
-                                        <span className='font-bold tabular-nums'>0876 346 261</span>
-                                    </div>
-                                    <div className='flex justify-between items-center'>
-                                        <span className='font-medium'>{tTeam('person2Name')}</span>
-                                        <span className='font-bold tabular-nums'>0878 355 494</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
-                                    <svg className='w-6 h-6 text-[#009fe3] mr-3' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-                                    </svg>
-                                    {t('workingHoursTitle')}
-                                </h3>
-                                <div className='text-gray-700 ml-9 space-y-2 text-lg'>
-                                    {(
-                                        [
-                                            'workingHoursMonday',
-                                            'workingHoursTuesday',
-                                            'workingHoursWednesday',
-                                            'workingHoursThursday',
-                                            'workingHoursFriday',
-                                            'workingHoursSaturday',
-                                            'workingHoursSunday',
-                                        ] as const
-                                    ).map((day) => {
-                                        const text = t(day);
-                                        const parts = text.split(':');
-                                        const dayName = parts[0];
-                                        const time = parts.slice(1).join(':').trim();
-
-                                        return (
-                                            <div key={day} className='flex justify-between items-center border-b border-gray-100 last:border-0 pb-1 last:pb-0'>
-                                                <span className='font-medium'>{dayName}</span>
-                                                <span className='font-bold'>{time}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+        <div className='bg-gradient-to-b from-[var(--dp-bg-from)] to-white'>
+            <section className='px-4 sm:px-8 pt-12 pb-16'>
+                <div className='max-w-xl mx-auto'>
+                    <div className='mb-10 sm:mb-14'>
+                        <div className='flex items-center gap-3 mb-3'>
+                            <div className='w-1.5 h-12 rounded-full bg-[var(--dp-primary)]' />
+                            <h1 className='font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--dp-heading)]'>
+                                {t('title')}
+                            </h1>
                         </div>
+                        <p className='font-montserrat text-gray-500 text-base sm:text-lg ml-5'>{t('subtitle')}</p>
                     </div>
 
-                    {/* Google Maps */}
-                    <div className='bg-white rounded-lg shadow-lg p-8'>
-                        <h2 className='text-3xl font-bold text-[#005baa] mb-8'>{t('locationTitle')}</h2>
-                        <ContactMap />
-                        <div className='mt-8 text-center'>
-                            <a
-                                href='https://www.google.com/maps/place/Dental+Point+-+%D0%B4-%D1%80+%D0%AF%D0%B2%D0%BE%D1%80+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2,+%D0%B4-%D1%80+%D0%95%D0%BA%D0%B0%D1%82%D0%B5%D1%80%D0%B8%D0%BD%D0%B0+%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B0/@43.221575,27.917847,17z/data=!4m6!3m5!1s0x40a455d3a111b459:0xe737faf0914586ae!8m2!3d43.2215545!4d27.917852!16s%2Fg%2F11l6zqphst?entry=ttu&g_ep=EgoyMDI1MDcxNS4xIKXMDSoASAFQAw%3D%3D'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='inline-flex items-center px-6 py-3 bg-[#009fe3] text-white font-semibold rounded-lg hover:bg-[#005baa] transition-colors duration-200'
-                            >
-                                <svg className='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                    <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth={2}
-                                        d='M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14'
-                                    />
-                                </svg>
-                                {t('openInMaps')}
-                            </a>
+                    {session?.user ? (
+                        <ContactAwayAdmin initialSettings={settings} locale={locale} />
+                    ) : away ? (
+                        <div className='bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-[var(--dp-card-border)]'>
+                            <ContactAwayNotice
+                                title={t('awayTitle')}
+                                dateMessage={dateMessage}
+                                callLabel={t('awayCallLabel')}
+                                doctors={DOCTORS.map((d) => ({ name: tTeam(d.name), phone: d.phone }))}
+                            />
                         </div>
-                    </div>
+                    ) : (
+                        <div className='bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-[var(--dp-card-border)]'>
+                            {awaySoon && <ContactAwaySoonBanner message={soonMessage} />}
+                            <ContactForm />
+                        </div>
+                    )}
                 </div>
-            </div>
+            </section>
         </div>
     );
 }
