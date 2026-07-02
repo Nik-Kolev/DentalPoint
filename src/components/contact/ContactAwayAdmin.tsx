@@ -191,10 +191,10 @@ export default function ContactAwayAdmin({ initialSettings, locale }: { initialS
                         doctors={DOCTORS.map((d) => ({ name: tTeam(d.name), phone: d.phone }))}
                     />
                 ) : (
-                    <fieldset disabled className='opacity-60 pointer-events-none'>
+                    <>
                         {awaySoon && <ContactAwaySoonBanner message={soonMessage} />}
                         <ContactForm />
-                    </fieldset>
+                    </>
                 )}
             </div>
         </div>

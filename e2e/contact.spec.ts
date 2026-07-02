@@ -104,14 +104,14 @@ test.describe('contact — admin', () => {
         await page.goto('/contact');
     });
 
-    test('admin sees away-mode toggle and a disabled form preview initially', async ({ page }) => {
+    test('admin sees away-mode toggle and a working form preview initially', async ({ page }) => {
         await expect(page.getByLabel('Режим "Отсъстваме"')).toBeVisible();
         await expect(page.getByText('Изберете период')).not.toBeVisible();
 
         await expect(page.getByText('Отсъстваме временно')).not.toBeVisible();
-        // The preview form is real ContactForm markup wrapped in <fieldset disabled> so an admin
-        // can't accidentally submit a real inquiry while just looking at the page.
-        await expect(page.locator('input[name="name"]')).toBeDisabled();
+        // The preview is real ContactForm markup, fully interactive — it mirrors exactly what a
+        // visitor sees so the admin can validate copy/dates against the live page, not a locked mock.
+        await expect(page.locator('input[name="name"]')).toBeEnabled();
     });
 
     test('enabling away mode reveals the calendar, updates live preview, and persists across contexts', async ({ page, browser }) => {
@@ -165,8 +165,10 @@ test.describe('contact — admin', () => {
         await expect(newPage.getByText(/Кабинетът няма да работи от/)).toBeVisible();
         await expect(newPage.locator('input[name="name"]')).not.toBeVisible();
 
-        await expect(newPage.getByText('0876 346 261')).toBeVisible();
-        await expect(newPage.getByText('0878 355 494')).toBeVisible();
+        // Scoped to <main> — the site footer (rendered on every page) shows these same
+        // numbers in its Contact column, so an unscoped getByText() matches both.
+        await expect(newPage.getByRole('main').getByText('0876 346 261')).toBeVisible();
+        await expect(newPage.getByRole('main').getByText('0878 355 494')).toBeVisible();
 
         await newContext.close();
     });
@@ -188,7 +190,7 @@ test.describe('contact — admin', () => {
         await toggle.uncheck();
 
         await expect(page.getByText('Отсъстваме временно')).not.toBeVisible();
-        await expect(page.locator('input[name="name"]')).toBeDisabled();
+        await expect(page.locator('input[name="name"]')).toBeEnabled();
 
         // Unchecking triggers an async Server Action save with no visible "saved" indicator (no
         // Save button is shown while away-mode is off) — wait for that request to actually land
