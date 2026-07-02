@@ -7,6 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
         "optimize-images": "node scripts/optimize-images.js",
         "generate-blur": "node scripts/generate-blur-placeholders.js",
         "process-images": "node scripts/optimize-images.js && node scripts/generate-blur-placeholders.js"
@@ -24,6 +26,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@playwright/test": "^1.61.1",
         "@tailwindcss/postcss": "^4.1.11",
         "@types/node": "^20",
         "@types/react": "^19",
