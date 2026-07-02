@@ -35,9 +35,14 @@ src/
                       # CertificatesViewer, CertificatesAdmin,
                       # GalleryCasesViewer, GalleryCasesAdmin,
                       # BeforeAfterSlider, ImageLightbox
+    admin/            # Shared admin primitives: ImageSlot, AdminActionBar, BilingualTextFields
+                      # — composed by all 4 admin components, see Conventions below
     layout/           # Navigation, DeferredWidgets
     shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, DentalPointLogo, etc.
     statistics/       # BarChart
+  hooks/
+    useImageUpload.ts           # Headless upload-state hook
+    useReorderableCollection.ts # Drag-reorder + revert state/handlers
   lib/
     actions/
       gallery.ts      # Server Actions: uploadGalleryImage, removeGalleryImage,
@@ -65,6 +70,8 @@ data/
 scripts/
   optimize-images.js            # Compresses images in /public/Images
   generate-blur-placeholders.js # Bakes base64 blur data URLs into blurPlaceholders.ts
+e2e/                  # Playwright e2e suite — see "E2E testing" in Conventions below
+playwright.config.ts
 ```
 
 ## Commands
@@ -74,6 +81,8 @@ npm run build            # Production build (runs image scripts first via prebui
 npm run optimize-images  # Compress public/Images/**
 npm run generate-blur    # Regenerate blur placeholders
 npm run process-images   # Both optimize + generate-blur
+npm run test:e2e         # Playwright e2e suite (npx playwright test)
+npm run test:e2e:ui      # Playwright UI mode, for debugging a single spec
 ```
 
 ## Deployment
@@ -120,6 +129,17 @@ return <*Viewer items={items} />;
 
 Admin JS never ships to unauthenticated visitors. Only the lightweight Viewer bundle does.
 
+### Admin primitives — shared mechanisms across all 4 admin components
+`HomeGalleryAdmin`, `CertificatesAdmin`, `GalleryCasesAdmin`, `TeamAdmin` each compose 5 shared building blocks instead of reimplementing the same mechanisms 4 times:
+
+- `src/hooks/useImageUpload.ts` — headless upload-state hook (`{ uploading, handleFile }`). Doesn't own an `<input>` — callers wire their own, so a single shared input can still drive many items (e.g. Gallery Cases' before/after replace buttons, which need per-slot busy state `useImageUpload`'s single-flag model doesn't fit, so that one stays bespoke by design — not a missed extraction).
+- `src/hooks/useReorderableCollection.ts` — plain hook, not a rendering component. Owns `items`/`dragId`/`dragOverId`/drag handlers/`revert(confirmMessage)`. Used by Home Gallery, Certificates, Gallery Cases — not Team, which has nothing to reorder (2 fixed doctors).
+- `src/components/admin/ImageSlot.tsx` — "one image, optionally editable." `variant="grid-cell"` (drag handle + delete, no replace — Home/Certs never supported per-item replace) or `variant="portrait"` (camera-overlay replace, no delete — Team). Not used for Gallery Cases' before/after images (stays on `BeforeAfterSlider`, a comparison-slider widget that doesn't fit an image+overlay shape).
+- `src/components/admin/AdminActionBar.tsx` — the floating revert/done pill bar. Independent of drag/reorder (Team uses it too, despite having no collection to reorder).
+- `src/components/admin/BilingualTextFields.tsx` — renders only BG/EN field pairs; does not own Save/Cancel or extra controls (callers compose their own action row, since e.g. Gallery Cases needs aspect-ratio preset buttons between the fields and its Save/Cancel row). Three `layout` modes (`columns`/`rows`/`grouped`) exist because Gallery Cases' add-form, Gallery Cases' edit-form, and Team's edit-form each had a genuinely different existing visual layout — pass an explicit `idPrefix` too, since two instances (e.g. an open "add new" form + an open per-case edit form) can coexist on the same page and would otherwise collide on duplicate DOM ids.
+
+**Native HTML5 drag-and-drop, not a library.** `draggable={editMode}`, `onDragStart`/`onDragOver`/`onDrop`/`onDragEnd`, with `dragId`/`dragOverId` state and a swap-two-array-indices reorder algorithm. Gallery Cases additionally gates with `draggable={editMode && !isEditing}` so a case can't be dragged while its own text-edit form is open.
+
 **Gallery cases** follow the same split but the Admin is full CRUD (add/delete/replace images/edit text+aspect ratio) rather than just reorder:
 ```
 gallery/page.tsx         ← async server component: readGalleryCases() + auth()
@@ -151,6 +171,14 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 - **Windows sharp file lock fix:** on Windows, `sharp(filePath)` holds the file handle open; writing to the same path fails. Always read to buffer first: `const buf = fs.readFileSync(filePath); sharp(buf)...` — then write the output buffer back.
 - `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
 - The static `prebuild` scripts (`optimize-images.js`, `generate-blur-placeholders.js`) still run before every `npm run build` for non-gallery static images.
+
+### E2E testing (Playwright)
+Suite lives in `e2e/` at project root, config at `playwright.config.ts`. Single sequential project (`workers: 1`, `fullyParallel: false`) — admin specs mutate shared server-side JSON files (`data/*.json`), so parallel workers would race on them. `retries: 1` locally too (not just CI) — a full run occasionally hits a transient dev-server slowdown that shows up as one test failing on a plain navigation, unrelated to app logic.
+
+- **`e2e/global-setup.ts`/`global-teardown.ts`** — setup refuses to run if `data/`/`public/Images/` have uncommitted changes (protects real in-progress admin edits from being discarded); teardown unconditionally `git checkout`s + `git clean`s both after every run, pass or fail. This is what makes it safe for tests to freely add/delete/replace real-shaped content — never hand-track cleanup per test, rely on this net.
+- **`e2e/setup/auth.setup.ts`** — mints a real Auth.js session JWT directly via `next-auth/jwt`'s `encode()`, using the actual `NEXTAUTH_SECRET`, bypassing Google OAuth entirely (Playwright can't click through a real Google consent screen). Zero changes to `src/auth.ts`. The `salt` param must equal the literal cookie name (`'authjs.session-token'` for non-HTTPS dev) — this was confirmed by reading `@auth/core`'s internal callback source, not guessed.
+- **`e2e/fixtures.ts`** — every spec imports `test`/`expect` from here, not `@playwright/test` directly. Auto-injects a `cookie-consent` localStorage flag (a fresh browser context has no prior consent, so the banner blocks clicks on real content) and a `NEXT_LOCALE=bg` cookie (Playwright's default context reports the OS locale via `Accept-Language`, which next-intl falls back to without a cookie — silently rendering English instead of the app's actual Bulgarian default).
+- **Native HTML5 drag-and-drop:** `locator.dragTo()` does not reliably trigger this app's `draggable`/`ondragstart`/`ondragover`/`ondrop` handlers. Dispatch real `DragEvent`s via `page.evaluate()` instead, with short waits between dragstart→dragover→drop→dragend so React actually commits each state update before the next event fires.
 
 ### Analytics (GA4)
 - In production, real GA4 data comes from `POST /api/analytics` (uses `googleapis`).

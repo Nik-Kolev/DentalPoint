@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
+import { useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { HomeGalleryItem } from '@/types/gallery';
 import { uploadGalleryImage, removeGalleryImage, reorderGallery } from '@/lib/actions/gallery';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { useReorderableCollection } from '@/hooks/useReorderableCollection';
+import ImageSlot from '@/components/admin/ImageSlot';
+import AdminActionBar from '@/components/admin/AdminActionBar';
 
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
@@ -15,15 +18,23 @@ function getGridCols(count: number): string {
 }
 
 export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeGalleryItem[] }) {
-    const [items, setItems] = useState<HomeGalleryItem[]>(initialItems);
     const [editMode, setEditMode] = useState(false);
     const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
-    const [dragId, setDragId] = useState<string | null>(null);
-    const [dragOverId, setDragOverId] = useState<string | null>(null);
-    const [uploading, setUploading] = useState(false);
-    const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const snapshotRef = useRef<HomeGalleryItem[]>(initialItems);
+
+    const { items, setItems, dragId, dragOverId, handleDragStart, handleDragOver, handleDrop, handleDragEnd, revert } =
+        useReorderableCollection<HomeGalleryItem>({
+            initialItems,
+            onReorder: (orderedIds) => reorderGallery('home', orderedIds),
+        });
+
+    const { uploading, handleFile } = useImageUpload(async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const newItem = (await uploadGalleryImage('home', formData)) as HomeGalleryItem;
+        setItems((prev) => [...prev, newItem]);
+        return newItem;
+    });
 
     const handleImageClick = (item: HomeGalleryItem) => {
         if (editMode) return;
@@ -35,17 +46,12 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        setUploading(true);
-        const formData = new FormData();
-        formData.append('file', file);
         try {
-            const newItem = await uploadGalleryImage('home', formData);
-            setItems((prev) => [...prev, newItem as HomeGalleryItem]);
+            await handleFile(file);
         } catch (err) {
             console.error(err);
             alert('Грешка при качване на снимката');
         } finally {
-            setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
@@ -58,46 +64,6 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
             console.error(err);
             alert('Грешка при изтриване');
         }
-    };
-
-    const handleRevert = async () => {
-        const confirmed = window.confirm(
-            'Ще върнете реда на снимките към оригиналния. Изтритите снимки не могат да бъдат възстановени. Продължавате?',
-        );
-        if (!confirmed) return;
-        const original = snapshotRef.current;
-        setItems(original);
-        try {
-            await reorderGallery('home', original.map((i) => i.id));
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const handleDragStart = (id: string) => setDragId(id);
-    const handleDragOver = (e: React.DragEvent, id: string) => {
-        e.preventDefault();
-        setDragOverId(id);
-    };
-    const handleDrop = async (targetId: string) => {
-        if (!dragId || dragId === targetId) return;
-        const from = items.findIndex((i) => i.id === dragId);
-        const to = items.findIndex((i) => i.id === targetId);
-        const reordered = [...items];
-        [reordered[from], reordered[to]] = [reordered[to], reordered[from]];
-        const withOrder = reordered.map((item, index) => ({ ...item, order: index }));
-        setItems(withOrder);
-        setDragId(null);
-        setDragOverId(null);
-        try {
-            await reorderGallery('home', withOrder.map((i) => i.id));
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    const handleDragEnd = () => {
-        setDragId(null);
-        setDragOverId(null);
     };
 
     return (
@@ -127,41 +93,19 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
                             ${dragId === item.id ? 'opacity-50' : ''}
                         `}
                     >
-                        <div className='relative aspect-[4/3] rounded-md overflow-hidden bg-gray-100'>
-                            {!loadedIds.has(item.id) && (
-                                <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />
-                            )}
-                            <Image
-                                src={item.path}
-                                alt={item.alt}
-                                fill
-                                unoptimized
-                                className='rounded-md object-cover'
-                                onLoad={() => setLoadedIds((prev) => new Set([...prev, item.id]))}
-                            />
-                        </div>
-
-                        {editMode && (
-                            <div className='absolute inset-0 rounded-lg flex flex-col'>
-                                <div className='flex justify-center pt-1'>
-                                    <span className='text-white bg-black/40 rounded px-2 py-0.5 text-xs select-none'>
-                                        ⠿ Плъзни
-                                    </span>
-                                </div>
-                                <div className='mt-auto flex justify-center pb-2 px-2'>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDelete(item.id);
-                                        }}
-                                        title='Изтрий'
-                                        className='bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <ImageSlot
+                            variant='grid-cell'
+                            src={item.path}
+                            alt={item.alt}
+                            editable={editMode}
+                            aspectRatioClassName='aspect-[4/3]'
+                            containerClassName='bg-gray-100'
+                            imageClassName='rounded-md'
+                            dragHandleLabel='⠿ Плъзни'
+                            onDelete={() => handleDelete(item.id)}
+                            deleteTitle='Изтрий'
+                            showSkeleton
+                        />
                     </div>
                 ))}
 
@@ -189,23 +133,14 @@ export default function HomeGalleryAdmin({ initialItems }: { initialItems: HomeG
             <input ref={fileInputRef} type='file' accept='image/*' className='hidden' onChange={handleUpload} />
 
             {editMode && (
-                <div className='fixed bottom-6 inset-x-0 flex justify-center z-20 pointer-events-none'>
-                    <div className='flex items-center gap-3 bg-white rounded-full shadow-xl border border-gray-200 px-5 py-2.5 pointer-events-auto'>
-                        <button
-                            onClick={handleRevert}
-                            className='text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors'
-                        >
-                            ↩ Върни преди промените
-                        </button>
-                        <div className='w-px h-5 bg-gray-200' />
-                        <button
-                            onClick={() => setEditMode(false)}
-                            className='px-4 py-1.5 bg-[var(--dp-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--dp-primary)]/90 transition-colors'
-                        >
-                            ✓ Готово
-                        </button>
-                    </div>
-                </div>
+                <AdminActionBar
+                    onRevert={() =>
+                        revert(
+                            'Ще върнете реда на снимките към оригиналния. Изтритите снимки не могат да бъдат възстановени. Продължавате?',
+                        )
+                    }
+                    onDone={() => setEditMode(false)}
+                />
             )}
 
             {lightbox && (

@@ -17,6 +17,8 @@ Production website for **Dental Point**, a dental clinic in Varna, Bulgaria. Liv
 npm run dev              # Start local dev server (http://localhost:3000)
 npm run build            # Production build
 npm run process-images   # Compress images + regenerate blur placeholders
+npm run test:e2e         # Playwright e2e suite
+npm run test:e2e:ui      # Playwright UI mode, for debugging a single spec
 ```
 
 > `npm run build` automatically runs `optimize-images` and `generate-blur-placeholders` before building.
@@ -25,7 +27,11 @@ npm run process-images   # Compress images + regenerate blur placeholders
 
 Visit `/admin` and sign in with the authorised Google account.
 
-Capabilities: upload/delete/rotate/reorder clinic photos and certificates, reorder before/after treatment cases.
+Capabilities: upload/delete/reorder clinic photos and certificates; add/edit/delete/reorder before/after treatment cases; edit team member photos and bilingual bios.
+
+## Testing
+
+Playwright e2e suite in `e2e/`. Mutates real server-side data during admin tests, then hard-resets `data/` and `public/Images/` to the last commit after every run — commit or stash any in-progress admin edits before running (`npm run test:e2e` will refuse to start otherwise).
 
 ## Deployment
 

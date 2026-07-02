@@ -10,6 +10,9 @@ import {
     updateGalleryCaseText,
 } from '@/lib/actions/gallery';
 import type { GalleryCase } from '@/types/gallery';
+import { useReorderableCollection } from '@/hooks/useReorderableCollection';
+import AdminActionBar from '@/components/admin/AdminActionBar';
+import BilingualTextFields, { type BilingualField } from '@/components/admin/BilingualTextFields';
 
 const ASPECT_PRESETS = [
     { label: '4:3', value: 'aspect-[4/3]' },
@@ -51,6 +54,31 @@ const EMPTY_NEW_CASE: NewCaseState = {
     afterPreview: null,
 };
 
+const CASE_TEXT_FIELDS: BilingualField[] = [
+    { key: 'caption', labelBg: 'Заглавие (Български)', labelEn: 'Заглавие (Английски)', type: 'input' },
+    { key: 'description', labelBg: 'Описание (Български)', labelEn: 'Описание (Английски)', type: 'textarea', rows: 3 },
+];
+
+const NEW_CASE_TEXT_FIELDS: BilingualField[] = [
+    {
+        key: 'caption',
+        labelBg: 'Заглавие (Български) *',
+        labelEn: 'Заглавие (Английски) *',
+        type: 'input',
+        placeholderBg: 'Композитно възстановяване',
+        placeholderEn: 'Composite Bonding',
+    },
+    {
+        key: 'description',
+        labelBg: 'Описание (Български)',
+        labelEn: 'Описание (Английски)',
+        type: 'textarea',
+        rows: 3,
+        placeholderBg: 'Кратко описание на лечението...',
+        placeholderEn: 'Short description of the treatment...',
+    },
+];
+
 interface Props {
     initialCases: GalleryCase[];
     locale: string;
@@ -59,13 +87,13 @@ interface Props {
 }
 
 export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, afterLabel }: Props) {
-    const [cases, setCases] = useState<GalleryCase[]>(initialCases);
     const [editMode, setEditMode] = useState(false);
 
-    // Drag-to-reorder
-    const [dragId, setDragId] = useState<string | null>(null);
-    const [dragOverId, setDragOverId] = useState<string | null>(null);
-    const snapshotRef = useRef<GalleryCase[]>(initialCases);
+    const { items: cases, setItems: setCases, dragId, dragOverId, handleDragStart, handleDragOver, handleDrop, handleDragEnd, revert } =
+        useReorderableCollection<GalleryCase>({
+            initialItems: initialCases,
+            onReorder: (orderedIds) => reorderGalleryCases(orderedIds),
+        });
 
     // Per-case text editing
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -88,37 +116,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
     const [addingLoading, setAddingLoading] = useState(false);
     const newBeforeRef = useRef<HTMLInputElement | null>(null);
     const newAfterRef = useRef<HTMLInputElement | null>(null);
-
-    // ── Drag ────────────────────────────────────────────────────────────────
-    const handleDragStart = (id: string) => setDragId(id);
-    const handleDragOver = (e: React.DragEvent, id: string) => {
-        e.preventDefault();
-        setDragOverId(id);
-    };
-    const handleDrop = async (targetId: string) => {
-        if (!dragId || dragId === targetId) return;
-        const from = cases.findIndex((c) => c.id === dragId);
-        const to = cases.findIndex((c) => c.id === targetId);
-        const reordered = [...cases];
-        [reordered[from], reordered[to]] = [reordered[to], reordered[from]];
-        const withOrder = reordered.map((c, i) => ({ ...c, order: i }));
-        setCases(withOrder);
-        setDragId(null);
-        setDragOverId(null);
-        try {
-            await reorderGalleryCases(withOrder.map((c) => c.id));
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    const handleDragEnd = () => { setDragId(null); setDragOverId(null); };
-
-    const handleRevert = async () => {
-        if (!window.confirm('Всички промени от тази сесия ще бъдат отменени. Продължавате?')) return;
-        const original = snapshotRef.current;
-        setCases(original);
-        try { await reorderGalleryCases(original.map((c) => c.id)); } catch (err) { console.error(err); }
-    };
 
     // ── Delete ───────────────────────────────────────────────────────────────
     const handleDelete = async (id: string) => {
@@ -183,10 +180,21 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
     };
 
     // ── Add new case ─────────────────────────────────────────────────────────
+    const resetNewCase = () => {
+        if (newCase.beforePreview) URL.revokeObjectURL(newCase.beforePreview);
+        if (newCase.afterPreview) URL.revokeObjectURL(newCase.afterPreview);
+        setNewCase(EMPTY_NEW_CASE);
+    };
+
     const pickNewFile = (slot: 'before' | 'after', file: File) => {
         const preview = URL.createObjectURL(file);
-        if (slot === 'before') setNewCase((p) => ({ ...p, beforeFile: file, beforePreview: preview }));
-        else setNewCase((p) => ({ ...p, afterFile: file, afterPreview: preview }));
+        if (slot === 'before') {
+            if (newCase.beforePreview) URL.revokeObjectURL(newCase.beforePreview);
+            setNewCase((p) => ({ ...p, beforeFile: file, beforePreview: preview }));
+        } else {
+            if (newCase.afterPreview) URL.revokeObjectURL(newCase.afterPreview);
+            setNewCase((p) => ({ ...p, afterFile: file, afterPreview: preview }));
+        }
     };
 
     const handleAddCase = async () => {
@@ -206,7 +214,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
             const newCases = [added, ...cases];
             setCases(newCases);
             await reorderGalleryCases(newCases.map((c) => c.id));
-            setNewCase(EMPTY_NEW_CASE);
+            resetNewCase();
             setAddingNew(false);
         } catch (err) {
             console.error(err);
@@ -215,10 +223,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
             setAddingLoading(false);
         }
     };
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--dp-primary)]';
-    const labelCls = 'block text-xs font-semibold text-gray-500 mb-1';
 
     return (
         <>
@@ -247,7 +251,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                     const label = slot === 'before' ? 'Преди' : 'След';
                                     return (
                                         <div key={slot}>
-                                            <label className={labelCls}>{label}</label>
+                                            <label className='block text-xs font-semibold text-gray-500 mb-1'>{label}</label>
                                             <button
                                                 onClick={() => (slot === 'before' ? newBeforeRef : newAfterRef).current?.click()}
                                                 className='w-full aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 hover:border-[var(--dp-primary)] transition-colors overflow-hidden relative bg-gray-50'
@@ -272,32 +276,20 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                             </div>
 
                             {/* Text fields */}
-                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                                <div>
-                                    <label className={labelCls}>Заглавие (Български) *</label>
-                                    <input type='text' className={inputCls} placeholder='Композитно възстановяване'
-                                        value={newCase.captionBg} onChange={(e) => setNewCase((p) => ({ ...p, captionBg: e.target.value }))} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Заглавие (Английски) *</label>
-                                    <input type='text' className={inputCls} placeholder='Composite Bonding'
-                                        value={newCase.captionEn} onChange={(e) => setNewCase((p) => ({ ...p, captionEn: e.target.value }))} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Описание (Български)</label>
-                                    <textarea rows={3} className={`${inputCls} resize-none`} placeholder='Кратко описание на лечението...'
-                                        value={newCase.descriptionBg} onChange={(e) => setNewCase((p) => ({ ...p, descriptionBg: e.target.value }))} />
-                                </div>
-                                <div>
-                                    <label className={labelCls}>Описание (Английски)</label>
-                                    <textarea rows={3} className={`${inputCls} resize-none`} placeholder='Short description of the treatment...'
-                                        value={newCase.descriptionEn} onChange={(e) => setNewCase((p) => ({ ...p, descriptionEn: e.target.value }))} />
-                                </div>
-                            </div>
+                            <BilingualTextFields
+                                fields={NEW_CASE_TEXT_FIELDS}
+                                valuesBg={{ caption: newCase.captionBg, description: newCase.descriptionBg }}
+                                valuesEn={{ caption: newCase.captionEn, description: newCase.descriptionEn }}
+                                onChange={(lang, key, value) =>
+                                    setNewCase((p) => ({ ...p, [`${key}${lang === 'bg' ? 'Bg' : 'En'}`]: value }))
+                                }
+                                layout='columns'
+                                idPrefix='new-case'
+                            />
 
                             {/* Aspect ratio */}
                             <div>
-                                <label className={labelCls}>Формат на снимките</label>
+                                <label className='block text-xs font-semibold text-gray-500 mb-1'>Формат на снимките</label>
                                 <div className='flex gap-2'>
                                     {ASPECT_PRESETS.map((p) => (
                                         <button key={p.value} onClick={() => setNewCase((prev) => ({ ...prev, aspectRatio: p.value }))}
@@ -316,7 +308,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                     {addingLoading && <span className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />}
                                     {addingLoading ? 'Добавя...' : 'Добави случай'}
                                 </button>
-                                <button onClick={() => { setAddingNew(false); setNewCase(EMPTY_NEW_CASE); }}
+                                <button onClick={() => { setAddingNew(false); resetNewCase(); }}
                                     className='px-5 py-2.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-200 transition-colors'>
                                     Отказ
                                 </button>
@@ -410,28 +402,18 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 <div className='w-full lg:w-2/5'>
                                     {isEditing ? (
                                         <div className='bg-white rounded-2xl p-5 shadow-lg border border-[var(--dp-primary)]/30 space-y-3' onClick={(e) => e.stopPropagation()} onDragStart={(e) => e.stopPropagation()}>
+                                            <BilingualTextFields
+                                                fields={CASE_TEXT_FIELDS}
+                                                valuesBg={{ caption: editFields.captionBg, description: editFields.descriptionBg }}
+                                                valuesEn={{ caption: editFields.captionEn, description: editFields.descriptionEn }}
+                                                onChange={(lang, key, value) =>
+                                                    setEditFields((f) => ({ ...f, [`${key}${lang === 'bg' ? 'Bg' : 'En'}`]: value }))
+                                                }
+                                                layout='rows'
+                                                idPrefix={c.id}
+                                            />
                                             <div>
-                                                <label className={labelCls}>Заглавие (Български)</label>
-                                                <input type='text' className={inputCls} value={editFields.captionBg}
-                                                    onChange={(e) => setEditFields((f) => ({ ...f, captionBg: e.target.value }))} />
-                                            </div>
-                                            <div>
-                                                <label className={labelCls}>Заглавие (Английски)</label>
-                                                <input type='text' className={inputCls} value={editFields.captionEn}
-                                                    onChange={(e) => setEditFields((f) => ({ ...f, captionEn: e.target.value }))} />
-                                            </div>
-                                            <div>
-                                                <label className={labelCls}>Описание (Български)</label>
-                                                <textarea rows={3} className={`${inputCls} resize-none`} value={editFields.descriptionBg}
-                                                    onChange={(e) => setEditFields((f) => ({ ...f, descriptionBg: e.target.value }))} />
-                                            </div>
-                                            <div>
-                                                <label className={labelCls}>Описание (Английски)</label>
-                                                <textarea rows={3} className={`${inputCls} resize-none`} value={editFields.descriptionEn}
-                                                    onChange={(e) => setEditFields((f) => ({ ...f, descriptionEn: e.target.value }))} />
-                                            </div>
-                                            <div>
-                                                <label className={labelCls}>Формат на снимките</label>
+                                                <label className='block text-xs font-semibold text-gray-500 mb-1'>Формат на снимките</label>
                                                 <div className='flex gap-2'>
                                                     {ASPECT_PRESETS.map((p) => (
                                                         <button key={p.value} type='button'
@@ -485,23 +467,10 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
 
             {/* Floating action bar — stays visible regardless of scroll position */}
             {editMode && (
-                <div className='fixed bottom-6 inset-x-0 flex justify-center z-20 pointer-events-none'>
-                    <div className='flex items-center gap-3 bg-white rounded-full shadow-xl border border-gray-200 px-5 py-2.5 pointer-events-auto'>
-                        <button
-                            onClick={handleRevert}
-                            className='text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors'
-                        >
-                            ↩ Върни преди промените
-                        </button>
-                        <div className='w-px h-5 bg-gray-200' />
-                        <button
-                            onClick={() => { setEditMode(false); setEditingId(null); setAddingNew(false); }}
-                            className='px-4 py-1.5 bg-[var(--dp-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--dp-primary)]/90 transition-colors'
-                        >
-                            ✓ Готово
-                        </button>
-                    </div>
-                </div>
+                <AdminActionBar
+                    onRevert={() => revert('Всички промени от тази сесия ще бъдат отменени. Продължавате?')}
+                    onDone={() => { setEditMode(false); setEditingId(null); setAddingNew(false); }}
+                />
             )}
 
             {/* Single shared file input for image replacement */}

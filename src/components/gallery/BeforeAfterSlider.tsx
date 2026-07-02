@@ -70,15 +70,30 @@ export default function BeforeAfterSlider({
         handleMove(e.clientX);
     };
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        e.preventDefault();
-        handleMove(e.touches[0].clientX);
-    };
+    // Attached as native listeners (not JSX onTouchStart/onTouchMove) because browsers mark
+    // React's synthetic touch listeners passive by default, silently ignoring preventDefault()
+    // and spamming "Unable to preventDefault inside passive event listener" on every touchmove.
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
 
-    const handleTouchStart = (e: React.TouchEvent) => {
-        e.preventDefault();
-        handleMove(e.touches[0].clientX);
-    };
+        const onTouchStart = (e: TouchEvent) => {
+            e.preventDefault();
+            handleMove(e.touches[0].clientX);
+        };
+        const onTouchMove = (e: TouchEvent) => {
+            e.preventDefault();
+            handleMove(e.touches[0].clientX);
+        };
+
+        el.addEventListener('touchstart', onTouchStart, { passive: false });
+        el.addEventListener('touchmove', onTouchMove, { passive: false });
+
+        return () => {
+            el.removeEventListener('touchstart', onTouchStart);
+            el.removeEventListener('touchmove', onTouchMove);
+        };
+    }, [handleMove]);
 
     return (
         <div className='group'>
@@ -89,8 +104,6 @@ export default function BeforeAfterSlider({
                     aspectRatio || 'aspect-[4/3]'
                 } rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100 touch-none`}
                 onMouseDown={handleMouseDown}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
             >
                 {/* After image (background) with After label */}
                 <div className='absolute inset-0'>
