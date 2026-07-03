@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import type { TimePeriod, AnalyticsData } from '@/lib/analytics';
 import { getDateRange } from '@/lib/analytics';
+import { requireAdmin } from '@/lib/admin-auth';
 
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -13,10 +14,13 @@ type CachedEntry = {
 const analyticsCache: Partial<Record<TimePeriod, CachedEntry>> = {};
 
 export async function POST(request: NextRequest) {
+    const deny = await requireAdmin();
+    if (deny) return deny;
+
     try {
         const { period } = (await request.json()) as { period: TimePeriod };
 
-        const validPeriods: TimePeriod[] = ['day', 'week', 'month', 'year', 'alltime'];
+        const validPeriods: TimePeriod[] = ['week', 'month'];
         if (!validPeriods.includes(period)) {
             return NextResponse.json({ error: 'Invalid period' }, { status: 400 });
         }
@@ -51,7 +55,7 @@ export async function POST(request: NextRequest) {
 
         const { startDate, endDate } = getDateRange(period);
 
-        const [visitorsResponse, deviceResponse, sourceResponse, timeSeriesResponse] = await Promise.all([
+        const [visitorsResponse, deviceResponse, sourceResponse] = await Promise.all([
             analyticsDataClient.properties.runReport({
                 property: `properties/${propertyId}`,
                 requestBody: {
@@ -75,15 +79,6 @@ export async function POST(request: NextRequest) {
                     metrics: [{ name: 'totalUsers' }],
                     orderBys: [{ metric: { metricName: 'totalUsers' }, desc: true }],
                     limit: '10',
-                },
-            }),
-            analyticsDataClient.properties.runReport({
-                property: `properties/${propertyId}`,
-                requestBody: {
-                    dateRanges: [{ startDate, endDate }],
-                    dimensions: [{ name: period === 'alltime' ? 'year' : period === 'year' ? 'month' : 'date' }],
-                    metrics: [{ name: 'totalUsers' }],
-                    orderBys: [{ metric: { metricName: 'totalUsers' }, desc: false }],
                 },
             }),
         ]);
@@ -136,50 +131,11 @@ export async function POST(request: NextRequest) {
             });
         });
 
-        const timeSeriesRows = timeSeriesResponse.data.rows || [];
-        const timeSeries: NonNullable<AnalyticsData['timeSeries']> = timeSeriesRows.map((row) => {
-            const raw = row.dimensionValues?.[0]?.value || '';
-            const value = parseInt(row.metricValues?.[0]?.value || '0', 10);
-
-            let label = raw;
-
-            if (period === 'week' || period === 'month' || period === 'day') {
-                if (/^\d{8}$/.test(raw)) {
-                    const year = parseInt(raw.slice(0, 4), 10);
-                    const month = parseInt(raw.slice(4, 6), 10) - 1;
-                    const day = parseInt(raw.slice(6, 8), 10);
-                    const date = new Date(year, month, day);
-
-                    if (period === 'week') {
-                        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                        label = dayNames[date.getDay()];
-                    } else {
-                        const dd = String(day).padStart(2, '0');
-                        const mm = String(month + 1).padStart(2, '0');
-                        label = `${dd}.${mm}`;
-                    }
-                }
-            } else if (period === 'year') {
-                if (/^\d{6}$/.test(raw)) {
-                    const monthIndex = parseInt(raw.slice(4, 6), 10) - 1;
-                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    label = months[Math.max(0, Math.min(11, monthIndex))];
-                }
-            } else if (period === 'alltime') {
-                if (/^\d{4}$/.test(raw)) {
-                    label = raw;
-                }
-            }
-
-            return { label, visitors: value };
-        });
-
         const responseData: AnalyticsData = {
             totalVisitors,
             totalPageViews,
             uniqueVisitors: totalVisitors,
             totalSessions,
-            timeSeries,
             deviceBreakdown,
             trafficSources,
         };

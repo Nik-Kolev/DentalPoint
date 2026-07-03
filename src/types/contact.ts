@@ -4,6 +4,7 @@ export interface ContactSubmission {
     phone: string;
     message: string;
     createdAt: string;
+    read: boolean;
 }
 
 export interface ContactSettings {

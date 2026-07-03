@@ -2,8 +2,8 @@
 
 import { randomUUID } from 'crypto';
 import { auth } from '@/auth';
-import { appendContactSubmission, writeContactSettings } from '@/lib/contact-data';
-import type { ContactSettings } from '@/types/contact';
+import { appendContactSubmission, setSubmissionsRead, readContactSubmissions, writeContactSettings } from '@/lib/contact-data';
+import type { ContactSettings, ContactSubmission } from '@/types/contact';
 
 async function assertAdmin(): Promise<void> {
     const session = await auth();
@@ -23,12 +23,13 @@ export async function submitContactForm(_prevState: ContactFormState, formData: 
         return { status: 'error' };
     }
 
-    appendContactSubmission({
+    await appendContactSubmission({
         id: randomUUID(),
         name,
         phone,
         message,
         createdAt: new Date().toISOString(),
+        read: false,
     });
 
     return { status: 'success' };
@@ -37,4 +38,14 @@ export async function submitContactForm(_prevState: ContactFormState, formData: 
 export async function updateContactAwaySettings(settings: ContactSettings): Promise<void> {
     await assertAdmin();
     writeContactSettings(settings);
+}
+
+export async function markSubmissionsAsRead(ids: string[], read: boolean = true): Promise<void> {
+    await assertAdmin();
+    await setSubmissionsRead(ids, read);
+}
+
+export async function getContactSubmissions(): Promise<ContactSubmission[]> {
+    await assertAdmin();
+    return readContactSubmissions();
 }

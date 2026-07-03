@@ -24,14 +24,38 @@ function pruneExpired(submissions: ContactSubmission[]): ContactSubmission[] {
     return submissions.filter((s) => new Date(s.createdAt).getTime() >= cutoff);
 }
 
+// Both mutators below are called from Server Actions that `await assertAdmin()` first —
+// that await is a yield point, so two near-simultaneous requests (e.g. an admin clicking
+// through several messages quickly) can each start their own read-modify-write before the
+// other's write lands, silently losing one of the two updates. Since production runs a
+// single Node process (PM2 fork mode, no cluster flag), a module-level promise chain is
+// enough to serialize every write to this file within that process.
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+function enqueueWrite<T>(fn: () => T): Promise<T> {
+    const result = writeQueue.then(fn, fn) as Promise<T>;
+    writeQueue = result.catch(() => {});
+    return result;
+}
+
 export function readContactSubmissions(): ContactSubmission[] {
     return pruneExpired(readAll()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-export function appendContactSubmission(submission: ContactSubmission): void {
-    const kept = pruneExpired(readAll());
-    kept.push(submission);
-    writeAll(kept);
+export function appendContactSubmission(submission: ContactSubmission): Promise<void> {
+    return enqueueWrite(() => {
+        const kept = pruneExpired(readAll());
+        kept.push(submission);
+        writeAll(kept);
+    });
+}
+
+export function setSubmissionsRead(ids: string[], read: boolean): Promise<void> {
+    return enqueueWrite(() => {
+        const idSet = new Set(ids);
+        const kept = pruneExpired(readAll());
+        writeAll(kept.map((s) => (idSet.has(s.id) ? { ...s, read } : s)));
+    });
 }
 
 export function readContactSettings(): ContactSettings {
