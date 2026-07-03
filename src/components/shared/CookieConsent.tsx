@@ -29,6 +29,12 @@ export default function CookieConsent() {
         }
         window.gtag = gtag;
         gtag('js', new Date());
+        gtag('consent', 'default', {
+            analytics_storage: 'granted',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+        });
         gtag('config', measurementId, { anonymize_ip: true });
 
         const script = document.createElement('script');
