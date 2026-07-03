@@ -43,7 +43,7 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                         key={c.id}
                         className={`flex flex-col lg:flex-row gap-6 lg:gap-10 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
                     >
-                        <div className='w-full lg:w-3/5'>
+                        <div className='w-full lg:w-1/2'>
                             <BeforeAfterSlider
                                 beforeImage={c.beforePath}
                                 afterImage={c.afterPath}
@@ -54,7 +54,7 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
                             />
                         </div>
 
-                        <div className='w-full lg:w-2/5'>
+                        <div className='w-full lg:w-1/2'>
                             <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[var(--dp-primary)]/10 h-full'>
                                 <h3 className='text-xl font-bold text-[var(--dp-primary)] mb-4'>
                                     {locale === 'bg' ? c.captionBg : c.captionEn}

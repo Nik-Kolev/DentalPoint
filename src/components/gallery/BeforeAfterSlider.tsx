@@ -118,7 +118,7 @@ export default function BeforeAfterSlider({
                         draggable={false}
                     />
                     {/* After label - gets covered by before image when slider moves right */}
-                    <div className='absolute top-4 right-4 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-base sm:text-lg font-bold shadow-lg'>
+                    <div className='absolute top-4 right-4 px-4 py-2 rounded-full bg-[var(--dp-primary)] text-white text-base sm:text-lg font-bold shadow-lg'>
                         {afterLabel}
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export default function BeforeAfterSlider({
                         draggable={false}
                     />
                     {/* Before label - gets clipped with the before image when slider moves left */}
-                    <div className='absolute top-4 left-4 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-base sm:text-lg font-bold shadow-lg'>
+                    <div className='absolute top-4 left-4 px-4 py-2 rounded-full bg-[var(--dp-accent)] text-white text-base sm:text-lg font-bold shadow-lg'>
                         {beforeLabel}
                     </div>
                 </div>

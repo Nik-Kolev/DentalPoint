@@ -32,16 +32,14 @@ export default async function Gallery({ params }: { params: Promise<{ locale: st
                         <p className='font-montserrat text-gray-500 text-base sm:text-lg ml-5'>{t('subtitle')}</p>
                     </div>
 
-                    {!session?.user && (
-                        <div className='pb-8 sm:pb-10'>
-                            <p className='text-sm text-gray-500 flex items-center gap-2 ml-5'>
-                                <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>
-                                    <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' />
-                                </svg>
-                                {t('sliderHint')}
-                            </p>
-                        </div>
-                    )}
+                    <div className='pb-8 sm:pb-10 flex justify-center'>
+                        <p className='text-sm text-gray-500 flex items-center gap-2'>
+                            <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={1.5}>
+                                <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' />
+                            </svg>
+                            {t('sliderHint')}
+                        </p>
+                    </div>
 
                     {session?.user ? (
                         <GalleryCasesAdmin

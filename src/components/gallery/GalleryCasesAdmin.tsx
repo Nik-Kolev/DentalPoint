@@ -352,7 +352,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 )}
 
                                 {/* Slider column */}
-                                <div className={`w-full lg:w-3/5 ${editMode ? 'mt-5' : ''}`}>
+                                <div className={`w-full lg:w-1/2 ${editMode ? 'mt-5' : ''}`}>
                                     <div className={editMode && !isEditing ? 'pointer-events-none' : ''}>
                                         <BeforeAfterSlider
                                             beforeImage={c.beforePath}
@@ -399,7 +399,7 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 </div>
 
                                 {/* Info / edit panel */}
-                                <div className='w-full lg:w-2/5'>
+                                <div className='w-full lg:w-1/2'>
                                     {isEditing ? (
                                         <div className='bg-white rounded-2xl p-5 shadow-lg border border-[var(--dp-primary)]/30 space-y-3' onClick={(e) => e.stopPropagation()} onDragStart={(e) => e.stopPropagation()}>
                                             <BilingualTextFields
@@ -438,8 +438,9 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                         </div>
                                     ) : (
                                         <div className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg border border-[var(--dp-primary)]/10 h-full'>
-                                            <h3 className='text-xl font-bold text-[var(--dp-primary)] mb-1'>{c.captionBg}</h3>
-                                            <p className='text-sm text-gray-400 italic mb-3'>{c.captionEn}</p>
+                                            <h3 className='text-xl font-bold text-[var(--dp-primary)] mb-3'>
+                                                {locale === 'bg' ? c.captionBg : c.captionEn}
+                                            </h3>
                                             <p className='text-gray-600 leading-relaxed text-sm'>
                                                 {locale === 'bg' ? c.descriptionBg : c.descriptionEn}
                                             </p>
