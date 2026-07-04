@@ -16,7 +16,7 @@ Production dental clinic website for **Dental Point**, Varna, Bulgaria. Live at 
 ## Stack
 - **Next.js 16** (App Router, TypeScript)
 - **Tailwind CSS v4**
-- **Auth.js (next-auth v5)** — Google OAuth, protects `/statistics/` and `/admin/`
+- **Auth.js (next-auth v5)** — Google OAuth, single-email allowlist (`ALLOWED_EMAIL`). No dedicated `/admin` page — admin controls render inline on content pages (home/team/gallery/licenses) when signed in. `proxy.ts` still lists `/admin` in `protectedPaths` from an earlier design; harmless (no page exists there to protect) but not load-bearing.
 - **next-intl v4** — wired for routing since Phase 3; `localePrefix: 'never'`, cookie-based locale switching
 - **googleapis** — GA4 data for the analytics dashboard
 - **sharp** — image rotation and processing for admin uploads
@@ -51,7 +51,7 @@ src/
     analytics.ts      # GA4 fetch + mock data generator
     gallery-data.ts   # readHomeGallery, writeHomeGallery, readCertificates, writeCertificates,
                       # readGalleryCases, writeGalleryCases
-    blurPlaceholders.ts
+    heroBlurPlaceholder.ts
     imageVersion.ts
     cloudflareLoader.ts
   i18n/
@@ -63,13 +63,12 @@ src/
   proxy.ts            # Middleware — next-intl + next-auth auth check
                       # (Next.js 16 uses proxy.ts, not middleware.ts)
 data/
-  home-gallery.json   # Home gallery images (managed by admin)
-  certificates.json   # Certificate images (managed by admin)
-  gallery-cases.json  # Before/after treatment cases (full CRUD managed by admin)
-  pending-changes.json
-scripts/
-  optimize-images.js            # Compresses images in /public/Images
-  generate-blur-placeholders.js # Bakes base64 blur data URLs into blurPlaceholders.ts
+  home-gallery.json   # Home gallery images (managed by admin) — gitignored (Phase 11), admin-mutated
+  certificates.json   # Certificate images (managed by admin) — gitignored (Phase 11), admin-mutated
+  gallery-cases.json  # Before/after treatment cases (full CRUD managed by admin) — gitignored (Phase 11)
+  team.json           # Team member bios/photos (managed by admin) — gitignored (Phase 11)
+  contact-settings.json  # Away-mode toggle — gitignored (Phase 11)
+  pending-changes.json   # gitignored (Phase 11)
 e2e/                  # Playwright e2e suite — see "E2E testing" in Conventions below
 playwright.config.ts
 ```
@@ -77,10 +76,7 @@ playwright.config.ts
 ## Commands
 ```bash
 npm run dev              # Local dev server
-npm run build            # Production build (runs image scripts first via prebuild)
-npm run optimize-images  # Compress public/Images/**
-npm run generate-blur    # Regenerate blur placeholders
-npm run process-images   # Both optimize + generate-blur
+npm run build            # Production build
 npm run test:e2e         # Playwright e2e suite (npx playwright test)
 npm run test:e2e:ui      # Playwright UI mode, for debugging a single spec
 ```
@@ -170,12 +166,13 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 - **No manual rotation UI** — removed in Phase 8. Doctor uploads via Xerox scanner (not iPhone), so EXIF rotation issues don't occur and re-encoding would cause quality loss. The `sharp.rotate()` EXIF auto-correction in `processGalleryImage` is kept (it's part of upload, not a UI button).
 - **Windows sharp file lock fix:** on Windows, `sharp(filePath)` holds the file handle open; writing to the same path fails. Always read to buffer first: `const buf = fs.readFileSync(filePath); sharp(buf)...` — then write the output buffer back.
 - `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
-- The static `prebuild` scripts (`optimize-images.js`, `generate-blur-placeholders.js`) still run before every `npm run build` for non-gallery static images.
+- Blur-up placeholder for the home hero image (`clinic.jpg`) is a single hardcoded constant (`src/lib/heroBlurPlaceholder.ts`), not a generated lookup table — it's the only image on the site that ever uses one, so a scanning script + generic `Record` map was more machinery than the one value needed (Phase 11).
+- **No image-optimization maintenance script** (removed Phase 11) — `optimize-images.js` scanned all of `public/Images/`, including the admin-managed folders (`front/`, `certificates/`, `gallery/`, `owners/`). Re-running it against live admin content would silently desync stored metadata — certificates' `aspectRatio` in `certificates.json` is measured at upload time from exact pixel dimensions, and any later resize/trim would invalidate it without updating the JSON. Its one legitimately-static target (`logo/`) had a config bug (missing `minSize`) that made it a permanent no-op there anyway, and 3 of the 4 logo files were unused (deleted; only `cropped_logo_dp.jpg` is referenced, as an SEO JSON-LD URL, not a rendered `<Image>`).
 
 ### E2E testing (Playwright)
 Suite lives in `e2e/` at project root, config at `playwright.config.ts`. Single sequential project (`workers: 1`, `fullyParallel: false`) — admin specs mutate shared server-side JSON files (`data/*.json`), so parallel workers would race on them. `retries: 1` locally too (not just CI) — a full run occasionally hits a transient dev-server slowdown that shows up as one test failing on a plain navigation, unrelated to app logic.
 
-- **`e2e/global-setup.ts`/`global-teardown.ts`** — setup refuses to run if `data/`/`public/Images/` have uncommitted changes (protects real in-progress admin edits from being discarded); teardown unconditionally `git checkout`s + `git clean`s both after every run, pass or fail. This is what makes it safe for tests to freely add/delete/replace real-shaped content — never hand-track cleanup per test, rely on this net.
+- **`e2e/global-setup.ts`/`global-teardown.ts`** — file-copy based snapshot/restore, not git: setup copies the current `data/*.json` + `public/Images/{certificates,gallery,owners}` into `e2e/.data-backup/` (gitignored); teardown restores from that snapshot and deletes the backup, pass or fail. This is what makes it safe for tests to freely add/delete/replace real-shaped content — never hand-track cleanup per test, rely on this net. (Was `git checkout`/`git clean`-based before Phase 11 — switched to filesystem copy once `data/*.json` and those image dirs became gitignored, since git can no longer reset paths it doesn't track.) `contact-submissions.json` is always reset to `[]` rather than restored (PII, 60-day retention — never worth preserving across a test run).
 - **`e2e/setup/auth.setup.ts`** — mints a real Auth.js session JWT directly via `next-auth/jwt`'s `encode()`, using the actual `NEXTAUTH_SECRET`, bypassing Google OAuth entirely (Playwright can't click through a real Google consent screen). Zero changes to `src/auth.ts`. The `salt` param must equal the literal cookie name (`'authjs.session-token'` for non-HTTPS dev) — this was confirmed by reading `@auth/core`'s internal callback source, not guessed.
 - **`e2e/fixtures.ts`** — every spec imports `test`/`expect` from here, not `@playwright/test` directly. Auto-injects a `cookie-consent` localStorage flag (a fresh browser context has no prior consent, so the banner blocks clicks on real content) and a `NEXT_LOCALE=bg` cookie (Playwright's default context reports the OS locale via `Accept-Language`, which next-intl falls back to without a cookie — silently rendering English instead of the app's actual Bulgarian default).
 - **Native HTML5 drag-and-drop:** `locator.dragTo()` does not reliably trigger this app's `draggable`/`ondragstart`/`ondragover`/`ondrop` handlers. Dispatch real `DragEvent`s via `page.evaluate()` instead, with short waits between dragstart→dragover→drop→dragend so React actually commits each state update before the next event fires.
