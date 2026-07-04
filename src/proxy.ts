@@ -22,7 +22,11 @@ export default async function proxy(req: NextRequest) {
         const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
         if (!token) {
             const signInUrl = new URL('/auth/signin', req.url);
-            signInUrl.searchParams.set('callbackUrl', req.url);
+            // Relative path only, not the absolute req.url — req.nextUrl's origin is Next.js's
+            // internal server address (e.g. http://localhost:3000), not the public domain, for
+            // the same reason the redirect-loop bug happened. next-auth resolves a relative
+            // callbackUrl against its own configured base correctly.
+            signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname + req.nextUrl.search);
             return NextResponse.redirect(signInUrl);
         }
     }
