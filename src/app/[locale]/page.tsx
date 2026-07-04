@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import HomeGallery from '@/components/gallery/HomeGallery';
+import HomeReviews from '@/components/shared/HomeReviews';
 import { getTranslations } from 'next-intl/server';
 import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
 
@@ -47,13 +48,13 @@ export default async function Home() {
                             <div className='flex flex-col sm:flex-row gap-3 justify-center lg:justify-start'>
                                 <Link
                                     href='/contact'
-                                    className='inline-block bg-[var(--dp-accent)] text-white px-8 py-3.5 rounded-xl font-semibold font-montserrat text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg'
+                                    className='inline-block whitespace-nowrap bg-[var(--dp-accent)] text-white px-8 py-3.5 rounded-xl font-semibold font-montserrat text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg'
                                 >
                                     {tLayout('bookAppointment')}
                                 </Link>
                                 <Link
                                     href='/team'
-                                    className='inline-block border-2 border-[var(--dp-primary)] text-[var(--dp-primary)] px-8 py-3.5 rounded-xl font-semibold font-montserrat text-sm sm:text-base transition-all duration-300 hover:bg-[var(--dp-primary)] hover:text-white'
+                                    className='inline-block whitespace-nowrap border-2 border-[var(--dp-primary)] text-[var(--dp-primary)] px-8 py-3.5 rounded-xl font-semibold font-montserrat text-sm sm:text-base transition-all duration-300 hover:bg-[var(--dp-primary)] hover:text-white'
                                 >
                                     {t('moreInfo')}
                                 </Link>
@@ -191,28 +192,15 @@ export default async function Home() {
                 </div>
             </section>
 
+            {/* ── Reviews ──────────────────────────────────────── */}
+            <HomeReviews />
+
             {/* ── Gallery ──────────────────────────────────────── */}
             <section className='bg-[var(--dp-bg-from)] pt-8 pb-10 sm:pb-14 px-4 sm:px-8'>
                 <div className='max-w-6xl mx-auto'>
-                    {/* Mirror the About+Map proportions so the button centers over the map column */}
-                    <div className='flex items-center gap-8 mb-4'>
-                        <div className='flex items-center gap-3 lg:flex-[0.9]'>
-                            <div className='w-1.5 h-8 rounded-full bg-[var(--dp-primary)]' />
-                            <h2 className='text-2xl sm:text-3xl font-bold text-[var(--dp-heading)]'>{t('galleryTitle')}</h2>
-                        </div>
-                        <div className='hidden lg:flex lg:flex-[1.1] justify-center'>
-                            <a
-                                href='https://www.google.com/maps/dir/?api=1&destination=Dental+Point,+%D1%83%D0%BB.+%D0%9F%D0%BE%D0%B4%D0%BF%D0%BE%D0%BB%D0%BA%D0%BE%D0%B2%D0%BD%D0%B8%D0%BA+%D0%9A%D0%B0%D0%BB%D0%B8%D1%82%D0%B8%D0%BD+2,+Varna,+Bulgaria'
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='flex items-center gap-2 flex-shrink-0 bg-white border border-[var(--dp-primary)] rounded-xl px-4 py-2 shadow-sm hover:shadow-md transition-all font-montserrat text-sm font-semibold text-gray-700 whitespace-nowrap'
-                            >
-                                <svg className='w-4 h-4 text-[var(--dp-primary)] flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
-                                    <path strokeLinecap='round' strokeLinejoin='round' d='M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.159.69.159 1.006 0Z' />
-                                </svg>
-                                {t('getDirections')}
-                            </a>
-                        </div>
+                    <div className='flex items-center gap-3 mb-4'>
+                        <div className='w-1.5 h-8 rounded-full bg-[var(--dp-primary)]' />
+                        <h2 className='text-2xl sm:text-3xl font-bold text-[var(--dp-heading)]'>{t('galleryTitle')}</h2>
                     </div>
                     <Suspense fallback={<GallerySkeleton />}>
                         <HomeGallery />

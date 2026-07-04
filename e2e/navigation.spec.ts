@@ -16,16 +16,6 @@ test.describe('navigation', () => {
         }
     });
 
-    test('reviews link resolves', async ({ page }) => {
-        await page.goto('/');
-        const reviewsLink = page.getByRole('link', { name: 'Отзиви' });
-        if (await reviewsLink.isVisible()) {
-            await reviewsLink.click();
-            await expect(page).toHaveURL(/\/reviews/);
-            await expect(page).not.toHaveURL(/404|error/);
-        }
-    });
-
     test('gallery/results link resolves', async ({ page }) => {
         await page.goto('/');
         const galleryLink = page.getByRole('link', { name: 'Резултати' });

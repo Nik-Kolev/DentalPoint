@@ -16,10 +16,9 @@
         "menuTeam": "Team",
         "menuGallery": "Results",
         "menuLicenses": "Certificates",
-        "menuReviews": "Reviews",
         "footer": "All rights reserved.",
         "contactUs": "Contact Us",
-        "bookAppointment": "Book Appointment",
+        "bookAppointment": "Contact Us",
         "footerNav": "Navigation",
         "footerContact": "Contact",
         "footerTagline": "A dental clinic with modern equipment and personalized care for every patient."
@@ -33,12 +32,17 @@
         "doctor1Specialty": "Doctor of Dental Medicine",
         "doctor2Name": "Dr. Ekaterina Ivanova",
         "doctor2Specialty": "Doctor of Dental Medicine",
-        "moreInfo": "More Info",
+        "moreInfo": "Meet the Team",
         "aboutTitle": "About Us",
         "aboutTextLine1": "In our clinic, we combine next-generation technology with a personalized approach to every patient. We believe family health requires special attention, so we created a calm and secure environment where you can feel truly cared for.",
         "aboutTextLine2": "For your convenience, our office is equipped with X-ray for precise on-site diagnostics. We work in partnership with NHIF, providing accessible and quality healthcare.",
         "galleryTitle": "Our Clinic",
         "getDirections": "Get Directions",
+        "reviewsTitle": "Reviews",
+        "reviewsRatingSummary": "{rating} · {count} Google reviews",
+        "reviewsCta": "See all reviews on Google",
+        "reviewsLoadMore": "Load more",
+        "reviewsShowLess": "Show less",
         "ctaTitle": "Browse our modern clinic",
         "ctaSubtitle": "Book an appointment and experience professional care"
     },
@@ -198,12 +202,6 @@
         ]
     },
     "reviews": {
-        "title": "Reviews",
-        "subtitle": "See what our patients say about us",
-        "loadMore": "Load more",
-        "showLess": "Show less",
-        "ctaTitle": "Join our satisfied patients",
-        "ctaSubtitle": "Book an appointment and experience professional care",
         "items": [
             {
                 "name": "Andrey Andreev",

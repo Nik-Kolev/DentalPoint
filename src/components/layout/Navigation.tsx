@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 
@@ -18,13 +18,33 @@ interface NavigationProps {
         team: string;
         gallery: string;
         licenses: string;
-        reviews: string;
     };
 }
 
 export default function Navigation({ translations }: NavigationProps) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+
+        function handleClickOutside(e: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setIsMobileMenuOpen(false);
+            }
+        }
+        function handleScroll() {
+            setIsMobileMenuOpen(false);
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isMobileMenuOpen]);
 
     const isActive = (path: string) => {
         if (path === '') return pathname === '/';
@@ -61,59 +81,53 @@ export default function Navigation({ translations }: NavigationProps) {
                 <Link href='/licenses' className={linkClass('licenses')} prefetch={false}>
                     {translations.licenses}
                 </Link>
-                <Link href='/reviews' className={linkClass('reviews')} prefetch={false}>
-                    {translations.reviews}
-                </Link>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className='lg:hidden relative inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none'
-                aria-expanded={isMobileMenuOpen}
-                aria-label='Toggle navigation menu'
-            >
-                <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                    {isMobileMenuOpen ? (
-                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-                    ) : (
-                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4 6h16M4 12h16M4 18h16' />
-                    )}
-                </svg>
-            </button>
+            {/* Mobile Menu Button + Panel — shared ref so outside-click detection treats them as one unit */}
+            <div ref={menuRef} className='contents'>
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className='lg:hidden relative inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none'
+                    aria-expanded={isMobileMenuOpen}
+                    aria-label='Toggle navigation menu'
+                >
+                    <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                        {isMobileMenuOpen ? (
+                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+                        ) : (
+                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4 6h16M4 12h16M4 18h16' />
+                        )}
+                    </svg>
+                </button>
 
-            {/* Mobile Menu */}
-            {isMobileMenuOpen && (
-                <div className='lg:hidden fixed top-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
-                    <div className='py-2' onClick={() => setIsMobileMenuOpen(false)}>
-                        <Link href='/' className={mobileLinkClass('')}>
-                            {translations.home}
-                        </Link>
-                        <Link href='/contact' className={mobileLinkClass('contact')} prefetch={false}>
-                            {translations.contact}
-                        </Link>
-                        <Link href='/team' className={mobileLinkClass('team')} prefetch={false}>
-                            {translations.team}
-                        </Link>
-                        <Link href='/gallery' className={mobileLinkClass('gallery')} prefetch={false}>
-                            {translations.gallery}
-                        </Link>
-                        <Link href='/licenses' className={mobileLinkClass('licenses')} prefetch={false}>
-                            {translations.licenses}
-                        </Link>
-                        <Link href='/reviews' className={mobileLinkClass('reviews')} prefetch={false}>
-                            {translations.reviews}
-                        </Link>
+                {/* Mobile Menu */}
+                {isMobileMenuOpen && (
+                    <div className='lg:hidden fixed top-16 right-4 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50'>
+                        <div className='py-2' onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href='/' className={mobileLinkClass('')}>
+                                {translations.home}
+                            </Link>
+                            <Link href='/contact' className={mobileLinkClass('contact')} prefetch={false}>
+                                {translations.contact}
+                            </Link>
+                            <Link href='/team' className={mobileLinkClass('team')} prefetch={false}>
+                                {translations.team}
+                            </Link>
+                            <Link href='/gallery' className={mobileLinkClass('gallery')} prefetch={false}>
+                                {translations.gallery}
+                            </Link>
+                            <Link href='/licenses' className={mobileLinkClass('licenses')} prefetch={false}>
+                                {translations.licenses}
+                            </Link>
 
-                        <div className='border-t border-gray-200 mt-2 pt-2 flex justify-center'>
                             <StatisticsLink />
-                        </div>
-                        <div className='border-t border-gray-200 mt-2 pt-3 pb-1 flex justify-center'>
-                            <LanguageSwitcher />
+                            <div className='border-t border-gray-200 mt-2 pt-3 pb-1 flex justify-center'>
+                                <LanguageSwitcher />
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </>
     );
 }

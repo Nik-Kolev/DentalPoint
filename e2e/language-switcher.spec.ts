@@ -15,20 +15,6 @@ test.describe('language switcher', () => {
         }
     });
 
-    test('switch from Bulgarian to English on reviews page', async ({ page }) => {
-        await page.goto('/reviews');
-        await page.waitForTimeout(300);
-
-        const languageButtons = page.getByRole('button');
-        const enButton = languageButtons.filter({ hasText: /EN|en|English/ }).first();
-
-        if (await enButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-            await enButton.click();
-            await page.waitForTimeout(500);
-            await expect(page).toHaveURL(/\/reviews/);
-        }
-    });
-
     test('switch from Bulgarian to English on gallery page', async ({ page }) => {
         await page.goto('/gallery');
         await page.waitForTimeout(300);

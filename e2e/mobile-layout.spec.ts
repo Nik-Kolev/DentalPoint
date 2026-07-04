@@ -41,17 +41,6 @@ test.describe('mobile layout', () => {
         }
     });
 
-    test('reviews page responsive on mobile', async ({ page }) => {
-        await page.goto('/reviews');
-        await page.waitForTimeout(500);
-
-        const pageTitle = page.locator('h1').first();
-        await expect(pageTitle).toBeVisible();
-
-        const reviewCards = page.locator('[class*="bg-white"]').first();
-        await expect(reviewCards).toBeVisible({ timeout: 2000 });
-    });
-
     test('gallery page responsive on mobile', async ({ page }) => {
         await page.goto('/gallery');
         await page.waitForTimeout(500);

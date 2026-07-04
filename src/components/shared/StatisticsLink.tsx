@@ -15,7 +15,7 @@ export default function StatisticsLink() {
     const onDashboard = pathname?.startsWith('/statistics');
 
     return (
-        <div className='flex items-center gap-0.5'>
+        <div className='border-t border-gray-200 mt-2 pt-2 flex items-center justify-center gap-0.5 lg:border-0 lg:mt-0 lg:pt-0'>
             {!onDashboard && (
                 <Link
                     href='/statistics'

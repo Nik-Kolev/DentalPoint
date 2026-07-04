@@ -133,7 +133,6 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     team: t('menuTeam'),
     gallery: t('menuGallery'),
     licenses: t('menuLicenses'),
-    reviews: t('menuReviews'),
   };
 
   return (
@@ -217,11 +216,10 @@ export default async function LocaleLayout({ children, params }: { children: Rea
                 <nav className='flex flex-col gap-2.5 self-start'>
                   {[
                     { label: translations.home, href: '/' },
+                    { label: translations.contact, href: '/contact' },
                     { label: translations.team, href: '/team' },
                     { label: translations.gallery, href: '/gallery' },
-                    { label: translations.contact, href: '/contact' },
                     { label: translations.licenses, href: '/licenses' },
-                    { label: translations.reviews, href: '/reviews' },
                   ].map(({ label, href }) => (
                     <Link key={href} href={href} className='font-montserrat text-sm text-white/70 hover:text-white transition-colors'>
                       {label}
