@@ -1,4 +1,6 @@
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 export default async function globalSetup() {
     const status = execSync('git status --porcelain -- data public/Images', { encoding: 'utf-8' }).trim();
@@ -10,4 +12,9 @@ export default async function globalSetup() {
                 status,
         );
     }
+
+    // Contact-form specs submit the real form, which calls the real sendNtfyNotification —
+    // this marker tells that function to skip sending while a test run is in progress, so the
+    // suite can't fire real push notifications to whoever's subscribed to NTFY_TOPIC.
+    fs.writeFileSync(path.join(process.cwd(), '.e2e-running'), '');
 }

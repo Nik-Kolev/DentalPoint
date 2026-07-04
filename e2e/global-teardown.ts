@@ -10,4 +10,8 @@ export default async function globalTeardown() {
     // policy), so `git checkout` above can't restore it like every other data/*.json file —
     // reset it directly instead.
     fs.writeFileSync(path.join(process.cwd(), 'data', 'contact-submissions.json'), '[]\n', 'utf8');
+
+    // Remove the marker from global-setup.ts so sendNtfyNotification resumes sending real
+    // notifications once the suite has finished (pass or fail).
+    fs.rmSync(path.join(process.cwd(), '.e2e-running'), { force: true });
 }

@@ -3,6 +3,7 @@
 import { randomUUID } from 'crypto';
 import { auth } from '@/auth';
 import { appendContactSubmission, setSubmissionsRead, readContactSubmissions, writeContactSettings } from '@/lib/contact-data';
+import { sendNtfyNotification } from '@/lib/ntfy';
 import type { ContactSettings, ContactSubmission } from '@/types/contact';
 
 async function assertAdmin(): Promise<void> {
@@ -23,14 +24,17 @@ export async function submitContactForm(_prevState: ContactFormState, formData: 
         return { status: 'error' };
     }
 
-    await appendContactSubmission({
+    const submission: ContactSubmission = {
         id: randomUUID(),
         name,
         phone,
         message,
         createdAt: new Date().toISOString(),
         read: false,
-    });
+    };
+
+    await appendContactSubmission(submission);
+    await sendNtfyNotification(submission);
 
     return { status: 'success' };
 }

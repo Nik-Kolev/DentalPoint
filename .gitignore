@@ -36,6 +36,9 @@ yarn-error.log*
 # must never persist in git history, only on the server filesystem
 data/contact-submissions.json
 
+# e2e-test-run marker — see e2e/global-setup.ts
+.e2e-running
+
 # documentation file
 DENTALPOINT_DEPLOYMENT_GUIDE.md
 

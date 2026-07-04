@@ -3,27 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getContactSubmissions, markSubmissionsAsRead } from '@/lib/actions/contact';
+import { toViberLink, toTelLink, formatDate } from '@/lib/format';
 import DateRangePicker from '@/components/shared/DateRangePicker';
 import type { ContactSubmission } from '@/types/contact';
 
 const PAGE_SIZE = 5;
-
-function formatDate(iso: string): string {
-    return new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
-}
-
-// Viber's chat deep link requires E.164 (leading + and country code) — local numbers are
-// stored/displayed in the usual Bulgarian format ("0888 123 456"), so convert on the fly.
-// https://developers.viber.com/docs/tools/deep-links/
-function toViberLink(phone: string): string {
-    const digits = phone.replace(/\D/g, '');
-    const e164 = digits.startsWith('0') ? `+359${digits.slice(1)}` : `+${digits}`;
-    return `viber://chat?number=${e164}`;
-}
-
-function toTelLink(phone: string): string {
-    return `tel:${phone.replace(/\s/g, '')}`;
-}
 
 export default function MessagesTab() {
     const t = useTranslations('statistics.messages');
