@@ -4,7 +4,8 @@ import Link from 'next/link';
 import HomeGallery from '@/components/gallery/HomeGallery';
 import HomeReviews from '@/components/shared/HomeReviews';
 import { getTranslations } from 'next-intl/server';
-import { getImageUrl, getBlurPlaceholder } from '@/lib/imageVersion';
+import { getImageUrl } from '@/lib/imageVersion';
+import { heroBlurPlaceholder } from '@/lib/heroBlurPlaceholder';
 
 function GallerySkeleton() {
     return (
@@ -75,7 +76,7 @@ export default async function Home() {
                                     sizes='(max-width: 1024px) 100vw, 580px'
                                     fetchPriority='high'
                                     placeholder='blur'
-                                    blurDataURL={getBlurPlaceholder('/Images/front/clinic.jpg')}
+                                    blurDataURL={heroBlurPlaceholder}
                                 />
                             </div>
                         </div>

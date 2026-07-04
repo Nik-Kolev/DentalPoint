@@ -24,7 +24,6 @@ interface GalleryItem {
     alt: string;
     order: number;
     aspectRatio?: string;
-    blurDataURL?: string;
 }
 
 interface GalleryConfig {

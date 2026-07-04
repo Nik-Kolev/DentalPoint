@@ -4,5 +4,3 @@ export function getImageUrl(path: string): string {
     // Removed version param - causing 404s. Cache headers handle versioning now.
     return path;
 }
-
-export { getBlurPlaceholder } from './blurPlaceholders';

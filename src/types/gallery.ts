@@ -4,7 +4,6 @@ export interface HomeGalleryItem {
     path: string;
     alt: string;
     order: number;
-    blurDataURL?: string;
 }
 
 export interface GalleryCase {
@@ -18,8 +17,6 @@ export interface GalleryCase {
     afterPath: string;
     beforeAlt: string;
     afterAlt: string;
-    blurBefore?: string;
-    blurAfter?: string;
     imageStyle?: string;
     beforeImageStyle?: string;
     afterImageStyle?: string;
@@ -34,7 +31,6 @@ export interface Certificate {
     order: number;
     // Raw CSS ratio "W/H" applied via inline style, NOT a Tailwind class (unlike GalleryCase.aspectRatio)
     aspectRatio?: string;
-    blurDataURL?: string;
 }
 
 export interface TeamMember {
