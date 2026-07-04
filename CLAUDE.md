@@ -60,7 +60,8 @@ src/
   locales/
     bg.json           # Bulgarian strings (default locale)
     en.json           # English strings
-  proxy.ts            # Middleware — next-intl + next-auth auth check
+  proxy.ts            # Middleware — next-intl rewrite + protected-route session check via
+                      # next-auth/jwt's getToken() (NOT the auth() wrapper — see Auth section)
                       # (Next.js 16 uses proxy.ts, not middleware.ts)
 data/
   home-gallery.json   # Home gallery images (managed by admin) — gitignored (Phase 11), admin-mutated
@@ -88,6 +89,9 @@ npm run test:e2e:ui      # Playwright UI mode, for debugging a single spec
 - Nginx config is version-controlled: `nginx.conf.dentalpoint`
 - To skip deploy: include `[skip ci]` in the commit message
 - Manual fallback on server: `bash fix-build.sh`
+- Admin-mutated content (`data/*.json`, `public/Images/{certificates,gallery,owners}`, and everything in `public/Images/front/` except `clinic.jpg`) is gitignored (Phase 11) — deploy's `git reset --hard` never touches it. `deploy.yml` deliberately has no `git clean -fd` for the same reason.
+- **`package.json` has an `overrides` entry pinning `@swc/helpers` to `^0.5.17`.** Without it, npm's resolver can silently pick a version that satisfies `next`'s own requirement but not `next-intl`'s bundled `@swc/core` (`>=0.5.17`) — `npm install`/`tsc`/lint/build/e2e all pass locally regardless, but `npm ci` (which deploy.yml uses) fails hard with `EUSAGE: Missing @swc/helpers@X from lock file`. If you ever bump `next-intl` again, run a clean `npm ci` locally before trusting the lockfile — this is the one check that catches it.
+- **First real production deploy since 2026-04-04 confirmed working end-to-end as of 2026-07-05** (Phase 12) — see `roadmap.md` Phase 12 for the full incident log (3 issues found and fixed: the `@swc/helpers` lockfile gotcha above, the Auth.js `proxy.ts` redirect loop, and a `callbackUrl` bug — both documented in the Auth section below).
 
 ## Conventions & gotchas
 
@@ -186,7 +190,10 @@ Suite lives in `e2e/` at project root, config at `playwright.config.ts`. Single 
 - Google OAuth via Auth.js (next-auth v5). Config: `src/auth.ts` — single entry point.
 - **Import: `import { auth } from '@/auth'` — NOT `@/lib/auth`** (old path, doesn't export `auth`).
 - Protected routes: `/statistics/*` and `/admin/*` (enforced in `src/proxy.ts`).
-- In server components and Server Actions: call `await auth()` to get the session.
+- In server components and Server Actions: call `await auth()` to get the session. This is fine and correct there.
+- **`src/proxy.ts` deliberately does NOT use the `auth((req) => {...})` wrapper pattern** (Phase 12 incident, 2026-07-05). Wrapping the whole proxy in `auth()` mutates the request's perceived origin (via `NEXTAUTH_URL`) *before* `next-intl`'s middleware runs on it inside the callback — this made `next-intl` build an absolute rewrite URL instead of a relative one, which Next.js then treats as a real cross-origin redirect instead of an internal rewrite, producing an infinite `/` → `/` redirect loop. This is invisible in local dev and even local `next start` — it only reproduces when `NEXTAUTH_URL` differs from the request's actual origin, i.e. only in real production behind nginx/Cloudflare, which is why it wasn't caught until the very first real deploy since April. `proxy.ts` instead calls `next-auth/jwt`'s `getToken({ req, secret: process.env.NEXTAUTH_SECRET })` directly for the protected-path check — it reads the session cookie without touching `req.nextUrl` at all. If you ever reintroduce the `auth()` wrapper here, retest a real deploy behind Cloudflare, not just local dev.
+- Relatedly: when building a redirect URL in `proxy.ts` (e.g. the sign-in `callbackUrl`), use `req.nextUrl.pathname + req.nextUrl.search` (relative), never the raw `req.url` or `req.nextUrl.origin` — `req.nextUrl`'s origin is Next.js's internal server address (e.g. `http://localhost:3000`), not the public domain. Caught live once already (callbackUrl pointed at `localhost:3000` in production).
+- `AUTH_TRUST_HOST=true` is set both in `.env.production` and as `trustHost: true` in `src/auth.ts`'s config — a genuine requirement for Auth.js v5 behind a reverse proxy, kept even though it didn't turn out to be what fixed the redirect loop above.
 
 ### Brand
 - Design tokens live in `src/app/globals.css` as CSS custom properties, referenced everywhere via `var(--dp-*)`.
@@ -206,5 +213,7 @@ Footer uses `flex justify-between` to push two groups to opposite edges:
 - Copyright bar: `text-white/60` (not the accent color)
 
 ### Cloudflare image loader
-- `src/lib/cloudflareLoader.ts` is ready but not active in `next.config.js`.
-- Enabling it offloads all image resizing to Cloudflare's edge network (free tier).
+- **Active** since Phase 11 (`next.config.js`: `images.loader: 'custom'`, `loaderFile: './src/lib/cloudflareLoader.ts'`). Confirmed working in production — image requests resolve through `https://dentalpoint.bg/cdn-cgi/image/...`.
+- Only affects the 4 `<Image>` call sites that don't set `unoptimized`: home hero (`page.tsx`, LCP-critical), `TeamViewer.tsx`, `TeamAdmin.tsx`, `BeforeAfterSlider.tsx`. All gallery/certificate images use `unoptimized` and bypass this entirely.
+- `cloudflareLoader.ts` requires the `'use client'` directive at the top — Next.js needs to serialize a custom `loaderFile`'s exported function across the server/client boundary.
+- Offloads resize/format work to Cloudflare's edge, reducing CPU load on the 1 CPU/1GB VPS.
