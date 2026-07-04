@@ -8,14 +8,11 @@
         "start": "next start",
         "lint": "next lint",
         "test:e2e": "playwright test",
-        "test:e2e:ui": "playwright test --ui",
-        "optimize-images": "node scripts/optimize-images.js",
-        "generate-blur": "node scripts/generate-blur-placeholders.js",
-        "process-images": "node scripts/optimize-images.js && node scripts/generate-blur-placeholders.js"
+        "test:e2e:ui": "playwright test --ui"
     },
     "dependencies": {
         "googleapis": "^167.0.0",
-        "next": "16.2.9",
+        "next": "16.2.10",
         "next-auth": "^5.0.0-beta.31",
         "next-intl": "^4.3.4",
         "react": "^19",
@@ -34,7 +31,7 @@
         "@types/react-dom": "^19",
         "autoprefixer": "^10.4.21",
         "eslint": "^9",
-        "eslint-config-next": "16.2.9",
+        "eslint-config-next": "16.2.10",
         "postcss": "^8.5.6",
         "tailwindcss": "^4.1.11",
         "typescript": "^5"
