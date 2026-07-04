@@ -3,31 +3,33 @@
 import { Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function SignInContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
+    const [signInError, setSignInError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const callbackUrl = searchParams.get('callbackUrl') || '/statistics';
 
-    useEffect(() => {
-        const errorParam = searchParams.get('error');
-        if (errorParam === 'AccessDenied') {
-            setError('Access denied. Only authorized email addresses can sign in.');
-        } else if (errorParam) {
-            setError('An error occurred during sign in. Please try again.');
-        }
-    }, [searchParams]);
+    // Derived directly from the URL on every render — no effect needed, searchParams is
+    // already available synchronously (unlike window/localStorage, this isn't a client-only API).
+    const errorParam = searchParams.get('error');
+    const urlError =
+        errorParam === 'AccessDenied'
+            ? 'Access denied. Only authorized email addresses can sign in.'
+            : errorParam
+              ? 'An error occurred during sign in. Please try again.'
+              : null;
+    const error = signInError || urlError;
 
     const handleGoogleSignIn = async () => {
         setLoading(true);
-        setError(null);
+        setSignInError(null);
         try {
             await signIn('google', { callbackUrl, redirect: true });
-        } catch (err) {
-            setError('Failed to sign in. Please try again.');
+        } catch {
+            setSignInError('Failed to sign in. Please try again.');
             setLoading(false);
         }
     };

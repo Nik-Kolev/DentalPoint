@@ -10,7 +10,6 @@ export default function FloatingCTA() {
     const pathname = usePathname();
     const [isStaticCTAVisible, setIsStaticCTAVisible] = useState(false);
     const [isBackToTopVisible, setIsBackToTopVisible] = useState(false);
-    const [isPageScrollable, setIsPageScrollable] = useState(false);
     const [bottomOffset, setBottomOffset] = useState(0);
     const [hasPassedStaticCTA, setHasPassedStaticCTA] = useState(false);
 
@@ -19,7 +18,6 @@ export default function FloatingCTA() {
     useEffect(() => {
         const handleScroll = () => {
             setIsBackToTopVisible(window.pageYOffset > 100);
-            setIsPageScrollable(document.documentElement.scrollHeight > window.innerHeight + 100);
 
             const footer = document.querySelector('footer');
             if (footer) {
@@ -58,8 +56,12 @@ export default function FloatingCTA() {
         const staticCTAs = document.querySelectorAll('[data-static-cta]');
 
         if (staticCTAs.length === 0) {
+            // Part of the same DOM-query-driven sync as the IntersectionObserver setup below —
+            // document.querySelectorAll doesn't exist during SSR, so this can't run during render.
+            /* eslint-disable react-hooks/set-state-in-effect */
             setIsStaticCTAVisible(false);
             setHasPassedStaticCTA(false);
+            /* eslint-enable react-hooks/set-state-in-effect */
             return;
         }
 

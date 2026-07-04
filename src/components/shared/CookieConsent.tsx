@@ -10,12 +10,15 @@ export default function CookieConsent() {
     const [showBanner, setShowBanner] = useState(false);
 
     useEffect(() => {
+        // localStorage doesn't exist during SSR — can only be read client-side, post-mount.
+        /* eslint-disable react-hooks/set-state-in-effect */
         const consent = localStorage.getItem('cookie-consent');
         if (consent === null) {
             setShowBanner(true);
         } else if (consent === 'true') {
             loadGoogleAnalytics();
         }
+        /* eslint-enable react-hooks/set-state-in-effect */
     }, []);
 
     const loadGoogleAnalytics = () => {
@@ -24,7 +27,7 @@ export default function CookieConsent() {
         if (typeof window.gtag !== 'undefined') return;
 
         window.dataLayer = window.dataLayer || [];
-        function gtag(...args: any[]) {
+        function gtag(...args: unknown[]) {
             window.dataLayer.push(args);
         }
         window.gtag = gtag;
@@ -88,7 +91,7 @@ export default function CookieConsent() {
 
 declare global {
     interface Window {
-        dataLayer: any[];
-        gtag: (...args: any[]) => void;
+        dataLayer: unknown[];
+        gtag: (...args: unknown[]) => void;
     }
 }

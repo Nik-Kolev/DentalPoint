@@ -9,12 +9,12 @@ const PERIODS: TimePeriod[] = ['week', 'month'];
 interface WindowData {
     period: TimePeriod;
     data: AnalyticsData | null;
-    error: string | null;
+    errorMessage?: string;
 }
 
 export default function StatsTab() {
     const t = useTranslations('statistics');
-    const [windows, setWindows] = useState<WindowData[]>(PERIODS.map((period) => ({ period, data: null, error: null })));
+    const [windows, setWindows] = useState<WindowData[]>(PERIODS.map((period) => ({ period, data: null })));
     const [loading, setLoading] = useState(true);
 
     const translateDevice = (device: string): string => (t.raw('device') as Record<string, string>)[device] ?? device;
@@ -29,9 +29,10 @@ export default function StatsTab() {
                 PERIODS.map(async (period) => {
                     try {
                         const data = await fetchAnalyticsData(period);
-                        return { period, data, error: null };
-                    } catch (err: any) {
-                        return { period, data: null, error: err.message || t('loadError') };
+                        return { period, data };
+                    } catch (err) {
+                        const errorMessage = err instanceof Error ? err.message : undefined;
+                        return { period, data: null, errorMessage };
                     }
                 })
             );
@@ -58,12 +59,12 @@ export default function StatsTab() {
 
     return (
         <div className='space-y-4 sm:space-y-6'>
-            {windows.map(({ period, data, error }) => (
+            {windows.map(({ period, data, errorMessage }) => (
                 <div key={period} className='bg-white rounded-2xl border border-[var(--dp-card-border)] shadow-sm p-4 sm:p-6'>
                     <h2 className='text-lg sm:text-xl font-bold text-[var(--dp-heading)] mb-4'>{t(`period.${period}` as 'period.week')}</h2>
 
-                    {error ? (
-                        <p className='text-red-500 text-sm'>{error}</p>
+                    {data === null ? (
+                        <p className='text-red-500 text-sm'>{errorMessage || t('loadError')}</p>
                     ) : data ? (
                         <div className='space-y-5'>
                             <div className='text-center'>

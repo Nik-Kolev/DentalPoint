@@ -17,11 +17,15 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
+        // window.innerWidth doesn't exist during SSR, so the desktop-shows-all breakpoint check
+        // can only run client-side, post-mount — this can't be computed during render.
+        /* eslint-disable react-hooks/set-state-in-effect */
         if (window.innerWidth >= 768) {
             setVisibleCount(cases.length);
         } else {
             setVisibleCount(3);
         }
+        /* eslint-enable react-hooks/set-state-in-effect */
     }, [cases.length]);
 
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, cases.length));

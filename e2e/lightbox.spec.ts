@@ -11,7 +11,6 @@ test.describe('lightbox', () => {
             await galleryImages.click();
             await page.waitForTimeout(500);
 
-            const lightboxContainer = page.locator('[role="dialog"], [class*="lightbox"], [class*="modal"]').first();
             const lightboxImage = page.locator('img[class*="max-w"], img[class*="max-h"]').first();
 
             if (await lightboxImage.isVisible()) {
@@ -79,7 +78,9 @@ test.describe('lightbox', () => {
             const lightboxImage = page.locator('img[class*="max-w"], img[class*="max-h"]').first();
             if (await lightboxImage.isVisible()) {
                 const lightboxSrc = await lightboxImage.getAttribute('src');
-                expect(lightboxSrc).toContain('Images');
+                // Compare paths only, not query strings — the Cloudflare loader appends a
+                // width param that legitimately differs between thumbnail and full-size.
+                expect(lightboxSrc?.split('?')[0]).toBe(imageSrc?.split('?')[0]);
             }
         }
     });

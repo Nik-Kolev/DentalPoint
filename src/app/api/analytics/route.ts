@@ -146,14 +146,15 @@ export async function POST(request: NextRequest) {
         };
 
         return NextResponse.json(responseData);
-    } catch (error: any) {
+    } catch (error) {
         console.error('Analytics API error:', error);
+        const message = error instanceof Error ? error.message : undefined;
         let errorMessage = 'Failed to fetch analytics data';
-        if (error.message?.includes('has not been used') || error.message?.includes('is disabled')) {
+        if (message?.includes('has not been used') || message?.includes('is disabled')) {
             errorMessage = 'Google Analytics Data API is not enabled. Please enable it in Google Cloud Console.';
-        } else if (error.message?.includes('PERMISSION_DENIED')) {
+        } else if (message?.includes('PERMISSION_DENIED')) {
             errorMessage = 'Permission denied. Please check service account permissions in Google Analytics.';
         }
-        return NextResponse.json({ error: errorMessage, details: error.message }, { status: 500 });
+        return NextResponse.json({ error: errorMessage, details: message }, { status: 500 });
     }
 }

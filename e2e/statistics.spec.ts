@@ -231,8 +231,6 @@ test.describe('statistics — admin', () => {
         await expect(page.getByText('Message 0')).toBeVisible();
 
         // The 5 visible ones should now be read (no amber border or unread badge)
-        const messages = page.locator('div.rounded-2xl').filter({ has: page.locator('input[type="checkbox"]') });
-
         // Check first 5 are marked as read (checkboxes checked, no unread badge)
         const messageTexts = ['Message 0', 'Message 1', 'Message 2', 'Message 3', 'Message 4'];
         for (const text of messageTexts) {

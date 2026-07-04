@@ -98,7 +98,7 @@ export default async function Home() {
                             </div>
                             <div className='space-y-1'>
                                 <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>Адрес</p>
-                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>ул. „Подполковник Калитин" 2</p>
+                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>ул. „Подполковник Калитин“ 2</p>
                                 <p className='font-montserrat text-[13px] text-gray-500 leading-snug'>кв. Левски, Варна</p>
                             </div>
                         </div>

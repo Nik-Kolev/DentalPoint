@@ -13,7 +13,7 @@ export default function MessagesTab() {
     const t = useTranslations('statistics.messages');
     const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [hasError, setHasError] = useState(false);
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [fromIso, setFromIso] = useState('');
     const [untilIso, setUntilIso] = useState('');
@@ -25,7 +25,7 @@ export default function MessagesTab() {
             .then(setSubmissions)
             .catch((err) => {
                 console.error(err);
-                setError(t('loadError'));
+                setHasError(true);
             })
             .finally(() => setLoading(false));
     }, []);
@@ -100,10 +100,10 @@ export default function MessagesTab() {
         );
     }
 
-    if (error) {
+    if (hasError) {
         return (
             <div className='bg-white rounded-2xl border border-[var(--dp-card-border)] shadow-sm p-8 text-center text-red-500 text-sm'>
-                {error}
+                {t('loadError')}
             </div>
         );
     }

@@ -39,6 +39,8 @@ export default function HomeReviewsGrid({ items, ctaLabel, ctaUrl, loadMoreLabel
     // Desktop shows every review immediately — same "paginate on mobile, show all on desktop"
     // pattern already used in CertificatesViewer/GalleryCasesViewer.
     useEffect(() => {
+        // window.innerWidth doesn't exist during SSR — can only run client-side, post-mount.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (window.innerWidth >= 1024) setVisibleCount(items.length);
     }, [items.length]);
 

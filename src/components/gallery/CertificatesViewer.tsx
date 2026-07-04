@@ -75,7 +75,6 @@ function StatsSection({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         fired.current = false;
-        setStartTime(null);
 
         const el = ref.current;
         if (!el) return;
@@ -137,6 +136,9 @@ export default function CertificatesViewer({ items, loadMoreLabel, showLessLabel
     const [visibleCount, setVisibleCount] = useState(3);
 
     useEffect(() => {
+        // window.innerWidth doesn't exist during SSR, so the desktop-shows-all breakpoint check
+        // can only run client-side, post-mount — this can't be computed during render.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (window.innerWidth >= 768) setVisibleCount(items.length);
     }, [items.length]);
 

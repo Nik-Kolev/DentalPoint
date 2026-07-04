@@ -232,7 +232,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
               <div className='flex flex-col gap-4 items-center pl-2 md:pl-0 md:items-start'>
                 <p className='font-montserrat text-xs font-semibold uppercase tracking-[0.15em] text-white/40 self-start'>{t('footerContact')}</p>
                 <div className='flex flex-col gap-2 font-montserrat text-sm text-white/70 self-start'>
-                  <p>ул. „Подполковник Калитин" 2</p>
+                  <p>ул. „Подполковник Калитин“ 2</p>
                   <p>кв. Левски, Варна</p>
                   <p className='mt-1'>0876 346 261</p>
                   <p>0878 355 494</p>

@@ -55,10 +55,17 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt }: ImageL
     }, [isOpen]);
 
     useEffect(() => {
+        // Resets load state whenever the lightbox re-opens or the image changes, since this
+        // component instance persists across open/close cycles (isOpen only toggles a `return
+        // null`, it doesn't unmount). A render-time "previous key" comparison could replace this
+        // effect per React's guidance, but that's a structural change deferred to avoid risk in
+        // this dynamically-imported component shared across all 4 galleries.
+        /* eslint-disable react-hooks/set-state-in-effect */
         if (isOpen) {
             setImageLoaded(false);
             setImageError(false);
         }
+        /* eslint-enable react-hooks/set-state-in-effect */
     }, [isOpen, imageSrc]);
 
     if (!isOpen) return null;

@@ -48,9 +48,16 @@ export default function DateRangePicker({ fromIso, untilIso, onChange, locale, p
     // Re-sync when the parent clears/changes fromIso/untilIso from outside (e.g. a
     // "clear filter" button) — the useState initializer above only runs once on mount,
     // so without this the button label stays stuck on the old range after an external reset.
-    useEffect(() => {
+    // Adjusted directly during render (React's documented pattern for syncing state from a
+    // changed prop) rather than in an effect, to avoid the extra post-mount render an effect
+    // would cause here.
+    const [prevFromIso, setPrevFromIso] = useState(fromIso);
+    const [prevUntilIso, setPrevUntilIso] = useState(untilIso);
+    if (fromIso !== prevFromIso || untilIso !== prevUntilIso) {
+        setPrevFromIso(fromIso);
+        setPrevUntilIso(untilIso);
         setRange(fromIso || untilIso ? { from: toDate(fromIso), to: toDate(untilIso) } : undefined);
-    }, [fromIso, untilIso]);
+    }
 
     useEffect(() => {
         if (!open) return;
