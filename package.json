@@ -22,6 +22,9 @@
         "server-only": "^0.0.1",
         "sharp": "^0.34.5"
     },
+    "overrides": {
+        "@swc/helpers": "^0.5.17"
+    },
     "devDependencies": {
         "@playwright/test": "^1.61.1",
         "@tailwindcss/postcss": "^4.1.11",
