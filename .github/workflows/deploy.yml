@@ -23,9 +23,12 @@ jobs:
                   script: |
                       cd /var/www/DentalPoint
 
-                      # Discard any local changes and fetch latest
+                      # Discard local changes to tracked files and fetch latest.
+                      # Admin-mutated content (data/*.json, public/Images/{certificates,gallery,owners})
+                      # is gitignored and therefore untracked — git reset never touches it.
+                      # Deliberately no `git clean -fd` here: it would delete that same untracked
+                      # admin content. Build-cache dirs below are cleaned explicitly instead.
                       git reset --hard HEAD
-                      git clean -fd
                       git fetch origin main
                       git reset --hard origin/main
 
@@ -39,8 +42,9 @@ jobs:
                       rm -rf node_modules/.cache 2>/dev/null || true
                       rm -rf .swc 2>/dev/null || true
 
-                      # Install dependencies
-                      npm install || exit 1
+                      # Install dependencies (npm ci, not npm install — exact, reproducible install
+                      # from package-lock.json; npm install can silently rewrite the lockfile)
+                      npm ci || exit 1
 
                       # Build
                       echo "🔨 Building Next.js..."

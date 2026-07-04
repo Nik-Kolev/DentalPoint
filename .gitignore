@@ -10,6 +10,7 @@
 /test-results/
 /playwright-report/
 /e2e/.auth/
+/e2e/.data-backup/
 
 # next.js
 /.next/
@@ -32,9 +33,24 @@ yarn-error.log*
 .env
 .env.production
 
-# contact form submissions hold patient PII with a 60-day retention policy —
-# must never persist in git history, only on the server filesystem
+# admin-mutated content — written directly to the server filesystem by the
+# admin UI at runtime, never meant to be reset back to a git commit on deploy.
+# contact-submissions.json also holds patient PII with a 60-day retention policy —
+# must never persist in git history either way.
 data/contact-submissions.json
+data/home-gallery.json
+data/certificates.json
+data/gallery-cases.json
+data/team.json
+data/contact-settings.json
+data/pending-changes.json
+public/Images/certificates/
+public/Images/gallery/
+public/Images/owners/
+# front/ is the Home Gallery's admin upload dir too, except clinic.jpg (the static,
+# hardcoded hero image, never admin-mutated) — keep that one file tracked.
+public/Images/front/*
+!public/Images/front/clinic.jpg
 
 # e2e-test-run marker — see e2e/global-setup.ts
 .e2e-running
