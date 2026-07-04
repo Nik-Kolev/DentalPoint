@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Cloudflare Image Resizing Loader
  *
