@@ -11,8 +11,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     callbacks: {
         async signIn({ user }) {
             const allowedEmail = process.env.ALLOWED_EMAIL;
+            console.log('[TEMP DEBUG] signIn callback: user.email=', JSON.stringify(user.email), 'allowedEmail=', JSON.stringify(allowedEmail));
             if (!allowedEmail) return false;
-            return user.email?.toLowerCase() === allowedEmail.toLowerCase();
+            const result = user.email?.toLowerCase() === allowedEmail.toLowerCase();
+            console.log('[TEMP DEBUG] signIn callback: match result=', result);
+            return result;
         },
         async jwt({ token, user }) {
             if (user) {
