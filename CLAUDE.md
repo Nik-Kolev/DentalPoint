@@ -16,7 +16,7 @@ Production dental clinic website for **Dental Point**, Varna, Bulgaria. Live at 
 ## Stack
 - **Next.js 16** (App Router, TypeScript)
 - **Tailwind CSS v4**
-- **Auth.js (next-auth v5)** — Google OAuth, single-email allowlist (`ALLOWED_EMAIL`). No dedicated `/admin` page — admin controls render inline on content pages (home/team/gallery/licenses) when signed in. `proxy.ts` still lists `/admin` in `protectedPaths` from an earlier design; harmless (no page exists there to protect) but not load-bearing.
+- **Auth.js (next-auth v5)** — Google OAuth, multi-email allowlist (`ALLOWED_EMAILS`, comma-separated). No dedicated `/admin` page — admin controls render inline on content pages (home/team/gallery/licenses) when signed in. `proxy.ts` still lists `/admin` in `protectedPaths` from an earlier design; harmless (no page exists there to protect) but not load-bearing.
 - **next-intl v4** — wired for routing since Phase 3; `localePrefix: 'never'`, cookie-based locale switching
 - **googleapis** — GA4 data for the analytics dashboard
 - **sharp** — image rotation and processing for admin uploads
@@ -38,7 +38,7 @@ src/
     admin/            # Shared admin primitives: ImageSlot, AdminActionBar, BilingualTextFields
                       # — composed by all 4 admin components, see Conventions below
     layout/           # Navigation, DeferredWidgets
-    shared/           # StaticCTA, FloatingCTA, BackToTop, CookieConsent, DentalPointLogo, etc.
+    shared/           # StaticCTA, BackToTop, CookieConsent, DentalPointLogo, etc.
     statistics/       # BarChart
   hooks/
     useImageUpload.ts           # Headless upload-state hook
@@ -176,6 +176,8 @@ Practical implications:
 - **Home/certificates:** raw JPEG bytes passed through (no re-encode); EXIF rotation is handled by the browser (no quality loss). Non-JPEGs converted via `sharp` at quality 95.
 - **Certificates display aspect ratio (`src/lib/certificateAspectRatio.ts`):** each certificate still stores its *exact* measured aspect ratio at upload time (`actions/gallery.ts`'s `computeAspectRatio` flag, unchanged), but `CertificatesViewer`/`CertificatesAdmin` no longer apply that raw value directly to the CSS container. Since CSS Grid gives every card in a row equal width, deriving height from each image's own micro-varying ratio made same-orientation cards render at visibly different heights (Phase 13 bug report). `getCertificateDisplayRatio()` snaps the *displayed* ratio to one of two fixed values — `1600/1121` (landscape) or `1121/1600` (portrait) — chosen because that's the single most common exact measurement already present across the real scanned certificates, not an arbitrary preset. `object-contain` still guarantees zero cropping; the only visible cost is a sliver of extra card-mat margin on the few outlier images. This is a display-only transform — it's automatic for any future upload, no reprocessing step needed. Different from the single-global-preset system Phase 8.5 explicitly rejected: that one used a made-up ratio that didn't fit the real photos and caused heavy letterboxing; this one is derived from the real data, so it fits almost all images almost exactly.
 - **Gallery cases (`processGalleryImage(file, targetRatio?)`):** when a ratio is provided, applies EXIF auto-rotation first (`sharp.rotate()`), reads post-rotation pixel dimensions, then center-crops to the target ratio with `sharp.resize(w, h, { fit: 'cover', position: 'center' })`. Both before and after images are cropped to the same ratio on upload, so `object-cover` fills them identically in the slider with no zoom mismatch.
+- **Home gallery images should be pre-cropped to the grid's actual display aspect ratio, not left to the browser.** `HomeGalleryViewer.tsx`'s grid cells are a fixed `aspect-[4/3]` box, but portrait source photos (common — a phone held upright, EXIF-rotated) don't match that ratio. Leaving the crop to `object-cover` at render time means the *browser* crops+scales a full-resolution image live on every page load, which visibly looks worse than doing the same crop once, server-side, with a proper resize algorithm — confirmed directly (Phase 13, 2026-07-05): a set of 6 live photos that looked "soft"/blurry were not actually a JPEG-quality problem at all, they were this exact mismatch. Fix by applying the same `fit: 'cover', position: 'center'` resize used for gallery cases, targeting the grid's real 4:3 ratio, before the file is ever served — not by adjusting JPEG quality or resolution caps, which don't address a shape mismatch.
+- **Reusing a filename to swap an image's content does not bust the Cloudflare cache.** `/Images/` is served with `Cache-Control: public, max-age=31536000, immutable` — confirmed via `curl -I` that Cloudflare will keep serving the old bytes at that exact URL for up to a year (`Cf-Cache-Status: HIT`) even after the origin file changes. Any manual/SSH content swap for an existing gallery image must use a new filename (and update the referencing `data/*.json` entry), not overwrite the old one in place.
 - **No manual rotation UI** — removed in Phase 8. Doctor uploads via Xerox scanner (not iPhone), so EXIF rotation issues don't occur and re-encoding would cause quality loss. The `sharp.rotate()` EXIF auto-correction in `processGalleryImage` is kept (it's part of upload, not a UI button).
 - **Windows sharp file lock fix:** on Windows, `sharp(filePath)` holds the file handle open; writing to the same path fails. Always read to buffer first: `const buf = fs.readFileSync(filePath); sharp(buf)...` — then write the output buffer back.
 - `unoptimized` prop on all gallery `<Image>` — bypasses Next.js Lanczos3 downscaler which caused ringing on thumbnails.
@@ -191,9 +193,10 @@ Suite lives in `e2e/` at project root, config at `playwright.config.ts`. Single 
 - **Native HTML5 drag-and-drop:** `locator.dragTo()` does not reliably trigger this app's `draggable`/`ondragstart`/`ondragover`/`ondrop` handlers. Dispatch real `DragEvent`s via `page.evaluate()` instead, with short waits between dragstart→dragover→drop→dragend so React actually commits each state update before the next event fires.
 
 ### Analytics (GA4)
-- In production, real GA4 data comes from `POST /api/analytics` (uses `googleapis`).
+- In production, real GA4 data comes from `POST /api/analytics` (uses `googleapis`, service-account credentials, reads GA4's Reports API — this has a 24–48h processing lag and `getDateRange()` deliberately excludes "today", so brand-new traffic never appears same-day).
 - In dev, the statistics page has a toggle button (`useMockData` state) that switches to generated mock data.
 - The statistics dashboard (`/statistics/`) is Bulgarian-only — all UI strings are in `bg.json` statistics namespace.
+- **Client-side tracking (`CookieConsent.tsx`) uses `@next/third-parties`'s `<GoogleAnalytics gaId={...} />`**, not a hand-rolled `gtag`/`dataLayer` script injection — the latter was tried first and never actually sent a beacon (confirmed by direct `sendBeacon`/`fetch` instrumentation showing zero calls, even with Google's own unmodified reference snippet tested the same way). The component is conditionally rendered based on cookie-consent state (mounted only after accept, or on future visits if already accepted) rather than always-mounted with a Consent Mode `consent: 'default'` gate — since it never loads until consent is real, there's nothing left to default-deny.
 
 ### Auth
 - Google OAuth via Auth.js (next-auth v5). Config: `src/auth.ts` — single entry point.
