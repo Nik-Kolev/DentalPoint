@@ -18,7 +18,7 @@ const nextConfig = {
     poweredByHeader: false,
     productionBrowserSourceMaps: false,
     compiler: {
-        removeConsole: false, // TEMP: was stripping the diagnostic signIn callback logs — revert to production-only check
+        removeConsole: process.env.NODE_ENV === 'production',
     },
     experimental: {
         serverActions: {
