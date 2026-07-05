@@ -163,6 +163,13 @@ Source of truth lives in `data/` as JSON files. Read/write via `src/lib/gallery-
 - `certificates.json` — license certificates
 - `gallery-cases.json` — before/after treatment cases
 
+**The production server is the sole source of truth for all admin-mutated content** — every file in `data/*.json` plus admin-uploaded images (`public/Images/{certificates,gallery,owners}` and `public/Images/front/` except `clinic.jpg`) and `data/contact-submissions.json` ("messages"). This is deliberate and one-way: code flows git → GitHub → deploy → server; this content never flows in the other direction, and never will — that's what Phase 11's gitignore rule exists to guarantee (see Deployment section above). There is no backup/sync step that mirrors the server's content down to a local machine.
+
+Practical implications:
+- **A fresh `git clone` has none of these files.** `gallery-data.ts`'s and `contact-data.ts`'s read functions all default to `[]` (or a sane default object) when a file is missing, specifically so `npm run dev` works out of the box with an empty gallery/team/messages state — don't reintroduce a bare `fs.readFileSync` without that check.
+- Any `data/*.json` or admin-uploaded image sitting in a local working copy is disconnected scratch content (either from local testing or a one-off manual copy) — it does not reflect, and cannot be pushed to, what's actually live on the server.
+- To fix already-live admin content (e.g. a bad upload), either re-do the action through the live admin UI, or SSH into the server directly — a code deploy cannot touch it.
+
 ### Image pipeline — admin uploads
 - Images uploaded via browser, saved to `public/Images/<gallery>/` with UUID filenames.
 - **Home/certificates:** raw JPEG bytes passed through (no re-encode); EXIF rotation is handled by the browser (no quality loss). Non-JPEGs converted via `sharp` at quality 95.

@@ -5,8 +5,14 @@ import type { HomeGalleryItem, GalleryCase, Certificate, PendingChange, TeamMemb
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 
-function readJson<T>(filename: string): T {
-    const raw = fs.readFileSync(path.join(DATA_DIR, filename), 'utf8');
+// All data/*.json files are gitignored (admin-mutated content written directly to the
+// server's filesystem — see CLAUDE.md's "Admin content is server-only" section). A fresh
+// clone or CI checkout has none of them, so every read must default to an empty collection
+// rather than throw on a missing file.
+function readJson<T>(filename: string, defaultValue: T): T {
+    const filePath = path.join(DATA_DIR, filename);
+    if (!fs.existsSync(filePath)) return defaultValue;
+    const raw = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(raw) as T;
 }
 
@@ -15,7 +21,7 @@ function writeJson<T>(filename: string, data: T): void {
 }
 
 export function readHomeGallery(): HomeGalleryItem[] {
-    return readJson<HomeGalleryItem[]>('home-gallery.json').sort((a, b) => a.order - b.order);
+    return readJson<HomeGalleryItem[]>('home-gallery.json', []).sort((a, b) => a.order - b.order);
 }
 
 export function writeHomeGallery(items: HomeGalleryItem[]): void {
@@ -23,7 +29,7 @@ export function writeHomeGallery(items: HomeGalleryItem[]): void {
 }
 
 export function readGalleryCases(): GalleryCase[] {
-    return readJson<GalleryCase[]>('gallery-cases.json').sort((a, b) => a.order - b.order);
+    return readJson<GalleryCase[]>('gallery-cases.json', []).sort((a, b) => a.order - b.order);
 }
 
 export function writeGalleryCases(cases: GalleryCase[]): void {
@@ -31,7 +37,7 @@ export function writeGalleryCases(cases: GalleryCase[]): void {
 }
 
 export function readCertificates(): Certificate[] {
-    return readJson<Certificate[]>('certificates.json').sort((a, b) => a.order - b.order);
+    return readJson<Certificate[]>('certificates.json', []).sort((a, b) => a.order - b.order);
 }
 
 export function writeCertificates(items: Certificate[]): void {
@@ -39,7 +45,7 @@ export function writeCertificates(items: Certificate[]): void {
 }
 
 export function readTeamMembers(): TeamMember[] {
-    return readJson<TeamMember[]>('team.json').sort((a, b) => a.order - b.order);
+    return readJson<TeamMember[]>('team.json', []).sort((a, b) => a.order - b.order);
 }
 
 export function writeTeamMembers(members: TeamMember[]): void {
@@ -47,9 +53,7 @@ export function writeTeamMembers(members: TeamMember[]): void {
 }
 
 export function readPendingChanges(): PendingChange[] {
-    const file = path.join(DATA_DIR, 'pending-changes.json');
-    if (!fs.existsSync(file)) return [];
-    return readJson<PendingChange[]>('pending-changes.json');
+    return readJson<PendingChange[]>('pending-changes.json', []);
 }
 
 export function appendPendingChange(change: Omit<PendingChange, 'at'>): void {

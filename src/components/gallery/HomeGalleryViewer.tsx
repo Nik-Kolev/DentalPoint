@@ -20,7 +20,7 @@ export default function HomeGalleryViewer({ items }: { items: HomeGalleryItem[] 
     return (
         <>
             <div className={`grid gap-4 ${getGridCols(items.length)}`}>
-                {items.map((item, index) => (
+                {items.map((item) => (
                     <div
                         key={item.id}
                         onClick={() => {
@@ -37,7 +37,6 @@ export default function HomeGalleryViewer({ items }: { items: HomeGalleryItem[] 
                                 alt={item.alt}
                                 fill
                                 unoptimized
-                                priority={index === 0}
                                 className='rounded-md object-cover'
                                 onLoad={() => setLoadedIds((prev) => new Set([...prev, item.id]))}
                             />

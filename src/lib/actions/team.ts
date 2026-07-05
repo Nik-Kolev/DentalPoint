@@ -15,6 +15,19 @@ async function assertAdmin(): Promise<void> {
     if (!session?.user) throw new Error('Unauthorized');
 }
 
+// The raw-JPEG-passthrough branch below trusts the client-supplied filename's extension
+// alone and skips re-encoding for quality reasons — but that means a file merely named
+// "photo.jpg" whose actual bytes aren't a JPEG could otherwise be written to disk unchecked.
+// metadata() reads just the header (no full pixel decode) and throws on anything that
+// isn't a genuine, decodable image.
+async function assertValidImage(buffer: Buffer): Promise<void> {
+    try {
+        await sharp(buffer).metadata();
+    } catch {
+        throw new Error('Uploaded file is not a valid image');
+    }
+}
+
 export async function replaceTeamMemberImage(
     id: string,
     formData: FormData,
@@ -31,6 +44,7 @@ export async function replaceTeamMemberImage(
     const ext = path.extname(file.name).toLowerCase();
     const bytes = await file.arrayBuffer();
     const buf = Buffer.from(bytes);
+    await assertValidImage(buf);
 
     // Keep JPEG bytes raw (no re-encode loss); convert other formats to JPEG
     const outputBuf = JPEG_EXTS.has(ext) ? buf : await sharp(buf).jpeg({ quality: 95 }).toBuffer();

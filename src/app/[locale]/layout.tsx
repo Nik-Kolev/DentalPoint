@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { notFound } from 'next/navigation';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import Navigation from '@/components/layout/Navigation';
 import StatisticsLink from '@/components/shared/StatisticsLink';
@@ -6,6 +7,7 @@ import DeferredWidgets from '@/components/layout/DeferredWidgets';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import DentalPointLogo from '@/components/shared/DentalPointLogo';
+import { routing } from '@/i18n/routing';
 
 export async function generateViewport(): Promise<Viewport> {
   return {
@@ -83,6 +85,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function LocaleLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+    notFound();
+  }
   const t = await getTranslations('layout');
   const tMeta = await getTranslations('metadata');
 

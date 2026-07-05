@@ -34,6 +34,7 @@ interface GalleryConfig {
     read: () => GalleryItem[];
     write: (items: GalleryItem[]) => void;
     computeAspectRatio?: boolean;
+    maxDimension?: number;
 }
 
 export type Gallery = 'home' | 'certificates';
@@ -48,6 +49,7 @@ const configs: Record<Gallery, GalleryConfig> = {
         page: 'home',
         read: readHomeGallery,
         write: writeHomeGallery,
+        maxDimension: 2000,
     },
     certificates: {
         uploadDir: path.join(process.cwd(), 'public', 'Images', 'certificates'),
@@ -65,18 +67,51 @@ async function assertAdmin() {
     if (!session?.user) throw new Error('Unauthorized');
 }
 
+// The raw-JPEG-passthrough branches below trust the client-supplied filename's extension
+// alone and skip re-encoding for quality reasons — but that means a file merely named
+// "photo.jpg" whose actual bytes aren't a JPEG (e.g. HTML with a <script> tag) would
+// otherwise be written to disk unchecked. metadata() reads just the header (no full pixel
+// decode) and throws on anything that isn't a genuine, decodable image.
+async function assertValidImage(buffer: Buffer): Promise<void> {
+    try {
+        await sharp(buffer).metadata();
+    } catch {
+        throw new Error('Uploaded file is not a valid image');
+    }
+}
+
+// Home-gallery uploads otherwise pass raw JPEG bytes straight through (see certificates'
+// identical no-re-encode policy) — but real phone-camera photos (e.g. 4032x3024 iPhone
+// output) can be several MB at that resolution, and these images ship `unoptimized`
+// (no Cloudflare/Next resizing at request time), so an oversized original is served
+// byte-for-byte to every visitor. Downscaling only when the image actually exceeds the
+// cap keeps small/already-reasonable uploads byte-identical.
+async function capDimensions(buffer: Buffer, maxDimension: number): Promise<Buffer> {
+    const rotatedBuffer = await sharp(buffer).rotate().toBuffer();
+    const { width, height } = await sharp(rotatedBuffer).metadata();
+    if (!width || !height || Math.max(width, height) <= maxDimension) {
+        return buffer;
+    }
+
+    const resizeOpts = width >= height ? { width: maxDimension } : { height: maxDimension };
+    return sharp(rotatedBuffer).resize(resizeOpts).jpeg({ quality: 85 }).toBuffer();
+}
+
 async function _upload(formData: FormData, config: GalleryConfig): Promise<GalleryItem> {
     const file = formData.get('file') as File | null;
     if (!file) throw new Error('No file provided');
 
     const ext = path.extname(file.name).toLowerCase() || '.jpeg';
     const buffer = Buffer.from(await file.arrayBuffer());
+    await assertValidImage(buffer);
 
     let finalBuffer: Buffer;
     let saveExt: string;
 
     if (JPEG_EXTS.has(ext)) {
-        finalBuffer = buffer;
+        finalBuffer = config.maxDimension
+            ? await capDimensions(buffer, config.maxDimension)
+            : buffer;
         saveExt = ext;
     } else {
         finalBuffer = await sharp(buffer).rotate().jpeg({ quality: 100 }).toBuffer();
@@ -174,6 +209,7 @@ function parseAspectRatio(value: string): number | undefined {
 async function processGalleryImage(file: File, targetRatio?: number): Promise<Buffer> {
     const ext = path.extname(file.name).toLowerCase();
     const raw = Buffer.from(await file.arrayBuffer());
+    await assertValidImage(raw);
 
     if (!targetRatio && JPEG_EXTS.has(ext)) {
         // Raw JPEG passthrough — EXIF rotation handled by viewer, no re-encode loss
