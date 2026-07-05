@@ -7,7 +7,7 @@ import GalleryCasesAdmin from '@/components/gallery/GalleryCasesAdmin';
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('gallery');
-    return { title: t('title') };
+    return { title: t('title'), description: t('subtitle'), alternates: { canonical: '/gallery' } };
 }
 
 export default async function Gallery({ params }: { params: Promise<{ locale: string }> }) {

@@ -7,7 +7,7 @@ import TeamAdmin from '@/components/team/TeamAdmin';
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('team');
-    return { title: t('title') };
+    return { title: t('title'), description: t('subtitle'), alternates: { canonical: '/team' } };
 }
 
 export default async function Team({ params }: { params: Promise<{ locale: string }> }) {

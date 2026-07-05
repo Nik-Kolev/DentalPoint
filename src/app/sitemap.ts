@@ -6,52 +6,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return [
         {
-            url: `${baseUrl}/bg`,
+            url: baseUrl,
             lastModified: currentDate,
             changeFrequency: 'monthly',
             priority: 1,
         },
         {
-            url: `${baseUrl}/en`,
-            lastModified: currentDate,
-            changeFrequency: 'monthly',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/bg/contact`,
+            url: `${baseUrl}/contact`,
             lastModified: currentDate,
             changeFrequency: 'yearly',
             priority: 0.8,
         },
         {
-            url: `${baseUrl}/en/contact`,
-            lastModified: currentDate,
-            changeFrequency: 'yearly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/bg/team`,
+            url: `${baseUrl}/team`,
             lastModified: currentDate,
             changeFrequency: 'monthly',
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/en/team`,
+            url: `${baseUrl}/gallery`,
+            lastModified: currentDate,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/licenses`,
             lastModified: currentDate,
             changeFrequency: 'monthly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/bg/gallery`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/en/gallery`,
-            lastModified: currentDate,
-            changeFrequency: 'weekly',
-            priority: 0.8,
+            priority: 0.7,
         },
     ];
 }

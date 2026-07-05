@@ -11,7 +11,7 @@ import { DOCTORS } from '@/lib/doctors';
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('contact');
-    return { title: t('title'), description: t('subtitle') };
+    return { title: t('title'), description: t('subtitle'), alternates: { canonical: '/contact' } };
 }
 
 export default async function Contact({ params }: { params: Promise<{ locale: string }> }) {

@@ -77,8 +77,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     other: {
       'geo.region': 'BG',
       'geo.placename': 'Varna',
-      'geo.position': '43.22171865355527;27.91822750627432',
-      ICBM: '43.22171865355527, 27.91822750627432',
+      'geo.position': '43.2215545;27.917852',
+      ICBM: '43.2215545, 27.917852',
     },
   };
 }
@@ -104,7 +104,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     image: `${baseUrl}/og-image.jpg`,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: isBulgarian ? 'ул. "Ген. Гурко" 5' : '5 "Gen. Gurko" St.',
+      streetAddress: isBulgarian ? 'ул. "Подполковник Калитин" 2' : '2 Podpolkovnik Kalitin St.',
       addressLocality: 'Varna',
       addressRegion: 'Varna',
       postalCode: '9000',
@@ -112,8 +112,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '43.22171865355527',
-      longitude: '27.91822750627432',
+      latitude: '43.2215545',
+      longitude: '27.917852',
     },
     telephone: '+359876346261',
     priceRange: '$$',
@@ -121,8 +121,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '09:00',
-        closes: '18:00',
+        opens: '09:30',
+        closes: '18:30',
       },
     ],
     medicalSpecialty: ['Dentistry', 'Orthodontics', 'Pediatric Dentistry'],

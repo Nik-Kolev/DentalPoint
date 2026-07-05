@@ -7,7 +7,7 @@ import CertificatesViewer from '@/components/gallery/CertificatesViewer';
 
 export async function generateMetadata(): Promise<Metadata> {
     const t = await getTranslations('licenses');
-    return { title: t('title') };
+    return { title: t('title'), description: t('subtitle'), alternates: { canonical: '/licenses' } };
 }
 
 export default async function Licenses() {
