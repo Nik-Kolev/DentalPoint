@@ -31,10 +31,6 @@ export default function GalleryCasesViewer({ cases, locale, beforeLabel, afterLa
     const loadMore = () => setVisibleCount((prev) => Math.min(prev + 3, cases.length));
     const showLess = () => setVisibleCount(3);
 
-    useEffect(() => {
-        if (visibleCount > 3) window.dispatchEvent(new CustomEvent('content-expanded'));
-    }, [visibleCount]);
-
     const visibleCases = cases.slice(0, visibleCount);
     const hasMore = visibleCount < cases.length;
     const hasExpanded = visibleCount > 3;
