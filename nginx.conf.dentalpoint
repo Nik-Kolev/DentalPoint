@@ -17,7 +17,24 @@ server {
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name dentalpoint.bg www.dentalpoint.bg;
+    server_name www.dentalpoint.bg;
+
+    ssl_certificate /etc/letsencrypt/live/dentalpoint.bg/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/dentalpoint.bg/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Canonicalize to the non-www host — NEXTAUTH_URL is the non-www form, and Auth.js's
+    # __Host-/__Secure- prefixed cookies are strictly locked to the exact hostname that set
+    # them. Without this, a visitor who ever touches www mid-flow (bookmark, typed URL,
+    # stray link) could silently break the OAuth callback's state-cookie verification.
+    return 301 https://dentalpoint.bg$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name dentalpoint.bg;
 
     ssl_certificate /etc/letsencrypt/live/dentalpoint.bg/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/dentalpoint.bg/privkey.pem;
