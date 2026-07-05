@@ -165,24 +165,10 @@ export default function MessagesTab() {
                     {visible.map((s) => (
                         <div
                             key={s.id}
-                            className={`relative bg-white rounded-2xl border shadow-sm p-4 flex gap-3 ${
+                            className={`bg-white rounded-2xl border shadow-sm p-4 flex gap-3 ${
                                 s.read ? 'border-[var(--dp-card-border)]' : 'border-[var(--dp-accent)]'
                             }`}
                         >
-                            <button
-                                onClick={() => handleDelete(s.id)}
-                                disabled={deletingIds.has(s.id)}
-                                title='Изтрий'
-                                className='absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-red-500 border border-red-300 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors'
-                            >
-                                <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
-                                    <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
-                                    />
-                                </svg>
-                            </button>
                             <label className='flex items-start pt-1 cursor-pointer'>
                                 <input
                                     type='checkbox'
@@ -192,7 +178,7 @@ export default function MessagesTab() {
                                     className='w-5 h-5 accent-[var(--dp-primary)]'
                                 />
                             </label>
-                            <div className='flex-1 min-w-0 pr-12 pb-8'>
+                            <div className='flex-1 min-w-0'>
                                 <div className='flex flex-wrap items-center justify-between gap-2 mb-1'>
                                     <span className='font-semibold text-gray-800'>{s.name}</span>
                                     <span className='text-xs text-gray-400'>{formatDate(s.createdAt)}</span>
@@ -227,11 +213,29 @@ export default function MessagesTab() {
                                     </a>
                                 </div>
                                 <p className='text-sm text-gray-600 mt-1 whitespace-pre-wrap break-words'>{s.message}</p>
-                                {!s.read && (
-                                    <span className='inline-block mt-2 text-xs font-semibold text-[var(--dp-accent)] bg-[var(--dp-accent)]/10 px-2 py-0.5 rounded-full'>
-                                        {t('unreadBadge')}
-                                    </span>
-                                )}
+                                <div className='flex items-center justify-between mt-2'>
+                                    {!s.read ? (
+                                        <span className='inline-block text-xs font-semibold text-[var(--dp-accent)] bg-[var(--dp-accent)]/10 px-2 py-0.5 rounded-full'>
+                                            {t('unreadBadge')}
+                                        </span>
+                                    ) : (
+                                        <span />
+                                    )}
+                                    <button
+                                        onClick={() => handleDelete(s.id)}
+                                        disabled={deletingIds.has(s.id)}
+                                        title='Изтрий'
+                                        className='flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-red-500 border border-red-300 hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors'
+                                    >
+                                        <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
+                                            <path
+                                                strokeLinecap='round'
+                                                strokeLinejoin='round'
+                                                d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}
