@@ -1,13 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import HomeReviewsGrid from '@/components/shared/HomeReviewsGrid';
-
-interface ReviewItem {
-    name: string;
-    initials: string;
-    rating: number;
-    date: string;
-    text: string;
-}
+import { getAverageRating, type ReviewItem } from '@/lib/reviews';
 
 // https://www.google.com/maps/place/Dental+Point+-+... — confirmed correct listing (doctor names
 // in the URL match the site's own contact bar).
@@ -24,7 +17,7 @@ export default async function HomeReviews() {
     const items = (tReviews.raw('items') as ReviewItem[]).sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
-    const average = items.reduce((sum, r) => sum + r.rating, 0) / items.length;
+    const average = getAverageRating(items);
 
     return (
         <section className='bg-[var(--dp-bg-from)] pt-8 pb-4 px-4 sm:px-8'>

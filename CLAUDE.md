@@ -54,6 +54,7 @@ src/
     heroBlurPlaceholder.ts
     imageVersion.ts
     cloudflareLoader.ts
+    reviews.ts        # ReviewItem type + getAverageRating — shared by HomeReviews and layout.tsx's JSON-LD
   i18n/
     routing.ts        # defineRouting — localePrefix: 'never', locales: ['bg','en']
     request.ts        # getRequestConfig — lazy JSON loading from src/locales/
@@ -211,6 +212,7 @@ Suite lives in `e2e/` at project root, config at `playwright.config.ts`. Single 
 - **Every page's `generateMetadata` must set its own `alternates: { canonical: '/<path>' }`.** Next.js metadata inheritance is shallow per top-level key — a child route only overrides a key if it explicitly sets it; otherwise the parent's value flows through untouched. The root `[locale]/layout.tsx` sets `alternates: { canonical: '/' }` for the homepage, so any page that skips its own `alternates` silently inherits `/` as its canonical URL — telling Google that page is a duplicate of the homepage. Found live on `contact`/`team`/`gallery`/`licenses`/`privacy` (Phase 14, 2026-07-05) before this rule existed.
 - `sitemap.ts` must list flat, unprefixed URLs (`/`, `/contact`, `/team`, `/gallery`, `/licenses`) — the site uses `localePrefix: 'never'`, so `/bg`/`/en`-prefixed entries 307-redirect before Google ever indexes them there.
 - **The `DentalClinic` JSON-LD block in `[locale]/layout.tsx` (address, phone, hours) has no automatic single source of truth with the visible page copy** — when the real address/hours change in `bg.json`/`en.json` (footer, home contact bar), the structured-data fields must be updated by hand in the same pass. Caught live (Phase 14): the schema still had the clinic's old street address (`ул. "Ген. Гурко" 5`) and old hours weeks after the footer/home page had already moved to the real ones (`ул. "Подполковник Калитин" 2`, 09:30–18:30) — a real NAP (Name/Address/Phone) mismatch that erodes local-SEO trust signals, not just a cosmetic inconsistency.
+- **`AggregateRating`/`Review` JSON-LD in `[locale]/layout.tsx` is derived from the same real review data `HomeReviews.tsx` renders on the home page** (name/rating/date/text, translated under the `reviews` namespace) — not invented separately, since Google's structured-data guidelines require it to match content actually visible to visitors. The average-rating calculation (`getAverageRating`) lives once in `src/lib/reviews.ts` and is imported by both `HomeReviews.tsx` and `layout.tsx`, so the visible "X.X · N reviews" summary and the JSON-LD `ratingValue`/`reviewCount` can't drift apart.
 
 ### Brand
 - Design tokens live in `src/app/globals.css` as CSS custom properties, referenced everywhere via `var(--dp-*)`.

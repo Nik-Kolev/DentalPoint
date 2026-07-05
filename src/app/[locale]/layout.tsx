@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import DentalPointLogo from '@/components/shared/DentalPointLogo';
 import { routing } from '@/i18n/routing';
+import { getAverageRating, type ReviewItem } from '@/lib/reviews';
 
 export async function generateViewport(): Promise<Viewport> {
   return {
@@ -90,9 +91,13 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   }
   const t = await getTranslations('layout');
   const tMeta = await getTranslations('metadata');
+  const tReviews = await getTranslations('reviews');
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dentalpoint.bg';
   const isBulgarian = locale === 'bg';
+
+  const reviewItems = tReviews.raw('items') as ReviewItem[];
+  const averageRating = getAverageRating(reviewItems);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -130,6 +135,18 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       '@type': 'City',
       name: 'Varna',
     },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: averageRating.toFixed(1),
+      reviewCount: String(reviewItems.length),
+    },
+    review: reviewItems.map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.name },
+      datePublished: r.date,
+      reviewRating: { '@type': 'Rating', ratingValue: String(r.rating) },
+      reviewBody: r.text,
+    })),
   };
 
   const translations = {
