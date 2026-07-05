@@ -19,7 +19,13 @@ export default async function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
     if (protectedPaths.some((path) => pathname.startsWith(path))) {
-        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        // getToken()'s secureCookie option defaults to false (confirmed in @auth/core/src/jwt.ts),
+        // which makes it look for the unprefixed `authjs.session-token` cookie — but production
+        // always runs over HTTPS, so Auth.js actually sets `__Secure-authjs.session-token`.
+        // Without this, getToken() silently never finds a valid session (auth()'s full request
+        // pipeline detects this correctly elsewhere, which is why the site "looked" logged in
+        // while this middleware check kept bouncing back to signin).
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie: process.env.NODE_ENV === 'production' });
         if (!token) {
             const signInUrl = new URL('/auth/signin', req.url);
             // Relative path only, not the absolute req.url — req.nextUrl's origin is Next.js's
