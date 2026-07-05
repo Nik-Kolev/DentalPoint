@@ -159,7 +159,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
 
   return (
     <>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }} />
       <header className='w-full shadow-sm bg-white relative z-40'>
         <nav className='mx-auto flex items-center justify-between h-12 md:h-14 lg:h-16 px-4 sm:px-6 lg:px-8 relative'>
           {/* Logo */}
