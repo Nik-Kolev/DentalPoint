@@ -66,7 +66,7 @@ export default function CookieConsent() {
                     <h3 className='text-lg font-semibold text-gray-900 mb-2'>{t('title')}</h3>
                     <p className='text-sm text-gray-700 mb-2'>{t('description')}</p>
                     <p className='text-xs text-gray-600 mb-2'>{t('notice')}</p>
-                    <Link href='/privacy' className='text-xs text-[#005baa] hover:text-[#004085] hover:underline transition-colors font-medium'>
+                    <Link href='/privacy' className='text-xs text-[var(--dp-primary)] hover:text-[var(--dp-accent)] hover:underline transition-colors font-medium'>
                         {t('learnMore')}
                     </Link>
                 </div>
@@ -79,7 +79,7 @@ export default function CookieConsent() {
                     </button>
                     <button
                         onClick={handleAccept}
-                        className='px-4 py-2 text-sm font-medium text-white bg-[#005baa] rounded-lg hover:bg-[#004085] transition-colors'
+                        className='px-4 py-2 text-sm font-medium text-white bg-[var(--dp-primary)] rounded-lg hover:bg-[var(--dp-primary)]/90 transition-colors'
                     >
                         {t('accept')}
                     </button>

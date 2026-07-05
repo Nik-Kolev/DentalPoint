@@ -35,9 +35,10 @@ function SignInContent() {
     };
 
     return (
-        <div className='max-w-sm w-full bg-white rounded-lg shadow-lg p-6 border border-gray-200'>
+        <div className='relative overflow-hidden max-w-sm w-full bg-white rounded-2xl shadow-lg border border-[var(--dp-card-border)] p-6'>
+            <div className='absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--dp-primary)] to-[var(--dp-accent)]' />
             <div className='text-center mb-6'>
-                <h1 className='text-2xl font-bold text-[#005baa] mb-1'>Sign In</h1>
+                <h1 className='text-2xl font-bold text-[var(--dp-primary)] mb-1'>Sign In</h1>
                 <p className='text-gray-600 text-sm'>Access the statistics dashboard</p>
             </div>
 
@@ -51,11 +52,11 @@ function SignInContent() {
                 <button
                     onClick={handleGoogleSignIn}
                     disabled={loading}
-                    className='w-full bg-[#005baa] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#004a8f] active:bg-[#003d7a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2.5'
+                    className='w-full bg-white text-gray-700 font-medium py-2.5 px-4 rounded-lg border-2 border-[var(--dp-primary)] hover:bg-[var(--dp-primary)]/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2.5'
                 >
                     {loading ? (
                         <>
-                            <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin'></div>
+                            <div className='w-4 h-4 border-2 border-[var(--dp-primary)] border-t-transparent rounded-full animate-spin'></div>
                             <span className='text-sm'>Signing in...</span>
                         </>
                     ) : (
@@ -72,10 +73,10 @@ function SignInContent() {
                 </button>
             </div>
 
-            <div className='pt-4 border-t border-gray-200'>
+            <div className='pt-4 border-t border-[var(--dp-card-border)]'>
                 <button
                     onClick={() => router.push('/')}
-                    className='w-full text-sm text-gray-600 hover:text-[#005baa] transition-colors duration-200 flex items-center justify-center gap-1.5 py-1.5'
+                    className='w-full text-sm text-gray-600 hover:text-[var(--dp-primary)] transition-colors duration-200 flex items-center justify-center gap-1.5 py-1.5'
                 >
                     <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l-7-7m0 0l7-7m-7 7h18' />
@@ -89,8 +90,8 @@ function SignInContent() {
 
 export default function SignInPage() {
     return (
-        <div className='fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#e3f3fb] to-white px-4'>
-            <Suspense fallback={<div className='w-4 h-4 border-2 border-[#005baa] border-t-transparent rounded-full animate-spin' />}>
+        <div className='fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--dp-bg-from)] to-white px-4'>
+            <Suspense fallback={<div className='w-4 h-4 border-2 border-[var(--dp-primary)] border-t-transparent rounded-full animate-spin' />}>
                 <SignInContent />
             </Suspense>
         </div>
