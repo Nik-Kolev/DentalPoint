@@ -26,6 +26,11 @@ export default function CookieConsent() {
         const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
         if (typeof window.gtag !== 'undefined') return;
 
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        document.head.appendChild(script);
+
         window.dataLayer = window.dataLayer || [];
         function gtag(...args: unknown[]) {
             window.dataLayer.push(args);
@@ -38,12 +43,7 @@ export default function CookieConsent() {
             ad_user_data: 'denied',
             ad_personalization: 'denied',
         });
-        gtag('config', measurementId, { anonymize_ip: true });
-
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-        document.head.appendChild(script);
+        gtag('config', measurementId);
     };
 
     const handleAccept = () => {
