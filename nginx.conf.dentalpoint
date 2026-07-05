@@ -1,3 +1,12 @@
+# Per-IP rate limit for the main app proxy (Server Actions + page navigations run through
+# it — /Images/, /_next/static and favicon are separate location blocks and stay unthrottled
+# since they're cached static content). 10r/s steady-state with a 20-request burst is
+# generous for a real user (including several rapid admin actions) while still meaningfully
+# blocking a scripted flood against the 1 CPU/1GB VPS. Sits at file scope (outside any
+# server{} block) so it lands in the http{} context once this file is included from
+# /etc/nginx/sites-enabled/ inside the distro's main nginx.conf.
+limit_req_zone $binary_remote_addr zone=dentalpoint_limit:10m rate=10r/s;
+
 server {
     listen 80;
     listen [::]:80;
@@ -14,6 +23,11 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/dentalpoint.bg/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Matches next.config.js's serverActions.bodySizeLimit ('10mb') — without this,
+    # the effective upload ceiling is whichever client_max_body_size the server's global
+    # /etc/nginx/nginx.conf happens to have (not version-controlled here).
+    client_max_body_size 10m;
 
     # Performance: Compression
     gzip on;
@@ -72,6 +86,8 @@ server {
 
     # 5. Main Application Proxy
     location / {
+        limit_req zone=dentalpoint_limit burst=20 nodelay;
+
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
