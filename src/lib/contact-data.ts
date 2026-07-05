@@ -58,6 +58,14 @@ export function setSubmissionsRead(ids: string[], read: boolean): Promise<void> 
     });
 }
 
+export function deleteContactSubmissions(ids: string[]): Promise<void> {
+    return enqueueWrite(() => {
+        const idSet = new Set(ids);
+        const kept = pruneExpired(readAll());
+        writeAll(kept.filter((s) => !idSet.has(s.id)));
+    });
+}
+
 export function readContactSettings(): ContactSettings {
     const filePath = path.join(DATA_DIR, SETTINGS_FILE);
     if (!fs.existsSync(filePath)) return DEFAULT_SETTINGS;
