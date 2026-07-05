@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import type { Certificate } from '@/types/gallery';
+import { getCertificateDisplayRatio } from '@/lib/certificateAspectRatio';
 
 const ImageLightbox = dynamic(() => import('@/components/gallery/ImageLightbox'), { ssr: false });
 
@@ -177,7 +178,7 @@ export default function CertificatesViewer({ items, loadMoreLabel, showLessLabel
                     >
                         <div
                             className='relative aspect-square rounded-md overflow-hidden bg-[var(--dp-bg-from)] shadow-[0_2px_10px_rgba(0,0,0,0.12)]'
-                            style={item.aspectRatio ? { aspectRatio: item.aspectRatio } : undefined}
+                            style={item.aspectRatio ? { aspectRatio: getCertificateDisplayRatio(item.aspectRatio) } : undefined}
                         >
                             {!loadedIds.has(item.id) && (
                                 <div className='absolute inset-0 bg-gray-200 animate-pulse rounded-md' />

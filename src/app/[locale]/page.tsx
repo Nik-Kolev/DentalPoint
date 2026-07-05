@@ -33,9 +33,10 @@ export default async function Home() {
 
                         {/* Text column */}
                         <div className='flex-1 text-center lg:text-left'>
-                            <p className='text-[var(--dp-primary)] font-montserrat text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] mb-5'>
-                                {t('heroSubtitle')}
-                            </p>
+                            <div className='flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-2 text-[var(--dp-primary)] font-montserrat text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] mb-5'>
+                                <span>{t('doctor1Name')} &</span>
+                                <span>{t('doctor2Name')}</span>
+                            </div>
                             <h1 className='font-playfair leading-tight mb-8'>
                                 <span className='block text-2xl sm:text-3xl font-normal text-[var(--dp-heading)] opacity-75 mb-2'>
                                     {t('heroTitlePrefix')}
@@ -97,9 +98,9 @@ export default async function Home() {
                                 </svg>
                             </div>
                             <div className='space-y-1'>
-                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>Адрес</p>
-                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>ул. „Подполковник Калитин“ 2</p>
-                                <p className='font-montserrat text-[13px] text-gray-500 leading-snug'>кв. Левски, Варна</p>
+                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>{tLayout('addressLabel')}</p>
+                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>{tLayout('addressLine1')}</p>
+                                <p className='font-montserrat text-[13px] text-gray-500 leading-snug'>{tLayout('addressLine2')}</p>
                             </div>
                         </div>
 
@@ -110,19 +111,19 @@ export default async function Home() {
                                 </svg>
                             </div>
                             <div className='space-y-1'>
-                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>Контакти</p>
+                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>{tLayout('footerContact')}</p>
                                 <div className='flex divide-x divide-[var(--dp-card-border)]'>
                                     <div className='pr-4 space-y-1'>
                                         <a href='tel:+359876346261' className='font-montserrat text-[13px] font-semibold text-gray-800 hover:text-[var(--dp-primary)] transition-colors leading-snug block'>
                                             0876 346 261
                                         </a>
-                                        <p className='font-montserrat text-[12px] text-gray-500 leading-snug'>Д-р Явор Иванов</p>
+                                        <p className='font-montserrat text-[12px] text-gray-500 leading-snug'>{t('doctor1Name')}</p>
                                     </div>
                                     <div className='pl-4 space-y-1'>
                                         <a href='tel:+359878355494' className='font-montserrat text-[13px] font-semibold text-gray-800 hover:text-[var(--dp-primary)] transition-colors leading-snug block'>
                                             0878 355 494
                                         </a>
-                                        <p className='font-montserrat text-[12px] text-gray-500 leading-snug'>Д-р Екатерина Иванова</p>
+                                        <p className='font-montserrat text-[12px] text-gray-500 leading-snug'>{t('doctor2Name')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -135,9 +136,9 @@ export default async function Home() {
                                 </svg>
                             </div>
                             <div className='space-y-1'>
-                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>Работно Време</p>
-                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>Пон–Пет: 09:30–18:30</p>
-                                <p className='font-montserrat text-[13px] text-gray-500 leading-snug'>Събота–Неделя: Затворено</p>
+                                <p className='font-montserrat text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500 leading-snug'>{tLayout('workingHoursLabel')}</p>
+                                <p className='font-montserrat text-[13px] font-semibold text-gray-800 leading-snug'>{tLayout('workingHoursWeekdays')}</p>
+                                <p className='font-montserrat text-[13px] text-gray-500 leading-snug'>{tLayout('workingHoursWeekend')}</p>
                             </div>
                         </div>
 

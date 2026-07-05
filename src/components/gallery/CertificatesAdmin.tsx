@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { Certificate } from '@/types/gallery';
 import { uploadGalleryImage, removeGalleryImage, reorderGallery } from '@/lib/actions/gallery';
+import { getCertificateDisplayRatio } from '@/lib/certificateAspectRatio';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useReorderableCollection } from '@/hooks/useReorderableCollection';
 import ImageSlot from '@/components/admin/ImageSlot';
@@ -100,7 +101,7 @@ export default function CertificatesAdmin({ initialItems }: { initialItems: Cert
                             alt={item.alt}
                             editable={editMode}
                             aspectRatioClassName='aspect-square'
-                            aspectRatioStyle={item.aspectRatio ? { aspectRatio: item.aspectRatio } : undefined}
+                            aspectRatioStyle={item.aspectRatio ? { aspectRatio: getCertificateDisplayRatio(item.aspectRatio) } : undefined}
                             fit='contain'
                             containerClassName='bg-[var(--dp-bg-from)] shadow-[0_2px_10px_rgba(0,0,0,0.12)]'
                             dragHandleLabel='⠿ Плъзни'

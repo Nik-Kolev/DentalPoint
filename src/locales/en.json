@@ -21,12 +21,17 @@
         "bookAppointment": "Contact Us",
         "footerNav": "Navigation",
         "footerContact": "Contact",
-        "footerTagline": "A dental clinic with modern equipment and personalized care for every patient."
+        "footerTagline": "A dental clinic with modern equipment and personalized care for every patient.",
+        "addressLabel": "Address",
+        "addressLine1": "2 Podpolkovnik Kalitin St",
+        "addressLine2": "Levski District, Varna",
+        "workingHoursLabel": "Working Hours",
+        "workingHoursWeekdays": "Mon–Fri: 09:30–18:30",
+        "workingHoursWeekend": "Sat–Sun: Closed"
     },
     "home": {
         "heroTitlePrefix": "Dental Office",
         "heroTitleClinic": "Dental Point",
-        "heroSubtitle": "Dr. Yavor Ivanov & Dr. Ekaterina Ivanova",
         "doctorsTitle": "Our Specialists",
         "doctor1Name": "Dr. Yavor Ivanov",
         "doctor1Specialty": "Doctor of Dental Medicine",

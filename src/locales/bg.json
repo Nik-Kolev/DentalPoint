@@ -21,12 +21,17 @@
         "bookAppointment": "Свържете се с нас",
         "footerNav": "Навигация",
         "footerContact": "Контакти",
-        "footerTagline": "Дентална клиника с модерна апаратура и персонализирана грижа за всеки пациент."
+        "footerTagline": "Дентална клиника с модерна апаратура и персонализирана грижа за всеки пациент.",
+        "addressLabel": "Адрес",
+        "addressLine1": "ул. „Подполковник Калитин“ 2",
+        "addressLine2": "кв. Левски, Варна",
+        "workingHoursLabel": "Работно Време",
+        "workingHoursWeekdays": "Пон–Пет: 09:30–18:30",
+        "workingHoursWeekend": "Събота–Неделя: Затворено"
     },
     "home": {
         "heroTitlePrefix": "Дентален Кабинет",
         "heroTitleClinic": "Dental Point",
-        "heroSubtitle": "Д-р Явор Иванов & Д-р Екатерина Иванова",
         "doctorsTitle": "Нашите специалисти",
         "doctor1Name": "Д-р Явор Иванов",
         "doctor1Specialty": "Лекар по дентална медицина",
