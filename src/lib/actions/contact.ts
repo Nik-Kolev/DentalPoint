@@ -2,7 +2,7 @@
 
 import { randomUUID } from 'crypto';
 import { auth } from '@/auth';
-import { appendContactSubmission, setSubmissionsRead, readContactSubmissions, writeContactSettings } from '@/lib/contact-data';
+import { appendContactSubmission, setSubmissionsRead, deleteContactSubmissions, readContactSubmissions, writeContactSettings } from '@/lib/contact-data';
 import { sendNtfyNotification } from '@/lib/ntfy';
 import type { ContactSettings, ContactSubmission } from '@/types/contact';
 
@@ -47,6 +47,11 @@ export async function updateContactAwaySettings(settings: ContactSettings): Prom
 export async function markSubmissionsAsRead(ids: string[], read: boolean = true): Promise<void> {
     await assertAdmin();
     await setSubmissionsRead(ids, read);
+}
+
+export async function deleteSubmissions(ids: string[]): Promise<void> {
+    await assertAdmin();
+    await deleteContactSubmissions(ids);
 }
 
 export async function getContactSubmissions(): Promise<ContactSubmission[]> {

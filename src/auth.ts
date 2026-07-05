@@ -10,9 +10,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     ],
     callbacks: {
         async signIn({ user }) {
-            const allowedEmail = process.env.ALLOWED_EMAIL;
-            if (!allowedEmail) return false;
-            return user.email?.toLowerCase() === allowedEmail.toLowerCase();
+            const allowedEmails = process.env.ALLOWED_EMAILS?.split(',')
+                .map((email) => email.trim().toLowerCase())
+                .filter(Boolean);
+            if (!allowedEmails?.length) return false;
+            return allowedEmails.includes(user.email?.toLowerCase() ?? '');
         },
         async jwt({ token, user }) {
             if (user) {

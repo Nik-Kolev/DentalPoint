@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { getContactSubmissions, markSubmissionsAsRead } from '@/lib/actions/contact';
+import { getContactSubmissions, markSubmissionsAsRead, deleteSubmissions } from '@/lib/actions/contact';
 import { toViberLink, toTelLink, formatDate } from '@/lib/format';
 import DateRangePicker from '@/components/shared/DateRangePicker';
 import type { ContactSubmission } from '@/types/contact';
@@ -19,6 +19,7 @@ export default function MessagesTab() {
     const [untilIso, setUntilIso] = useState('');
     const [markingAll, setMarkingAll] = useState(false);
     const [markingIds, setMarkingIds] = useState<Set<string>>(new Set());
+    const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         getContactSubmissions()
@@ -69,6 +70,24 @@ export default function MessagesTab() {
             alert(t('markError'));
         } finally {
             setMarkingIds((prev) => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
+        }
+    }
+
+    async function handleDelete(id: string) {
+        if (!window.confirm(t('deleteConfirm'))) return;
+        setDeletingIds((prev) => new Set(prev).add(id));
+        try {
+            await deleteSubmissions([id]);
+            setSubmissions((prev) => prev.filter((s) => s.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert(t('deleteError'));
+        } finally {
+            setDeletingIds((prev) => {
                 const next = new Set(prev);
                 next.delete(id);
                 return next;
@@ -146,10 +165,18 @@ export default function MessagesTab() {
                     {visible.map((s) => (
                         <div
                             key={s.id}
-                            className={`bg-white rounded-2xl border shadow-sm p-4 flex gap-3 ${
+                            className={`relative bg-white rounded-2xl border shadow-sm p-4 flex gap-3 ${
                                 s.read ? 'border-[var(--dp-card-border)]' : 'border-[var(--dp-accent)]'
                             }`}
                         >
+                            <button
+                                onClick={() => handleDelete(s.id)}
+                                disabled={deletingIds.has(s.id)}
+                                title='Изтрий'
+                                className='absolute bottom-3 right-3 bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-full w-8 h-8 flex items-center justify-center shadow text-sm font-bold'
+                            >
+                                ✕
+                            </button>
                             <label className='flex items-start pt-1 cursor-pointer'>
                                 <input
                                     type='checkbox'
@@ -159,7 +186,7 @@ export default function MessagesTab() {
                                     className='w-5 h-5 accent-[var(--dp-primary)]'
                                 />
                             </label>
-                            <div className='flex-1 min-w-0'>
+                            <div className='flex-1 min-w-0 pr-12 pb-8'>
                                 <div className='flex flex-wrap items-center justify-between gap-2 mb-1'>
                                     <span className='font-semibold text-gray-800'>{s.name}</span>
                                     <span className='text-xs text-gray-400'>{formatDate(s.createdAt)}</span>

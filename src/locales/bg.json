@@ -338,7 +338,9 @@
             "datePlaceholder": "Избери период",
             "clearFilter": "Изчисти филтъра",
             "done": "Готово",
-            "unreadBadge": "Непрочетено"
+            "unreadBadge": "Непрочетено",
+            "deleteConfirm": "Изтриване на това съобщение?",
+            "deleteError": "Грешка при изтриване"
         }
     }
 }
