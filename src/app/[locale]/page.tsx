@@ -33,9 +33,10 @@ export default async function Home() {
 
                         {/* Text column */}
                         <div className='flex-1 text-center lg:text-left'>
-                            <p className='text-[var(--dp-primary)] font-montserrat text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] mb-5'>
-                                {t('heroSubtitle')}
-                            </p>
+                            <div className='flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-2 text-[var(--dp-primary)] font-montserrat text-xs sm:text-sm font-semibold uppercase tracking-[0.22em] mb-5'>
+                                <span>{t('doctor1Name')} &</span>
+                                <span>{t('doctor2Name')}</span>
+                            </div>
                             <h1 className='font-playfair leading-tight mb-8'>
                                 <span className='block text-2xl sm:text-3xl font-normal text-[var(--dp-heading)] opacity-75 mb-2'>
                                     {t('heroTitlePrefix')}
