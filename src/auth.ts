@@ -11,11 +11,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     callbacks: {
         async signIn({ user }) {
             const allowedEmail = process.env.ALLOWED_EMAIL;
-            console.log('[TEMP DEBUG] signIn callback: user.email=', JSON.stringify(user.email), 'allowedEmail=', JSON.stringify(allowedEmail));
             if (!allowedEmail) return false;
-            const result = user.email?.toLowerCase() === allowedEmail.toLowerCase();
-            console.log('[TEMP DEBUG] signIn callback: match result=', result);
-            return result;
+            return user.email?.toLowerCase() === allowedEmail.toLowerCase();
         },
         async jwt({ token, user }) {
             if (user) {
@@ -40,5 +37,4 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     secret: process.env.NEXTAUTH_SECRET,
     trustHost: true,
-    debug: true, // TEMP: verbose Auth.js internal logging while diagnosing a silent callback failure — revert
 });
