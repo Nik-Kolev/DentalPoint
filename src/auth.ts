@@ -40,4 +40,5 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     secret: process.env.NEXTAUTH_SECRET,
     trustHost: true,
+    debug: true, // TEMP: verbose Auth.js internal logging while diagnosing a silent callback failure — revert
 });
