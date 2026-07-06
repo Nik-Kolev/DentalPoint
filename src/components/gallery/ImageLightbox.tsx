@@ -111,6 +111,15 @@ export default function ImageLightbox({ isOpen, onClose, imageSrc, alt }: ImageL
                     </div>
                 )}
 
+                {/* Deliberately not next/image: this component only ever gets a bare URL, no known
+                    dimensions (see its 4 call sites), so it relies on the browser's own
+                    width:auto/height:auto intrinsic sizing below to render each image at its true
+                    aspect ratio. next/image's `fill` mode needs a fixed-size parent, which would
+                    force every image into one pane shape and letterbox anything that doesn't
+                    match — worst for portrait certificate scans. The optimization/lazy-load
+                    benefits next/image would otherwise bring are already moot: gallery images use
+                    `unoptimized`, and this component only mounts on click anyway. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={imageSrc}
                     alt={alt}
