@@ -39,6 +39,50 @@ test.describe('contact — visitor', () => {
         await page.locator('button[type="submit"]').click();
         await expect(page.getByText('Ще се свържем с вас възможно най-скоро.', { exact: true })).not.toBeVisible();
     });
+
+    // These three deliberately never submit a fully valid combination — submitContactForm
+    // (src/lib/actions/contact.ts) returns on the validation-errors branch before it ever calls
+    // appendContactSubmission/sendNtfyNotification, so an invalid submission can't reach ntfy.
+    // That's what makes it safe to actually click submit here instead of only checking
+    // el.validity.valid like the test above.
+    test('invalid phone shows a format error and does not submit', async ({ page }) => {
+        await page.goto('/contact');
+
+        await page.locator('input[name="name"]').fill('Иван Петров');
+        await page.locator('input[name="phone"]').fill('abc123');
+        await page.locator('textarea[name="message"]').fill('Искам да направя терапия.');
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByText('Моля, въведете валиден телефонен номер (напр. 0876 346 261 или +359 876 346 261).')).toBeVisible();
+        await expect(page.getByText('Ще се свържем с вас възможно най-скоро.', { exact: true })).not.toBeVisible();
+    });
+
+    test('too-short name shows a length error and does not submit', async ({ page }) => {
+        await page.goto('/contact');
+
+        await page.locator('input[name="name"]').fill('A');
+        await page.locator('input[name="phone"]').fill('0888123456');
+        await page.locator('textarea[name="message"]').fill('Искам да направя терапия.');
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByText('Името трябва да е поне 2 символа.')).toBeVisible();
+        await expect(page.getByText('Ще се свържем с вас възможно най-скоро.', { exact: true })).not.toBeVisible();
+    });
+
+    test('too-short message shows a length error and does not submit', async ({ page }) => {
+        await page.goto('/contact');
+
+        await page.locator('input[name="name"]').fill('Иван Петров');
+        await page.locator('input[name="phone"]').fill('0888123456');
+        await page.locator('textarea[name="message"]').fill('Здравей');
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByText('Съобщението трябва да е поне 10 символа.')).toBeVisible();
+        await expect(page.getByText('Ще се свържем с вас възможно най-скоро.', { exact: true })).not.toBeVisible();
+    });
 });
 
 test.describe('contact — visitor — away-soon banner', () => {
