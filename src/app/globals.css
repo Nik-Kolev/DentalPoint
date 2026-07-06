@@ -5,7 +5,6 @@
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
 
-    /* Design tokens — Deep Teal + Amber */
     --dp-primary: #1a7a8a;
     --dp-accent: #f4a261;
     --dp-bg-from: #f7f4ef;
@@ -49,7 +48,6 @@ body {
     text-wrap: balance;
 }
 
-/* Enhanced navigation link animations */
 .nav-link {
     position: relative;
     transition: color 0.15s ease-in-out;
@@ -80,7 +78,6 @@ body {
     color: #374151;
 }
 
-/* Mobile menu responsive styles */
 @media (max-width: 1024px) {
     .nav-link::after {
         display: none;
@@ -94,7 +91,6 @@ body {
     }
 }
 
-/* JavaScript to handle active state */
 script {
     display: none;
 }

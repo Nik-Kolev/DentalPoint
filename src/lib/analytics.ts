@@ -9,9 +9,6 @@ export interface AnalyticsData {
 
 export type TimePeriod = 'week' | 'month';
 
-/**
- * Fetch analytics data for a given time period from the real GA4 API
- */
 export async function fetchAnalyticsData(period: TimePeriod): Promise<AnalyticsData> {
     const response = await fetch('/api/analytics', {
         method: 'POST',
@@ -35,15 +32,12 @@ export async function fetchAnalyticsData(period: TimePeriod): Promise<AnalyticsD
     return data;
 }
 
-/**
- * Helper function to format GA4 date range based on period
- */
 export function getDateRange(period: TimePeriod): { startDate: string; endDate: string } {
     const today = new Date();
     const end = new Date(today);
     // Use yesterday as the end date so we only include full days
     end.setDate(end.getDate() - 1);
-    const endDate = end.toISOString().split('T')[0]; // YYYY-MM-DD
+    const endDate = end.toISOString().split('T')[0];
 
     let startDate: string;
     switch (period) {

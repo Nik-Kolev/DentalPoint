@@ -1,27 +1,11 @@
 'use client';
 
-/**
- * Cloudflare Image Resizing Loader
- *
- * This uses Cloudflare's FREE Image Resizing service (/cdn-cgi/image/).
- * Available on all Cloudflare plans - no paid subscription required!
- *
- * This offloads image optimization to Cloudflare's edge network,
- * reducing server CPU load on your 1 CPU/1GB RAM server.
- *
- * To use this loader, update next.config.js:
- * images: {
- *   loader: 'custom',
- *   loaderFile: './src/lib/cloudflareLoader.ts',
- * }
- *
- * Or use it directly in Image components with the loader prop.
- */
+// Offloads image optimization to Cloudflare's edge network — this server's only 1 CPU/1GB RAM,
+// too little to run Next's built-in image optimizer at real traffic volume.
 
 export default function cloudflareLoader({ src, width, quality }: { src: string; width: number; quality?: number }) {
     // In development, serve images directly from Next.js (with width param to avoid warning)
     if (process.env.NODE_ENV === 'development') {
-        // Return src with query param to satisfy Next.js loader requirements
         const separator = src.includes('?') ? '&' : '?';
         return `${src}${separator}w=${width}`;
     }

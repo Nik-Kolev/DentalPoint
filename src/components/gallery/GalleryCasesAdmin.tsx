@@ -95,7 +95,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
             onReorder: (orderedIds) => reorderGalleryCases(orderedIds),
         });
 
-    // Per-case text editing
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editFields, setEditFields] = useState<EditFields>({
         captionBg: '', captionEn: '', descriptionBg: '', descriptionEn: '', aspectRatio: 'aspect-[4/3]' as AspectValue,
@@ -107,17 +106,14 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
     const replaceFileRef = useRef<HTMLInputElement | null>(null);
     const pendingReplaceRef = useRef<{ id: string; slot: 'before' | 'after' } | null>(null);
 
-    // Delete
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    // Add new case
     const [addingNew, setAddingNew] = useState(false);
     const [newCase, setNewCase] = useState<NewCaseState>(EMPTY_NEW_CASE);
     const [addingLoading, setAddingLoading] = useState(false);
     const newBeforeRef = useRef<HTMLInputElement | null>(null);
     const newAfterRef = useRef<HTMLInputElement | null>(null);
 
-    // ── Delete ───────────────────────────────────────────────────────────────
     const handleDelete = async (id: string) => {
         if (!window.confirm('Изтрийте този случай?')) return;
         setDeletingId(id);
@@ -132,7 +128,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
         }
     };
 
-    // ── Replace image ────────────────────────────────────────────────────────
     const handleReplace = async (id: string, slot: 'before' | 'after', file: File) => {
         const key = `${id}-${slot}`;
         setReplacingKey(key);
@@ -153,7 +148,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
         }
     };
 
-    // ── Text edit ────────────────────────────────────────────────────────────
     const startEdit = (c: GalleryCase) => {
         setEditingId(c.id);
         setEditFields({
@@ -179,7 +173,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
         }
     };
 
-    // ── Add new case ─────────────────────────────────────────────────────────
     const resetNewCase = () => {
         if (newCase.beforePreview) URL.revokeObjectURL(newCase.beforePreview);
         if (newCase.afterPreview) URL.revokeObjectURL(newCase.afterPreview);
@@ -226,7 +219,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
 
     return (
         <>
-            {/* Toolbar */}
             <div className='flex items-center justify-end gap-3 mb-6'>
                 <button
                     onClick={() => { setEditMode((v) => !v); setEditingId(null); setAddingNew(false); }}
@@ -236,7 +228,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                 </button>
             </div>
 
-            {/* Case list */}
             <div className='space-y-6 sm:space-y-10'>
                 {/* Add new case — shown at top so newest appears first */}
                 {editMode && (
@@ -244,7 +235,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                         <div className='rounded-2xl border-2 border-[var(--dp-primary)]/30 bg-white p-6 space-y-4'>
                             <h3 className='font-bold text-[var(--dp-primary)] text-sm'>Нов случай</h3>
 
-                            {/* Image upload areas */}
                             <div className='grid grid-cols-2 gap-4'>
                                 {(['before', 'after'] as const).map((slot) => {
                                     const preview = slot === 'before' ? newCase.beforePreview : newCase.afterPreview;
@@ -275,7 +265,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 })}
                             </div>
 
-                            {/* Text fields */}
                             <BilingualTextFields
                                 fields={NEW_CASE_TEXT_FIELDS}
                                 valuesBg={{ caption: newCase.captionBg, description: newCase.descriptionBg }}
@@ -287,7 +276,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 idPrefix='new-case'
                             />
 
-                            {/* Aspect ratio */}
                             <div>
                                 <label className='block text-xs font-semibold text-gray-500 mb-1'>Формат на снимките</label>
                                 <div className='flex gap-2'>
@@ -301,7 +289,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                 </div>
                             </div>
 
-                            {/* Actions */}
                             <div className='flex gap-3'>
                                 <button onClick={handleAddCase} disabled={addingLoading}
                                     className='flex-1 py-2.5 bg-[var(--dp-primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--dp-primary)]/90 disabled:opacity-60 transition-colors flex items-center justify-center gap-2'>
@@ -351,7 +338,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                     </div>
                                 )}
 
-                                {/* Slider column */}
                                 <div className={`w-full lg:w-1/2 ${editMode ? 'mt-5' : ''}`}>
                                     <div className={editMode && !isEditing ? 'pointer-events-none' : ''}>
                                         <BeforeAfterSlider
@@ -364,7 +350,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                         />
                                     </div>
 
-                                    {/* Replace image buttons */}
                                     {editMode && (
                                         <div
                                             className='flex gap-2 mt-2'
@@ -398,7 +383,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                                     )}
                                 </div>
 
-                                {/* Info / edit panel */}
                                 <div className='w-full lg:w-1/2'>
                                     {isEditing ? (
                                         <div className='bg-white rounded-2xl p-5 shadow-lg border border-[var(--dp-primary)]/30 space-y-3' onClick={(e) => e.stopPropagation()} onDragStart={(e) => e.stopPropagation()}>
@@ -466,7 +450,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
 
             </div>
 
-            {/* Floating action bar — stays visible regardless of scroll position */}
             {editMode && (
                 <AdminActionBar
                     onRevert={() => revert('Всички промени от тази сесия ще бъдат отменени. Продължавате?')}
@@ -474,7 +457,6 @@ export default function GalleryCasesAdmin({ initialCases, locale, beforeLabel, a
                 />
             )}
 
-            {/* Single shared file input for image replacement */}
             <input
                 type='file'
                 accept='image/*'

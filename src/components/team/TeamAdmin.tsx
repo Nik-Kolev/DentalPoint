@@ -105,7 +105,6 @@ export default function TeamAdmin({ initialMembers, locale }: Props) {
 
     return (
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10'>
-            {/* Toolbar */}
             <div className='flex items-center justify-end gap-3 mb-3 lg:col-span-2'>
                 <button
                     onClick={editMode ? exitEditMode : enterEditMode}
@@ -126,7 +125,6 @@ export default function TeamAdmin({ initialMembers, locale }: Props) {
                         id={member.id}
                         className='flex flex-col bg-white rounded-3xl shadow-sm border border-[var(--dp-card-border)] overflow-hidden scroll-mt-24'
                     >
-                        {/* Portrait */}
                         <ImageSlot
                             variant='portrait'
                             src={member.imagePath}
@@ -144,7 +142,6 @@ export default function TeamAdmin({ initialMembers, locale }: Props) {
                             replaceLabel='Смени снимка'
                         />
 
-                        {/* Bio / Edit form */}
                         <div className='flex flex-col p-8 xl:p-10 flex-1'>
                             {editMode && fields ? (
                                 <div className='flex flex-col gap-4'>

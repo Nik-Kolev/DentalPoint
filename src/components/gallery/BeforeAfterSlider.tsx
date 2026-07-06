@@ -97,7 +97,6 @@ export default function BeforeAfterSlider({
 
     return (
         <div className='group'>
-            {/* Slider container */}
             <div
                 ref={containerRef}
                 className={`relative ${
@@ -105,7 +104,6 @@ export default function BeforeAfterSlider({
                 } rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-xl bg-gray-100 touch-none`}
                 onMouseDown={handleMouseDown}
             >
-                {/* After image (background) with After label */}
                 <div className='absolute inset-0'>
                     <Image
                         src={getImageUrl(afterImage)}
@@ -123,7 +121,6 @@ export default function BeforeAfterSlider({
                     </div>
                 </div>
 
-                {/* Before image (foreground, clipped) with Before label */}
                 <div className='absolute inset-0 overflow-hidden' style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}>
                     <Image
                         src={getImageUrl(beforeImage)}
@@ -141,12 +138,10 @@ export default function BeforeAfterSlider({
                     </div>
                 </div>
 
-                {/* Slider line */}
                 <div
                     className='absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_rgba(0,0,0,0.5)] z-10'
                     style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
                 >
-                    {/* Slider handle wrapper - stays centered */}
                     <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
                         {/* Handle - smoothly scales near edges */}
                         <div
@@ -174,7 +169,6 @@ export default function BeforeAfterSlider({
                 </div>
             </div>
 
-            {/* Description */}
             {description && (
                 <div className='mt-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-[var(--dp-primary)]/10'>
                     <p className='text-gray-700 text-center leading-relaxed'>{description}</p>
