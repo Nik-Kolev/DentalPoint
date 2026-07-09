@@ -106,10 +106,13 @@ export async function POST(request: NextRequest) {
         const sourceRows = sourceResponse.data.rows || [];
         const totalSourceUsers = sourceRows.reduce((sum, row) => sum + parseInt(row.metricValues?.[0]?.value || '0', 10), 0);
 
+        // GA4 can return several distinct raw sessionSource values that normalize to the
+        // same label (e.g. two different Google referrer strings both becoming "Google") —
+        // group by normalized label first, so each label appears once with a summed count.
+        const sourceCounts = new Map<string, number>();
         sourceRows.forEach((row) => {
             const source = row.dimensionValues?.[0]?.value || 'Unknown';
             const count = parseInt(row.metricValues?.[0]?.value || '0', 10);
-            const percentage = totalSourceUsers > 0 ? (count / totalSourceUsers) * 100 : 0;
 
             let normalizedSource = source;
             if (source === '(direct)') {
@@ -124,12 +127,19 @@ export async function POST(request: NextRequest) {
                 normalizedSource = 'Twitter/X';
             }
 
+            sourceCounts.set(normalizedSource, (sourceCounts.get(normalizedSource) || 0) + count);
+        });
+
+        sourceCounts.forEach((count, source) => {
+            const percentage = totalSourceUsers > 0 ? (count / totalSourceUsers) * 100 : 0;
             trafficSources.push({
-                source: normalizedSource,
+                source,
                 count,
                 percentage: Math.round(percentage * 10) / 10,
             });
         });
+
+        trafficSources.sort((a, b) => b.count - a.count);
 
         const responseData: AnalyticsData = {
             totalVisitors,

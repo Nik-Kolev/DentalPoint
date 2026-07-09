@@ -85,7 +85,7 @@ export default function StatsTab() {
                                                         style={{ width: `${device.percentage}%` }}
                                                     />
                                                 </div>
-                                                <span className='text-sm font-semibold text-[var(--dp-primary)] w-16 text-right shrink-0'>
+                                                <span className='text-sm font-semibold text-[var(--dp-primary)] w-20 text-right shrink-0 whitespace-nowrap'>
                                                     {device.percentage}% ({device.count})
                                                 </span>
                                             </div>
@@ -109,7 +109,7 @@ export default function StatsTab() {
                                                         style={{ width: `${source.percentage}%` }}
                                                     />
                                                 </div>
-                                                <span className='text-sm font-semibold text-[var(--dp-accent)] w-16 text-right shrink-0'>
+                                                <span className='text-sm font-semibold text-[var(--dp-accent)] w-20 text-right shrink-0 whitespace-nowrap'>
                                                     {source.percentage}% ({source.count})
                                                 </span>
                                             </div>

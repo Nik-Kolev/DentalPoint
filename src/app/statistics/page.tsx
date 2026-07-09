@@ -24,7 +24,7 @@ export default function StatisticsPage() {
     return (
         <ProtectedRoute>
             <div className='min-h-screen bg-gradient-to-b from-[var(--dp-bg-from)] to-white py-4 px-3 sm:py-6 sm:px-4'>
-                <div className='max-w-2xl mx-auto w-full'>
+                <div className='max-w-2xl lg:max-w-3xl mx-auto w-full'>
                     <div className='bg-white rounded-2xl border border-[var(--dp-card-border)] shadow-sm p-4 sm:p-5 mb-4 sm:mb-6'>
                         <div className='flex flex-col sm:flex-row justify-between items-center gap-3 mb-4'>
                             <h1 className='text-xl sm:text-2xl font-bold text-[var(--dp-heading)]'>{t('title')}</h1>
