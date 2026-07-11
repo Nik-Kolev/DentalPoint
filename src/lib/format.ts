@@ -1,5 +1,15 @@
 export function formatDate(iso: string): string {
-    return new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
+    return new Intl.DateTimeFormat('bg-BG', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Sofia' }).format(new Date(iso));
+}
+
+// en-CA locale formats dates as YYYY-MM-DD
+export function toSofiaDateString(date: Date): string {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Sofia' }).format(date);
+}
+
+export function sofiaToday(): Date {
+    const [y, m, d] = toSofiaDateString(new Date()).split('-').map(Number);
+    return new Date(y, m - 1, d);
 }
 
 // E.164 (leading + and country code) is required by Viber's deep link and recognized by

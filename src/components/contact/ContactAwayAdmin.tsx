@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { updateContactAwaySettings } from '@/lib/actions/contact';
 import { isContactAway, isContactAwaySoon, formatAwayRange } from '@/lib/contactAway';
+import { sofiaToday } from '@/lib/format';
 import type { ContactSettings } from '@/types/contact';
 import ContactForm from './ContactForm';
 import ContactAwayNotice from './ContactAwayNotice';
@@ -78,7 +79,7 @@ export default function ContactAwayAdmin({ initialSettings, locale }: { initialS
                                 locale={locale}
                                 placeholder={t('adminAwayRangePlaceholder')}
                                 doneLabel={t('adminDone')}
-                                disabled={{ before: new Date() }}
+                                disabled={{ before: sofiaToday() }}
                             />
                             {/* Always mounted so its height is reserved — conditionally rendering this
                             node made the box grow/shrink by one line every time a range finished

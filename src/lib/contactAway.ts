@@ -1,4 +1,5 @@
 import type { ContactSettings } from '@/types/contact';
+import { toSofiaDateString } from '@/lib/format';
 
 const AWAY_SOON_LEAD_DAYS = 3;
 // The form stops accepting new requests this many days before the clinic's actual awayFrom
@@ -15,9 +16,7 @@ function shiftIsoDate(iso: string, deltaDays: number): string {
 // components (unlike contact-data.ts, which is marked 'server-only').
 export function isContactAway(settings: ContactSettings, now: Date = new Date()): boolean {
     if (!settings.awayEnabled || !settings.awayFrom || !settings.awayUntil) return false;
-    // Compared as UTC calendar dates — in Bulgaria's UTC+2/+3 offset this can lag local
-    // midnight by a few hours at the boundary, which is an acceptable trade-off here.
-    const today = now.toISOString().slice(0, 10);
+    const today = toSofiaDateString(now);
     const closesFrom = shiftIsoDate(settings.awayFrom, -FORM_CLOSE_LEAD_DAYS);
     return today >= closesFrom && today <= settings.awayUntil;
 }
@@ -28,7 +27,7 @@ export function isContactAway(settings: ContactSettings, now: Date = new Date())
 export function isContactAwaySoon(settings: ContactSettings, now: Date = new Date()): boolean {
     if (!settings.awayEnabled || !settings.awayFrom) return false;
     if (isContactAway(settings, now)) return false;
-    const today = now.toISOString().slice(0, 10);
+    const today = toSofiaDateString(now);
     const leadStart = shiftIsoDate(settings.awayFrom, -AWAY_SOON_LEAD_DAYS);
     return today >= leadStart;
 }

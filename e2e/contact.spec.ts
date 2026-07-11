@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { test, expect } from './fixtures';
+import { toSofiaDateString } from '@/lib/format';
+
+function sofiaDatePlusDays(days: number): string {
+    const todayIso = toSofiaDateString(new Date());
+    return new Date(new Date(`${todayIso}T00:00:00Z`).getTime() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
 
 test.describe('contact — visitor', () => {
     test('page loads with contact form and no admin controls', async ({ page }) => {
@@ -102,8 +108,8 @@ test.describe('contact — visitor — away-soon banner', () => {
     // exact boundary where the banner first appears) — both should still show the form (a
     // response just might be delayed), not replace it with the full away notice.
     test('shows a warning banner and a working form 2 days before the away period starts', async ({ page }) => {
-        const from = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        const until = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const from = sofiaDatePlusDays(2);
+        const until = sofiaDatePlusDays(10);
         fs.writeFileSync(settingsPath, JSON.stringify({ awayEnabled: true, awayFrom: from, awayUntil: until }, null, 2));
 
         await page.goto('/contact');
@@ -114,8 +120,8 @@ test.describe('contact — visitor — away-soon banner', () => {
     });
 
     test('still shows the banner exactly 3 days before the away period starts (upper boundary)', async ({ page }) => {
-        const from = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        const until = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const from = sofiaDatePlusDays(3);
+        const until = sofiaDatePlusDays(10);
         fs.writeFileSync(settingsPath, JSON.stringify({ awayEnabled: true, awayFrom: from, awayUntil: until }, null, 2));
 
         await page.goto('/contact');
@@ -128,8 +134,8 @@ test.describe('contact — visitor — away-soon banner', () => {
     // itself — a message sent the evening before has no realistic chance of a same-day reply,
     // so 1 day out should already show the full away notice instead of the banner+form.
     test('shows the full away notice (not the banner) 1 day before the away period starts', async ({ page }) => {
-        const from = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        const until = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const from = sofiaDatePlusDays(1);
+        const until = sofiaDatePlusDays(10);
         fs.writeFileSync(settingsPath, JSON.stringify({ awayEnabled: true, awayFrom: from, awayUntil: until }, null, 2));
 
         await page.goto('/contact');
@@ -221,8 +227,8 @@ test.describe('contact — admin', () => {
         // Self-contained: seed the "on" state directly rather than relying on the previous test
         // having left it enabled, so this test doesn't cascade-fail if that one does.
         const settingsPath = path.join(process.cwd(), 'data', 'contact-settings.json');
-        const today = new Date().toISOString().slice(0, 10);
-        const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const today = sofiaDatePlusDays(0);
+        const nextWeek = sofiaDatePlusDays(7);
         fs.writeFileSync(settingsPath, JSON.stringify({ awayEnabled: true, awayFrom: today, awayUntil: nextWeek }, null, 2));
 
         await page.reload();

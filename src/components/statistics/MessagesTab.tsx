@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getContactSubmissions, markSubmissionsAsRead, deleteSubmissions } from '@/lib/actions/contact';
-import { toViberLink, toTelLink, formatDate } from '@/lib/format';
+import { toViberLink, toTelLink, formatDate, sofiaToday } from '@/lib/format';
 import DateRangePicker from '@/components/shared/DateRangePicker';
 import type { ContactSubmission } from '@/types/contact';
 
@@ -137,7 +137,7 @@ export default function MessagesTab() {
                     locale='bg'
                     placeholder={t('datePlaceholder')}
                     doneLabel={t('done')}
-                    disabled={{ after: new Date() }}
+                    disabled={{ after: sofiaToday() }}
                 />
                 {hasFilter && (
                     <button
